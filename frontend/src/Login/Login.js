@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Header, Image, Segment, Grid, Icon, Button, Form } from 'semantic-ui-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import axiosInstance from '../serverConnection/axios';
 import logo from '../images/main_logo.png';
@@ -11,7 +11,6 @@ function Login(props) {
     const [password, setPassword] = useState();
     const [errorMessages, setErrorMessages] = useState();
     const [hasError, setHasError] = useState(false);
-    const navigate = useNavigate();
 
     function isInputsValid() {
         var isValid = true;
