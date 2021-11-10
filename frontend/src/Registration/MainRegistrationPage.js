@@ -62,9 +62,6 @@ class MainRegistrationPage extends React.Component {
         var user = this.state.newUser;
         var center = this.state.newCenter;
         const registration = await axiosInstance.post('api/center/registration', formData, {
-            header: {
-                'Content-Type': 'application/json'
-            },
             params: {
                 center: center,
                 user: user

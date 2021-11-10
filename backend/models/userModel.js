@@ -43,12 +43,11 @@ User.login = async (email, password) => {
         if (existingUser.recordset.length > 0) {
             const isVerified = passwordHash.verify(password, existingUser.recordset[0].password);
             if (isVerified) {       //proveri password i ako je dobar dodeli mu token
-                const token = jwt.sign({role: existingUser.recordset[0].role, email: existingUser.recordset[0].email}, 'sE6ret0gfknf');
+                const token = jwt.sign({ id: existingUser.recordset[0].iduser, role: existingUser.recordset[0].role }, secretToken);
                 
-                //res.header('auth-token', token).send({status: 'success', token: token});
-                return ({status: 'success', token: token});
+                return ({ status: 'success', token: token, id: existingUser.recordset[0].iduser });
             } else {
-                return ({ status: 'failed'}); 
+                return ({ status: 'failed' });
             }
         }
         return ({ status: 'failed' });

@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+global.secretToken = 'sE6ret0gfknf';
 
 const centerRoute = require('./routes/center');
 const userRoute = require('./routes/user');

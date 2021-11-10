@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Container, Header, Image, Segment, Grid, Icon, Button, Form } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../serverConnection/axios';
 import logo from '../images/main_logo.png';
 
-function Login() {
+function Login(props) {
 
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    const [errorMessages, setErrorMessages] = useState({});
+    const [errorMessages, setErrorMessages] = useState();
     const [hasError, setHasError] = useState(false);
+    const navigate = useNavigate();
 
     function isInputsValid() {
         var isValid = true;
@@ -27,22 +28,20 @@ function Login() {
     async function onLogin(e) {
         e.preventDefault();
         if (isInputsValid()) {
-            //posalji serveru zahtev
-            //predji na profil korisnika
             const userExist = await axiosInstance.get('/api/user/login', {
-                header: {
-                    'Content-Type': 'application/json'
-                },
                 params: {
                     email: email,
                     password: password
                 }
             });
             if (userExist.data.status === 'success') {
-                console.log(userExist);
+                localStorage.setItem('loggedIn', userExist.data.token);
+                console.log(userExist.data.id);
+                props.onHomePage(true);
             } else {
-                //da se ispise poruka password is incorrect.
-                console.log('blaa');
+                const message = 'Email/Password is incorrect.'
+                setHasError(true);
+                setErrorMessages(message);
             }
         }
     }

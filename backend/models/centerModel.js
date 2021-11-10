@@ -75,7 +75,7 @@ Center.registration = async (user, center, areaCode, phoneNumber) => {
                 return ({ status: 'success' });
             }
         });
-        
+
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

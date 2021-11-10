@@ -12,10 +12,10 @@ exports.emailValidation = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { status, token } = await User.login(req.query.email, req.query.password);
-        res.header('auth-token', token).send({status: status, token: token});
+        const { status, token, id } = await User.login(req.query.email, req.query.password);
+        res.header('auth-token', token).send({status: status, token: token, id: id});
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' })
     }
-}
+};

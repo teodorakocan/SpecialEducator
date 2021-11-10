@@ -30,9 +30,6 @@ function CenterRegistration(props){
         const { errorMessages, formIsValid } = CenterFormValidation(props.center);
         if (formIsValid) {
             const centerExist = await axiosInstance.get('api/center/validation', {
-                header: {
-                    'Content-Type': 'application/json'
-                },
                 params: {
                     name: props.center['name'],
                     email: props.center['email']

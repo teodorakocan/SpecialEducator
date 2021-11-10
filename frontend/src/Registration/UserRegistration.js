@@ -39,9 +39,6 @@ function UserRegistration(props) {
         const { errorMessages, formIsValid } = UserFormValidation(props.user);
         if (formIsValid) {
             const userExist = await axiosInstance.get('api/user/emailValidation', {
-                header: {
-                    'Content-Type': 'application/json'
-                },
                 params: {
                     email: props.user['email']
                 }
