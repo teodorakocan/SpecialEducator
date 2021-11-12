@@ -7,5 +7,6 @@ const { loggedIn } = require('../helper/authMiddleware');
 router.get('/emailValidation', userController.emailValidation);
 router.get('/login', userController.login);
 router.get('/data', loggedIn, authenticatedController.data);
+router.get('/changeData', loggedIn, authenticatedController.changeData);
 
 module.exports = router;

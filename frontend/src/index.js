@@ -4,7 +4,6 @@ import 'semantic-ui-css/semantic.min.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import MainRegistrationPage from './Registration/MainRegistrationPage';
-import MainHomePage from './Home/MainHomePage';
 import StartApp from './StartApp';
 
 const routing = (

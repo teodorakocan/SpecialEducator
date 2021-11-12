@@ -1,0 +1,18 @@
+.title {
+    font-size: 34px;
+    font-weight: bold;
+    color: #ff5500;
+    font-family: Verdana, Arial, Helvetica, sans-serif
+}
+
+.subTitle {
+    font-size: 18px;
+    color: #ff5500;
+    font-family: Verdana, Arial, Helvetica, sans-serif
+}
+
+.role {
+    font-size: 14px;
+    color: #ff5500;
+    font-family: Verdana, Arial, Helvetica, sans-serif
+}
