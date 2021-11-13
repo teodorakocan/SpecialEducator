@@ -5,12 +5,14 @@ import '../UserStyle.css';
 import UserDataChangeValidation from '../../Validations/UserDataChangeValidation';
 import axiosInstance from '../../serverConnection/axios';
 import { authHeader } from '../../serverConnection/authHeader';
+import { useNavigate } from 'react-router';
 
-function Profile(props) {
+function ChangeProfileInformation(props) {
 
     const [userData, setUserData] = useState(props.user);
     const [errorMessages, setErrorMessages] = useState({});
     const [hasError, setHasError] = useState(false);
+    const navigate = useNavigate();
 
     const validationErrorComponents = Object.values(errorMessages).map((errorMessage, index) =>
         <div style={{ color: 'red' }} key={index}>{errorMessage}</div>)
@@ -24,12 +26,11 @@ function Profile(props) {
         setHasError(false);
     }
 
-    function onChangeData(e) {
-        e.preventDefault();
+    function onClickChangeData() {
         const { errorValidationMessages, isValid } = UserDataChangeValidation(userData);
         var serverErrorMessage = {};
         if (isValid) {
-            axiosInstance.get('/api/user/changeData', {
+            axiosInstance.post('/api/user/changeData',{}, {
                 headers: authHeader(),
                 params: {
                     user: userData
@@ -41,7 +42,13 @@ function Profile(props) {
                         setErrorMessages(serverErrorMessage);
                         setHasError(isValid);
                     } else {
-                        props.onChangeData();
+                        props.onClickChangeData();
+                    }
+                }).catch((error) => {
+                    if (error.response.status === 401) {
+                        navigate('/notAuthorized');
+                    } else {
+                        navigate('notFound');
                     }
                 });
         } else {
@@ -90,7 +97,7 @@ function Profile(props) {
                     <Grid.Column>
                     </Grid.Column>
                     <Grid.Column>
-                        <Button color='orange' floated='right' onClick={onChangeData}>Change</Button>
+                        <Button color='orange' floated='right' onClick={onClickChangeData}>Change</Button>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -98,4 +105,4 @@ function Profile(props) {
     )
 };
 
-export default Profile;
+export default ChangeProfileInformation;

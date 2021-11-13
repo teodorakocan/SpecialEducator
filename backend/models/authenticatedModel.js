@@ -28,7 +28,7 @@ Authenticated.data = async (id) => {
         console.log(err);
         return ({ status: 'failed' });
     }
-}
+};
 
 Authenticated.changeData = async (user) => {
     try {
@@ -66,5 +66,38 @@ Authenticated.changeData = async (user) => {
         return ({ status: 'failed' });
     }
 };
+
+Authenticated.changePassword = async (userId, newPassword, oldPassword) => {
+    try {
+        const {user} = await Authenticated.data(userId);
+        const isVerified = passwordHash.verify(oldPassword, user.password);
+        if (isVerified) {
+            const hashedPassword = passwordHash.generate(newPassword);
+            let request = await sql.connect(dbConfig);
+
+            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "' WHERE iduser = '" + userId + "';");
+            return ({ status: 'success', message: 'You have successfully changed your password.' });
+        } else {
+            return ({ status: 'failed', message: 'Old password is incorrect.' });
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.changeImage = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        console.log(imageName);
+        await request.request()
+            .query("UPDATE [User] SET image = '" + imageName + "' WHERE iduser = '" + id + "';");
+
+        return ({ status: 'success' });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+}
 
 module.exports = Authenticated;

@@ -33,8 +33,7 @@ function UserRegistration(props) {
         props.handleUpload(e);
     }
 
-    async function onClickFinalStep(e) {
-        e.preventDefault();
+    async function onClickFinalStep() {
         var serverErrorMessage = {};
         const { errorMessages, formIsValid } = UserFormValidation(props.user);
         if (formIsValid) {
@@ -56,8 +55,7 @@ function UserRegistration(props) {
         }
     }
 
-    function onClickPrevStep(e) {
-        e.preventDefault();
+    function onClickPrevStep() {
         props.onClickPrevStep();
     }
 

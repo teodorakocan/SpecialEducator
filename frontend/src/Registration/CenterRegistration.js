@@ -24,8 +24,7 @@ function CenterRegistration(props){
         props.onDropdownCenterChange(e, data);
     }
 
-    async function onClickNextStep(e) {
-        e.preventDefault();
+    async function onClickNextStep() {
         var serverErrorMessage = {};
         const { errorMessages, formIsValid } = CenterFormValidation(props.center);
         if (formIsValid) {

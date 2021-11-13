@@ -16,19 +16,19 @@ function MenuItems(props){
                                     name='profile'
                                     active={props.activeItem === 'profile'}
                                     onClick={handleChange}>
-                                    <Icon name='user' /> Profile infomration
-                                </Menu.Item>
-                                <Menu.Item
-                                    name='image'
-                                    active={props.activeItem === 'image'}
-                                    onClick={handleChange}>
-                                    <Icon name='image' /> Change profile image
+                                    <Icon name='user' /> Change profile infomration
                                 </Menu.Item>
                                 <Menu.Item
                                     name='password'
                                     active={props.activeItem === 'password'}
                                     onClick={handleChange}>
                                     <Icon name='pencil alternate' /> Change password
+                                </Menu.Item>
+                                <Menu.Item
+                                    name='image'
+                                    active={props.activeItem === 'image'}
+                                    onClick={handleChange}>
+                                    <Icon name='image' /> Change profile image
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu>

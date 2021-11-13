@@ -18,7 +18,7 @@ class MainRegistrationPage extends React.Component {
         };
     }
 
-    onInputCenterChange = async (e, name) => {
+    onInputCenterChange = (e, name) => {
         var center = this.state.newCenter;
         let value = '';
         if (name === 'state') {
@@ -30,19 +30,19 @@ class MainRegistrationPage extends React.Component {
         this.setState({ newCenter: center });
     }
 
-    onDropdownCenterChange = async (e, data) => {
+    onDropdownCenterChange = (data) => {
         var center = this.state.newCenter;
         center[data.name] = data.value;
         this.setState({ newCenter: center });
     }
 
-    onInputUserChange = async (e, name) => {
+    onInputUserChange = (e, name) => {
         var user = this.state.newUser;
         user[name] = e.target.value;
         this.setState({ newUser: user });
     }
 
-    handleUpload = async (e) => {
+    handleUpload = (e) => {
         if (e.target.files.length !== 0) {
             var user = this.state.newUser;
             user['image'] = URL.createObjectURL(e.target.files[0]);
@@ -50,12 +50,11 @@ class MainRegistrationPage extends React.Component {
         }
     }
 
-    onClickNextStep = async () => {
+    onClickNextStep = () => {
         this.setState({ step: this.state.step + 1 });
     }
 
     onClickFinalStep = async () => {
-        console.log(this.state.seletedFile);
         var formData = new FormData();
         formData.append('file', this.state.seletedFile[0]);
 
