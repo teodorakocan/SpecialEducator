@@ -42,7 +42,7 @@ function AddParent(props) {
                         name='lastName' onChange={handleParentInputChange} defaultValue={props.parent ? props.parent['lastName'] : ''} />
                 </Form.Group>
 
-                <Form.Input required label='E-mail' placeholder='john@gmail.com' width={12}
+                <Form.Input required label='Email' placeholder='john@gmail.com' width={12}
                     name='email' onChange={handleParentInputChange} defaultValue={props.parent ? props.parent['email'] : ''} />
 
                 <Form.Input

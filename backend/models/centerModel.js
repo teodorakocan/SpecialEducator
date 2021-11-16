@@ -1,7 +1,6 @@
 const sql = require('mssql');
 const dbConfig = require('../configurations/dbConfig');
 var passwordHash = require('password-hash');
-var mailCongig = require('../configurations/mailConfig');
 
 const Center = function (center) {
     this.name = center.name;

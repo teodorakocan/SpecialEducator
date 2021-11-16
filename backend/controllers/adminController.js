@@ -82,9 +82,9 @@ exports.addChild = async (req, res) => {
                     res.send({ status: status, message: portalMessage });
                 }
             });
+        } else {
+            res.send({ status: 'failed' });
         }
-        res.send({ status: 'failed' });
-
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

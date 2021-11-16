@@ -92,7 +92,7 @@ function ChangeProfileData(props) {
 
                 <Grid.Row divided>
                     <Grid.Column>
-                        <p className='userProperty'>E-mail</p>
+                        <p className='userProperty'>Email</p>
                     </Grid.Column>
                     <Grid.Column>
                         <Input fluid defaultValue={userData['email']} name='email' onChange={onInputChange}

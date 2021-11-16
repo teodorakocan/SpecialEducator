@@ -35,7 +35,6 @@ function Login(props) {
             });
             if (userExist.data.status === 'success') {
                 localStorage.setItem('loggedIn', userExist.data.token);
-                console.log(userExist.data.id);
                 props.onHomePage(true);
             } else {
                 const message = 'Email/Password is incorrect.'

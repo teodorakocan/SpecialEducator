@@ -64,7 +64,7 @@ function UserRegistration(props) {
                                         <Form.Input required width={7} label='Last name' placeholder='Brosnan...' name='lastName'
                                             onChange={onInputUserChange} defaultValue={props.user ? props.user['lastName'] : ''} />
                                     </Form.Group>
-                                    <Form.Input type='email' required width={11} label='E-mail' placeholder='pierce@gmail.com...'
+                                    <Form.Input type='email' required width={11} label='Email' placeholder='pierce@gmail.com...'
                                         name='email' onChange={onInputUserChange} defaultValue={props.user ? props.user['email'] : ''} />
                                     <Form.Group>
                                         <Form.Input required width={7} label='Password' name='password' type={hiddePassword ? 'password' : 'text'}

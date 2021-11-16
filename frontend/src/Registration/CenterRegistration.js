@@ -86,7 +86,7 @@ function CenterRegistration(props){
                                             defaultValue={props.center ? props.center['phoneNumber'] : ''}
                                         />
                                     </Form.Group>
-                                    <Form.Input type='email' required width={11} label='E-mail' placeholder='john@gmail.com...' onChange={onInputCenterChange}
+                                    <Form.Input type='email' required width={11} label='Email' placeholder='john@gmail.com...' onChange={onInputCenterChange}
                                         name='email' defaultValue={props.center ? props.center['email'] : ''} />
                                     <br />
                                     {hasError && formErrorComponents}

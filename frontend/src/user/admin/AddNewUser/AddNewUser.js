@@ -103,7 +103,7 @@ function AddNewUser() {
                     <Form.Input required width={7} label='Last name' placeholder='Brosnan...' name='lastName'
                         onChange={handleInputChange} />
                 </Form.Group>
-                <Form.Input type='email' required width={11} label='E-mail' name='email' placeholder='pierce@gmail.com...'
+                <Form.Input type='email' required width={11} label='Email' name='email' placeholder='pierce@gmail.com...'
                     onChange={handleInputChange} />
                 <Form.Input required width={7} label='Password' name='password' type={hidePassword ? 'password' : 'text'}
                     action={<Button basic icon onClick={() => setHidePassword(!hidePassword)}>
