@@ -27,7 +27,7 @@ function Login(props) {
     async function onLogin(e) {
         e.preventDefault();
         if (isInputsValid()) {
-            const userExist = await axiosInstance.get('/api/user/login', {
+            const userExist = await axiosInstance.get('/user/login', {
                 params: {
                     email: email,
                     password: password

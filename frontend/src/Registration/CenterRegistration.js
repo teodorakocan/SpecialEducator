@@ -21,14 +21,14 @@ function CenterRegistration(props){
 
     function onDropdownCenterChange(e, data) {
         e.preventDefault();
-        props.onDropdownCenterChange(e, data);
+        props.onDropdownCenterChange(data); 
     }
 
     async function onClickNextStep() {
         var serverErrorMessage = {};
         const { errorMessages, formIsValid } = CenterFormValidation(props.center);
         if (formIsValid) {
-            const centerExist = await axiosInstance.get('api/center/validation', {
+            const centerExist = await axiosInstance.get('/center/validation', {
                 params: {
                     name: props.center['name'],
                     email: props.center['email']
@@ -39,7 +39,7 @@ function CenterRegistration(props){
                 setFormErrorMessages(serverErrorMessage);
                 setHasError(formIsValid);
             } else {
-                props.onClickNextStep();
+                props.onClickNextStep(2);
             }
         } else {
             setFormErrorMessages(errorMessages);
@@ -69,8 +69,8 @@ function CenterRegistration(props){
                                     <Form.Group>
                                         <Form.Input required width={7} label='City' placeholder='London...' onChange={onInputCenterChange} name='city'
                                             defaultValue={props.center ? props.center['city'] : ''} />
-                                        <Form.Select required selection width={7} label='State' placeholder='Select your country'
-                                            options={states} onChange={onInputCenterChange} name='state' defaultValue={props.center ? props.center['state'] : ''} />
+                                        <Form.Dropdown required button selection width={7} label='State' placeholder='Select your country'
+                                            options={states} onChange={onDropdownCenterChange} name='state' defaultValue={props.center ? props.center['state'] : ''} />
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Input
@@ -86,7 +86,7 @@ function CenterRegistration(props){
                                             defaultValue={props.center ? props.center['phoneNumber'] : ''}
                                         />
                                     </Form.Group>
-                                    <Form.Input type='email' required width={11} label='Email' placeholder='john@gmail.com...' onChange={onInputCenterChange}
+                                    <Form.Input type='email' required width={11} label='E-mail' placeholder='john@gmail.com...' onChange={onInputCenterChange}
                                         name='email' defaultValue={props.center ? props.center['email'] : ''} />
                                     <br />
                                     {hasError && formErrorComponents}

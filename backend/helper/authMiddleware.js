@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 
-exports.loggedIn = async (req, res, next) => {
+exports.loggedIn = function (req, res, next) {
     let token = req.header('Authorization');
     if(!token) {
-        return res.status(401).send({ message: 'You are not authorized. You need to be logged in.'});
+        return res.status(403).send({ message: 'You are not authenticated. You need to be logged in.'});
     }
 
     try{
@@ -14,6 +14,13 @@ exports.loggedIn = async (req, res, next) => {
         req.user = verified;
         next();
     }catch(err){
-        res.status(401).send({message: 'Invalid token'});
+        res.status(403).send({message: 'Invalid token'});
     }
 };
+
+exports.adminOnly = async function(req, res, next){
+    if(req.user.role !== 'admin'){
+        return res.status(401).send('Unauthorized!');
+    }
+    next();
+}

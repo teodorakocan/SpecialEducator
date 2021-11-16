@@ -16,25 +16,19 @@ const Center = function (center) {
 
 Center.validation = async (name, email) => {
     try {
-        let status = '';
-        let message = '';
         let request = await sql.connect(dbConfig);
 
         var existingCenter = await request.request()
             .query("SELECT * FROM center WHERE name='" + name + "';");
 
         if (existingCenter.recordset.length > 0) {
-            status = 'failed';
-            message = 'Name of center is already taken. Please change.'
-            return ({ status, message });
+            return ({ status: 'failed', message: 'Name of center is already taken. Please change.' });
         } else {
             var existingCenter = await request.request()
                 .query("SELECT * FROM center WHERE email='" + email + "';");
 
             if (existingCenter.recordset.length > 0) {
-                status = 'failed';
-                message = 'Email address has been already taken. Please change.'
-                return ({ status, message });
+                return ({ status: 'failed', message: 'Email address has been already taken. Please change.' });
             }
         }
         return ({ status: 'success' });
@@ -56,25 +50,12 @@ Center.registration = async (user, center, areaCode, phoneNumber) => {
                 + "'); SELECT SCOPE_IDENTITY() AS id");
 
         var idCenter = parseInt(newCenter.recordset[0].id);
-        var newUser = await request.request()
+        await request.request()
             .query("INSERT INTO [User] (name, lastName, email, image, role, Center_IDCenter, password)"
                 + "VALUES ('" + user.name + "', '" + user.lastName + "', '" + user.email + "', '" + imageName
                 + "', 'admin', " + idCenter + ", '" + hashedPassword + "');");
 
-        var mailOptionsCenter = {
-            from: 'specialeducator2021@gmail.com',
-            to: user.email,
-            subject: 'Special Educator',
-            text: 'Welcome. You have successfully registered your special education center, ' + name + ', on the Special Educator application. Enjoy using it.'
-        };
-
-        mailCongig.sendMail(mailOptionsCenter, function (error, info) {
-            if (error) {
-                return ({ status: 'failed' });
-            } else {
-                return ({ status: 'success' });
-            }
-        });
+        return ({ status: 'success' });
 
     } catch (err) {
         console.log(err);

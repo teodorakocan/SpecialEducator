@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-global.secretToken = 'sE6ret0gfknf';
 
 const centerRoute = require('./routes/center');
 const userRoute = require('./routes/user');
+const authUserRoute = require('./routes/authUser');
+const adminRoute = require('./routes/admin');
 
 const whitelist = ['http://localhost:3000'];
 const corsOptions = function (req, callback) {
@@ -36,8 +37,10 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(express.static('images'));
 
-app.use('/api/center', centerRoute);
-app.use('/api/user', userRoute);
+app.use('/center', centerRoute);
+app.use('/user', userRoute);
+app.use('/authUser', authUserRoute);
+app.use('/admin', adminRoute);
 
 app.listen(9000, function () {
     console.log('Example app listening on port 9000!');

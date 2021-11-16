@@ -20,14 +20,6 @@ function UserRegistration(props) {
         props.onInputUserChange(e, name);
     }
 
-    function onClickShowPassword() {
-        setHiddePassword(!hiddePassword);
-    }
-
-    function onClickShowPassConfirmation() {
-        setHiddeConfirmationPass(!hiddeConfirmationPass);
-    }
-
     const handleUpload = (e) => {
         e.preventDefault();
         props.handleUpload(e);
@@ -37,7 +29,7 @@ function UserRegistration(props) {
         var serverErrorMessage = {};
         const { errorMessages, formIsValid } = UserFormValidation(props.user);
         if (formIsValid) {
-            const userExist = await axiosInstance.get('api/user/emailValidation', {
+            const userExist = await axiosInstance.get('/user/emailValidation', {
                 params: {
                     email: props.user['email']
                 }
@@ -53,10 +45,6 @@ function UserRegistration(props) {
             setFormErrorMessages(errorMessages);
             setHasError(!formIsValid);
         }
-    }
-
-    function onClickPrevStep() {
-        props.onClickPrevStep();
     }
 
     return (
@@ -76,15 +64,15 @@ function UserRegistration(props) {
                                         <Form.Input required width={7} label='Last name' placeholder='Brosnan...' name='lastName'
                                             onChange={onInputUserChange} defaultValue={props.user ? props.user['lastName'] : ''} />
                                     </Form.Group>
-                                    <Form.Input type='email' required width={11} label='Email' placeholder='pierce@gmail.com...'
+                                    <Form.Input type='email' required width={11} label='E-mail' placeholder='pierce@gmail.com...'
                                         name='email' onChange={onInputUserChange} defaultValue={props.user ? props.user['email'] : ''} />
                                     <Form.Group>
                                         <Form.Input required width={7} label='Password' name='password' type={hiddePassword ? 'password' : 'text'}
-                                            defaultValue={props.user ? props.user['password'] : ''} action={<Button basic icon onClick={onClickShowPassword}>
+                                            defaultValue={props.user ? props.user['password'] : ''} action={<Button basic icon onClick={()=> setHiddePassword(!hiddePassword)}>
                                                 <Icon name='eye' />
                                             </Button>} onChange={onInputUserChange} />
                                         <Form.Input required width={7} label='Confirm password' name='passConfirmation' type={hiddeConfirmationPass ? 'password' : 'text'}
-                                            defaultValue={props.user ? props.user['passConfirmation'] : ''} action={<Button basic icon onClick={onClickShowPassConfirmation}>
+                                            defaultValue={props.user ? props.user['passConfirmation'] : ''} action={<Button basic icon onClick={()=>setHiddeConfirmationPass(!hiddeConfirmationPass)}>
                                                 <Icon name='eye' />
                                             </Button>} onChange={onInputUserChange} />
                                     </Form.Group>
@@ -112,7 +100,7 @@ function UserRegistration(props) {
                                     <Grid columns='equal'>
                                         <Grid.Row>
                                             <Grid.Column>
-                                                <Form.Button animated floated='left' color='orange' onClick={onClickPrevStep}>
+                                                <Form.Button animated floated='left' color='orange' onClick={props.onClickPrevStep}>
                                                     <Button.Content visible>Previous step</Button.Content>
                                                     <Button.Content hidden>
                                                         <Icon name='arrow left' />

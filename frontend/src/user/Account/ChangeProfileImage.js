@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, Grid, Icon, Button, Segment } from 'semantic-ui-react';
 import { InputFile } from 'semantic-ui-react-input-file';
+import '../UserStyle.css';
 
 function ChangeProfileImage(props) {
 
@@ -17,12 +18,12 @@ function ChangeProfileImage(props) {
         }
     }
 
-    function onClickUploadImage(){
+    function onClickUploadImage() {
         props.onClickUploadImage(file);
     }
 
     return (
-        <Segment raised>
+        <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
             <Grid>
                 <Grid.Row>
                     <Grid.Column width={12}>

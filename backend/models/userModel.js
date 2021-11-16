@@ -39,12 +39,13 @@ User.login = async (email, password) => {
 
         var existingUser = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
-
+        
+        var secretToken = existingUser.recordset[0].iduser + '_' + existingUser.recordset[0].email + '_' + new Date().getTime();
         if (existingUser.recordset.length > 0) {
             const isVerified = passwordHash.verify(password, existingUser.recordset[0].password);
             if (isVerified) {       //proveri password i ako je dobar dodeli mu token
                 const token = jwt.sign({ id: existingUser.recordset[0].iduser, role: existingUser.recordset[0].role }, secretToken);
-                
+
                 return ({ status: 'success', token: token, id: existingUser.recordset[0].iduser });
             } else {
                 return ({ status: 'failed' });

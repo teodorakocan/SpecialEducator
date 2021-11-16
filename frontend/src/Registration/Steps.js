@@ -3,7 +3,6 @@ import { Icon, Step, Container, Grid } from 'semantic-ui-react'
 
 function Steps({ step }) {
 
-    console.log(step);
     return (
         <div>
             <br/>

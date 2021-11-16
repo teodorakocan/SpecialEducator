@@ -1,9 +1,8 @@
 const sql = require('mssql');
 const dbConfig = require('../configurations/dbConfig');
-const User = require('../models/userModel');
-var jwt = require('jsonwebtoken');
 var passwordHash = require('password-hash');
 var mailCongig = require('../configurations/mailConfig');
+var User = require('../models/userModel');
 
 const Authenticated = function (user) {
     this.name = user.name;
@@ -14,7 +13,7 @@ const Authenticated = function (user) {
     this.password = user.password;
 };
 
-Authenticated.data = async (id) => {
+Authenticated.userData = async (id) => {
     try {
         let request = await sql.connect(dbConfig);
 
@@ -30,7 +29,7 @@ Authenticated.data = async (id) => {
     }
 };
 
-Authenticated.changeData = async (user) => {
+Authenticated.changeUserData = async (user) => {
     try {
         let request = await sql.connect(dbConfig);
 
@@ -61,6 +60,7 @@ Authenticated.changeData = async (user) => {
             await request.request().query("UPDATE [User] SET name = '" + user.name + "', lastName ='" + user.lastName + "', email ='" + user.email + "' WHERE iduser = '" + user.iduser + "';");
             return ({ status: 'success', message: 'You have successfully changed your profile information.' });
         }
+        return ({ status: 'failed' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });
@@ -69,7 +69,7 @@ Authenticated.changeData = async (user) => {
 
 Authenticated.changePassword = async (userId, newPassword, oldPassword) => {
     try {
-        const {user} = await Authenticated.data(userId);
+        const {user} = await Authenticated.userData(userId);
         const isVerified = passwordHash.verify(oldPassword, user.password);
         if (isVerified) {
             const hashedPassword = passwordHash.generate(newPassword);
@@ -89,7 +89,6 @@ Authenticated.changePassword = async (userId, newPassword, oldPassword) => {
 Authenticated.changeImage = async (id) => {
     try {
         let request = await sql.connect(dbConfig);
-        console.log(imageName);
         await request.request()
             .query("UPDATE [User] SET image = '" + imageName + "' WHERE iduser = '" + id + "';");
 
@@ -98,6 +97,23 @@ Authenticated.changeImage = async (id) => {
         console.log(err);
         return ({ status: 'failed' });
     }
-}
+};
+
+Authenticated.centerData = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        const {user} = await Authenticated.userData(id);
+
+        var centerData = await request.request()
+        .query("SELECT * FROM center WHERE idcenter='" + user.Center_IDCenter + "';");
+
+        if (centerData.recordset.length > 0) {
+            return ({ status: 'success', center: centerData.recordset[0] });
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
 
 module.exports = Authenticated;

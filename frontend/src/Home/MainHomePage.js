@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Image, Container, Button, Icon } from 'semantic-ui-react'
+import { Grid, Image, Container, Button, Icon } from 'semantic-ui-react';
 
 import axiosInstance from '../serverConnection/axios';
 import { authHeader } from '../serverConnection/authHeader';
@@ -12,16 +12,18 @@ import { useNavigate } from 'react-router';
 const MainHomePage = () => {
 
     const [user, setUser] = useState({});
+    const [center, setCenter] = useState({});
     const [imageURL, setImageURL] = useState(null);
     const [activeItem, setActiveItem] = useState('home');
     const navigate = useNavigate();
 
     useEffect(() => {
-        getData(); 
+        getUserData();
+        getCenterData();
     }, []);
 
-    function getData() {
-        axiosInstance.get('/api/user/data', { headers: authHeader() })
+    function getUserData() {
+        axiosInstance.get('/authUser/userData', { headers: authHeader() })
             .then((resposnse) => {
                 setUser(resposnse.data.user);
                 if (resposnse.data.user['image']) {
@@ -31,38 +33,49 @@ const MainHomePage = () => {
                 }
             })
             .catch((error) => {
-                if (error.response.status === 401) {
-                    navigate('/notAuthorized');
-                } else {
-                    navigate('notFound');
-                }
+                throwError(error);
             });
     }
 
-    function onClickChangeData() {
-        getData();
+    function getCenterData() {
+        axiosInstance.get('/authUser/centerData', { headers: authHeader() })
+            .then((resposnse) => {
+                setCenter(resposnse.data.center);
+            })
+            .catch((error) => {
+                throwError(error);
+            });
     }
 
-
-    function onClickUploadImage(file){
+    function onClickUploadImage(file) {
         var formData = new FormData();
         formData.append('file', file[0]);
 
-        axiosInstance.post('api/user/changeImage', formData, {
+        axiosInstance.post('/authUser/changeImage', formData, {
             headers: authHeader()
-        }).then((response)=>{
-            debugger
-            if(response.data.status === 'success')
-            {
-                getData();
+        }).then((response) => {
+            if (response.data.status === 'success') {
+                getUserData();
             }
         }).catch((error) => {
-            if (error.response.status === 401) {
-                navigate('/notAuthorized');
-            } else {
-                navigate('notFound');
-            }
+            throwError(error);
         });
+    }
+
+    const throwError = (error) => {
+        if (typeof error.response === 'undefined') {
+            navigate('/notFound');
+        } else if (error.response.status === 403) {
+            navigate('/notAuthenticated');
+        } else if (error.response.status === 401) {
+            navigate('/notAuthorized');
+        } else {
+            navigate('/notFound');
+        }
+    }
+
+    function onClickChangeUserData() {
+        getUserData();
     }
 
     return (
@@ -70,7 +83,7 @@ const MainHomePage = () => {
             <Grid>
                 <Grid.Row>
                     <Grid.Column width={2}>
-                        <Image style={{paddingLeft:'5px', paddingRight:'5px'}}  src={imageURL} size='huge'/>
+                        <Image style={{ paddingLeft: '5px', paddingRight: '5px' }} src={imageURL} size='huge' />
                     </Grid.Column>
                     <Grid.Column width={10}>
                         <div>
@@ -86,7 +99,7 @@ const MainHomePage = () => {
                         </div>
                     </Grid.Column>
                     <Grid.Column width={2}>
-                        <Button icon inverted color='orange' circular floated='right' onClick={() => setActiveItem('')}> 
+                        <Button icon inverted color='orange' circular floated='right' onClick={() => setActiveItem('')}>
                             <Icon size='large' name='home' />
                         </Button>
                     </Grid.Column>
@@ -94,11 +107,16 @@ const MainHomePage = () => {
 
                 <Grid.Row style={{ padding: '30px' }}>
                     <Grid.Column width={5}>
-                        <MenuItems handleChange={(name) => setActiveItem(name)} activeItem={activeItem} />
+                        <MenuItems handleChange={(name) => setActiveItem(name)} activeItem={activeItem}
+                            role={user['role']} />
                     </Grid.Column>
                     <Grid.Column width={10}>
-                        <UserBoard activeItem={activeItem} user={user} onClickChangeData={onClickChangeData}
-                        onClickUploadImage={onClickUploadImage} />
+                        <UserBoard
+                            activeItem={activeItem}
+                            user={user}
+                            center={center}
+                            onClickChangeUserData={onClickChangeUserData}
+                            onClickUploadImage={onClickUploadImage} />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

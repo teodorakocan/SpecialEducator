@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainRegistrationPage from './Registration/MainRegistrationPage';
 import StartApp from './StartApp';
 import NotAuthorized from './HelpPages/NotAuthorized';
+import NotAuthenticated from './HelpPages/NotAuthenticated';
 import NotFound from './HelpPages/NotFound';
 
 const routing = (
@@ -15,6 +16,7 @@ const routing = (
             <Route path='/registration' element={<MainRegistrationPage />} />
             <Route path='/notAuthorized' element={<NotAuthorized />} />
             <Route path='/notFound' element={<NotFound />} />
+            <Route path='/notAuthenticated' element={<NotAuthenticated />} />
         </Routes>
     </BrowserRouter>
 )

@@ -1,8 +1,8 @@
 import React from "react";
+import { Navigate } from 'react-router-dom';
 
 import CenterRegistration from "./CenterRegistration";
 import UserRegistration from "./UserRegistration";
-import Login from "../Login/Login";
 import Steps from './Steps';
 import axiosInstance from "../serverConnection/axios";
 
@@ -14,7 +14,7 @@ class MainRegistrationPage extends React.Component {
             step: 1,
             newCenter: {},
             newUser: {},
-            seletedFile: []
+            selectedFile: []
         };
     }
 
@@ -46,7 +46,7 @@ class MainRegistrationPage extends React.Component {
         if (e.target.files.length !== 0) {
             var user = this.state.newUser;
             user['image'] = URL.createObjectURL(e.target.files[0]);
-            this.setState({ seletedFile: e.target.files, newUser: user });
+            this.setState({ selectedFile: e.target.files, newUser: user });
         }
     }
 
@@ -56,11 +56,11 @@ class MainRegistrationPage extends React.Component {
 
     onClickFinalStep = async () => {
         var formData = new FormData();
-        formData.append('file', this.state.seletedFile[0]);
+        formData.append('file', this.state.selectedFile[0]);
 
         var user = this.state.newUser;
         var center = this.state.newCenter;
-        const registration = await axiosInstance.post('api/center/registration', formData, {
+        const registration = await axiosInstance.post('/center/registration', formData, {
             params: {
                 center: center,
                 user: user
@@ -98,7 +98,9 @@ class MainRegistrationPage extends React.Component {
                     </div>
                 )
             default:
-                return <Login />
+                return (
+                    <Navigate to="/" />
+                )
         }
     }
 }

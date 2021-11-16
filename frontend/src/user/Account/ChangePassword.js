@@ -27,14 +27,13 @@ function ChangePassword(props) {
         var newPassword = password;
         newPassword[name] = e.target.value;
         setPassword(newPassword);
-        setHasError(false);
     }
 
     function onClickChangePassword() {
         const { errorValidationMessages, isValid } = PasswordValidation(password);
         var serverErrorMessage = {};
         if (isValid) {
-            axiosInstance.post('/api/user/changePassword', {}, {
+            axiosInstance.post('/authUser/changePassword', {}, {
                 headers: authHeader(),
                 params: {
                     newPassword: password['newPassword'],
@@ -52,10 +51,14 @@ function ChangePassword(props) {
                     setPortalMessage(response.data.message);
                 }
             }).catch((error) => {
-                if (error.response.status === 401) {
-                    navigate('/notAuthorized');
+                if(typeof error.response === 'undefined'){
+                    navigate('/notFound');
+                }else if (error.response.status === 403) {
+                    navigate('/notAuthenticated');
+                } else if (error.response.status === 404) {
+                    navigate('/notFound');
                 } else {
-                    navigate('notFound');
+                    navigate('/notAuthorized');
                 }
             })
 
@@ -67,7 +70,7 @@ function ChangePassword(props) {
     }
 
     return (
-        <Segment raised>
+        <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
             <Divider horizontal>New password</Divider><br />
             <Grid textAlign='center'>
                 <Grid.Row>

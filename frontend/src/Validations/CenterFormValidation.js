@@ -1,7 +1,7 @@
 function CenterFormValidation(newCenter) {
     var errorMessages = {};
     var formIsValid = true;
-    var passwordPattern = new RegExp('[0-9]');
+    var phoneNumberPattern = new RegExp('[0-9]');
     var emailPattern = new RegExp(/^(('[\w-\s]+')|([\w-]+(?:\.[\w-]+)*)|('[\w-\s]+')([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
 
     if (!newCenter['name'] || !newCenter['address'] || !newCenter['addressNumber'] ||
@@ -50,7 +50,7 @@ function CenterFormValidation(newCenter) {
             formIsValid = false;
             errorMessages['areaCode'] = 'You must pick area code for your phone number.'
         } else {
-            if (!passwordPattern.test(newCenter['phoneNumber'])) {
+            if (!phoneNumberPattern.test(newCenter['phoneNumber'])) {
                 formIsValid = false;
                 errorMessages['phoneNumber'] = 'Phone number must contain only numbers.';
             }

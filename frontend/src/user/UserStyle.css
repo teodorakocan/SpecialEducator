@@ -2,3 +2,11 @@
     font-size: 22px;
     font-family: Verdana, Arial, Helvetica, sans-serif
 }
+
+.scroller {
+    width: auto;
+    height: auto;
+    overflow-y: scroll;
+    scrollbar-color: rebeccapurple green;
+    scrollbar-width: thin;
+}

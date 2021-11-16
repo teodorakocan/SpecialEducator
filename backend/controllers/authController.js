@@ -1,9 +1,8 @@
-const { query } = require('express');
-const Authentiated = require('../models/authenticatedModel');
+const Authentiated = require('../models/authModel');
 
-exports.data = async (req, res) => {
+exports.userData = async (req, res) => {
     try {
-        const { status, user } = await Authentiated.data(req.user.id);
+        const { status, user } = await Authentiated.userData(req.user.id);
         res.send({ status: status, user: user });
     } catch (err) {
         console.log(err);
@@ -11,10 +10,10 @@ exports.data = async (req, res) => {
     }
 };
 
-exports.changeData = async (req, res) => {
+exports.changeUserData = async (req, res) => {
     try {
         const userChange = JSON.parse(req.query.user)
-        const { status, message } = await Authentiated.changeData(userChange);
+        const { status, message } = await Authentiated.changeUserData(userChange);
         res.send({ status: status, message: message });
     } catch (err) {
         console.log(err);
@@ -39,5 +38,15 @@ exports.changeImage = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });
+    }
+}
+
+exports.centerData = async (req, res) => {
+    try{
+        const { status, center } = await Authentiated.centerData(req.user.id);
+        res.send({ status: status, center: center });
+    }catch(err){
+        console.log(err);
+        res.send({status: 'failed'});
     }
 }

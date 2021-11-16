@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Segment, Grid, Button, Input } from 'semantic-ui-react';
+import { useNavigate } from 'react-router';
 
 import '../UserStyle.css';
 import UserDataChangeValidation from '../../Validations/UserDataChangeValidation';
+import OpenPortal from '../../HelpPages/OpenPortal';
 import axiosInstance from '../../serverConnection/axios';
 import { authHeader } from '../../serverConnection/authHeader';
-import { useNavigate } from 'react-router';
 
-function ChangeProfileInformation(props) {
+function ChangeProfileData(props) {
 
     const [userData, setUserData] = useState(props.user);
     const [errorMessages, setErrorMessages] = useState({});
     const [hasError, setHasError] = useState(false);
+    const [openPortal, setOpenPortal] = useState(false);
+    const [portalMessage, setPortalMessage] = useState('');
     const navigate = useNavigate();
 
     const validationErrorComponents = Object.values(errorMessages).map((errorMessage, index) =>
@@ -23,32 +26,39 @@ function ChangeProfileInformation(props) {
         var userChange = userData;
         userChange[name] = e.target.value;
         setUserData(userChange);
-        setHasError(false);
     }
 
-    function onClickChangeData() {
+    function onClickChangeUserData() {
         const { errorValidationMessages, isValid } = UserDataChangeValidation(userData);
         var serverErrorMessage = {};
         if (isValid) {
-            axiosInstance.post('/api/user/changeData',{}, {
+            axiosInstance.post('/authUser/changeUserData', {}, {
                 headers: authHeader(),
                 params: {
                     user: userData
                 }
             })
-                .then((resposnse) => {
-                    if (resposnse.data.status === 'failed') {
-                        serverErrorMessage['notValid'] = resposnse.data.message;
+                .then((response) => {
+                    if (response.data.status === 'failed') {
+                        serverErrorMessage['notValid'] = response.data.message;
                         setErrorMessages(serverErrorMessage);
                         setHasError(isValid);
                     } else {
-                        props.onClickChangeData();
+                        setOpenPortal(isValid);
+                        setHasError(!isValid);
+                        setErrorMessages(serverErrorMessage);
+                        setPortalMessage(response.data.message);
+                        props.onClickChangeUserData();
                     }
                 }).catch((error) => {
-                    if (error.response.status === 401) {
-                        navigate('/notAuthorized');
+                    if (typeof error.response === 'undefined') {
+                        navigate('/notFound');
+                    } else if (error.response.status === 403) {
+                        navigate('/notAuthenticated');
+                    } else if (error.response.status === 404) {
+                        navigate('/notFound');
                     } else {
-                        navigate('notFound');
+                        navigate('/notAuthorized');
                     }
                 });
         } else {
@@ -58,7 +68,7 @@ function ChangeProfileInformation(props) {
     }
 
     return (
-        <Segment raised>
+        <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
             <Grid columns={2}>
                 <Grid.Row divided>
                     <Grid.Column>
@@ -75,16 +85,18 @@ function ChangeProfileInformation(props) {
                         <p className='userProperty'>Last name</p>
                     </Grid.Column>
                     <Grid.Column>
-                        <Input fluid defaultValue={userData['lastName']} name='lastName' onChange={onInputChange} />
+                        <Input fluid defaultValue={userData['lastName']} name='lastName' onChange={onInputChange}
+                            error={hasError ? true : false} />
                     </Grid.Column>
                 </Grid.Row>
 
                 <Grid.Row divided>
                     <Grid.Column>
-                        <p className='userProperty'>Email</p>
+                        <p className='userProperty'>E-mail</p>
                     </Grid.Column>
                     <Grid.Column>
-                        <Input fluid defaultValue={userData['email']} name='email' onChange={onInputChange} />
+                        <Input fluid defaultValue={userData['email']} name='email' onChange={onInputChange}
+                            error={hasError ? true : false} />
                     </Grid.Column>
                 </Grid.Row><br />
 
@@ -97,12 +109,13 @@ function ChangeProfileInformation(props) {
                     <Grid.Column>
                     </Grid.Column>
                     <Grid.Column>
-                        <Button color='orange' floated='right' onClick={onClickChangeData}>Change</Button>
+                        <Button color='orange' floated='right' onClick={onClickChangeUserData}>Change</Button>
                     </Grid.Column>
                 </Grid.Row>
+                {openPortal && <OpenPortal open={openPortal} message={portalMessage} handleClose={() => setOpenPortal(!openPortal)} />}
             </Grid>
         </Segment>
     )
 };
 
-export default ChangeProfileInformation;
+export default ChangeProfileData;
