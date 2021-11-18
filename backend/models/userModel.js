@@ -58,20 +58,26 @@ User.login = async (email, password) => {
 User.resetPasswordRequest = async (email) => {
     try {
         let request = await sql.connect(dbConfig);
+        var message='';
 
         var existingUser = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
 
         if (existingUser.recordset.length > 0) {
-            const code = randomstring.generate({
-                lenght: 15
-            });
-            const resetCode = code + '_' + existingUser.recordset[0].iduser;
+            const code = randomstring.generate({ lenght: 15 });
+            const rt = Date.now(); //request time
+            const time = new Date(rt);
             
+            const requestTime = time.getFullYear() + '' + time.getMonth() + '' + time.getDate() + '$'
+             + time.getHours() + '' + time.getMinutes() + '' + time.getSeconds();
+
+            const resetCode = code + '_' + existingUser.recordset[0].iduser + '_' + requestTime;
+
             await request.request().query("UPDATE [User] SET resetCode = '" + resetCode + "' WHERE email = '" + email + "';");
-            return ({ status: 'success', resetCode: resetCode });
+            message = 'Email with reset link was sent on your email address, ' + email + '.';
+            return ({ status: 'success', resetCode: resetCode, message: message });
         } else {
-            const message = 'Invalid email address';
+            message = "User with this email address isn't register on app";
             return ({ status: 'failed', message: message });
         }
     } catch (err) {

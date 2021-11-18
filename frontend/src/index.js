@@ -8,6 +8,8 @@ import StartApp from './StartApp';
 import NotAuthorized from './HelpPages/NotAuthorized';
 import NotAuthenticated from './HelpPages/NotAuthenticated';
 import NotFound from './HelpPages/NotFound';
+import ResetPasswordRequest from './ForgotPassword/ResetPasswordRequest';
+import ResetPassword from './ForgotPassword/ResetPassword';
 
 const routing = (
     <BrowserRouter>
@@ -17,6 +19,8 @@ const routing = (
             <Route path='/notAuthorized' element={<NotAuthorized />} />
             <Route path='/notFound' element={<NotFound />} />
             <Route path='/notAuthenticated' element={<NotAuthenticated />} />
+            <Route path='/forgotPassword' element={<ResetPasswordRequest />} />
+            <Route path='/resetPassword' element={<ResetPassword />} />
         </Routes>
     </BrowserRouter>
 )

@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 var mailCongig = require('../configurations/mailConfig');
+const { Int } = require('mssql');
 
 exports.emailValidation = async (req, res) => {
     try {
@@ -23,10 +24,9 @@ exports.login = async (req, res) => {
 
 exports.resetPasswordRequest = async (req, res) => {
     try {
-        const { status, resetCode } = await User.resetPasswordRequest(req.query.email);
+        const { status, resetCode, message } = await User.resetPasswordRequest(req.query.email);
         if (status === 'success') {
             const emailMessage = '<Link to="http://localhost:3000/resetPassword?resetCode=' + resetCode + '"/>';
-            const message = 'Email with reset link was sent on your email address, ' + req.query.email + '.';
             var mailOptionsCenter = {
                 from: 'specialeducator2021@gmail.com',
                 to: req.query.email,
@@ -42,7 +42,7 @@ exports.resetPasswordRequest = async (req, res) => {
                 }
             });
         } else {
-            res.send({ status: 'failed' }); //email ne postoji u bazi (s tom greskom informisi korisnika na frontu)
+            res.send({ status: 'failed', message: message });
         }
     } catch (err) {
         console.log(err);
@@ -52,10 +52,26 @@ exports.resetPasswordRequest = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
     try {
-        const { status, message } = await User.resetPassword(req.query.password, req.query.resetCode);
-        res.send({ status: status }); //email ne postoji u bazi (s tom greskom informisi korisnika na frontu)
+        const now = new Date(Date.now());
+        const resetCode = req.query.resetCode.split('_');
+        const requestDate = resetCode[2].split('$');
+        const nowDate = now.getFullYear() + '' + now.getMonth() + '' + now.getDate();
+        const nowTime = now.getHours() + '' + now.getMinutes() + '' + now.getSeconds();
+        if (nowDate === requestDate[0]) {
+            const result = parseInt(nowTime) - parseInt(requestDate[1]);
+            if(result > 10000 || result < 0){
+                res.send({ status: 'failed', message: 'Code expired.' });
+            }else{
+                const { status, message} = await User.resetPassword(req.query.password, req.query.resetCode);
+                res.send({ status: status, message: message });
+            }
+
+        } else {
+            res.send({ status: 'failed', message: 'Code expired.' });
+        }
+
     } catch (err) {
         console.log(err);
-        res.send({ status: 'failed' });
+        res.send({ status: 'failed', message: 'Server failed' });
     }
 };

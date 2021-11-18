@@ -16,7 +16,6 @@ const roles = [
 function AddNewUser() {
 
     const [user, setUser] = useState({});
-    const [resetUser, setResetUser] = useState({});
     const [hidePassword, setHidePassword] = useState(true);
     const [selectedFile, setSelectedFile] = useState([]);
     const [imageURL, setImageUrl] = useState(null);
@@ -51,7 +50,6 @@ function AddNewUser() {
         e.preventDefault();
         var userData = user;
         userData[data.name] = data.value;
-        setResetUser(userData);
     }
 
     function onClickAddNewUser() {

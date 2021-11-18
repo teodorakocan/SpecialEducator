@@ -1,13 +1,13 @@
 import React from 'react';
 
-import ChangeProfileData from '../user/Account/ChangeProfileData';
-import ChangeProfileImage from '../user/Account/ChangeProfileImage';
-import ChangePassword from '../user/Account/ChangePassword';
-import HomePage from '../user/HomePage';
-import CenterData from '../center/CenterData';
-import ChangeCenterData from '../center/ChangeCenterData';
-import MainNewChildPage from '../user/admin/AddChild/MainNewChildPage';
-import AddNewUser from '../user/admin/AddNewUser/AddNewUser';
+import ChangeProfileData from '../User/Account/ChangeProfileData';
+import ChangeProfileImage from '../User/Account/ChangeProfileImage';
+import ChangePassword from '../User/Account/ChangePassword';
+import HomePage from '../User/HomePage';
+import CenterData from '../Center/CenterData';
+import ChangeCenterData from '../Center/ChangeCenterData';
+import MainNewChildPage from '../User/Admin/AddChild/MainNewChildPage';
+import AddNewUser from '../User/Admin/AddNewUser/AddNewUser';
 
 function UserBoard(props) {
 
