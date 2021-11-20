@@ -1,5 +1,5 @@
 const Center = require('../models/centerModel');
-var mailCongig = require('../configurations/mailConfig');
+var mailConfig = require('../configurations/mailConfig');
 
 exports.validation = async (req, res) => {
     try {
@@ -18,9 +18,9 @@ exports.registration = async (req, res) => {
         let areaCode = '';
         let phoneNumber = '';
 
-        if (center.areaCode === 'undefined') {
-            areaCode = null;
-            phoneNumber = null;
+        if (typeof center.phoneNumber !== 'undefined') {
+            areaCode = center.areaCode;
+            phoneNumber = center.phoneNumber;
         }
 
         const { status } = await Center.registration(user, center, areaCode, phoneNumber);
@@ -32,7 +32,7 @@ exports.registration = async (req, res) => {
                 text: 'Welcome. You have successfully registered your special education center, ' + center.name + ', on the Special Educator application. Enjoy using it.'
             };
 
-            mailCongig.sendMail(mailOptionsCenter, function (error, info) {
+            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
                 if (error) {
                     res.send({ status: 'failed' });
                 } else {
@@ -46,4 +46,4 @@ exports.registration = async (req, res) => {
         console.log(err);
         res.send({ status: 'failed' });
     }
-}
+};

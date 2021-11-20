@@ -1,7 +1,6 @@
 import React from 'react';
 import { Segment, Grid, TextArea, Button, Form, Icon } from 'semantic-ui-react';
 
-
 function AddAnamnesis(props) {
 
     function handleAnamnesisInputChanges(e, { name }) {
@@ -20,9 +19,9 @@ function AddAnamnesis(props) {
 
                 <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                     Description of childbirth</p>
-                <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='descriptionOfChildbirth'
+                <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='descriptionOfChildBirth'
                     onChange={handleAnamnesisInputChanges}
-                    defaultValue={props.anamnesis ? props.anamnesis['descriptionOfChildbirth'] : ''} />
+                    defaultValue={props.anamnesis ? props.anamnesis['descriptionOfChildBirth'] : ''} />
 
                 <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                     Description of the child’s behavior</p>

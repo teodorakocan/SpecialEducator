@@ -2,7 +2,7 @@ function ChildValidation(newChild) {
     var errorValidationMessages = {};
     var isValid = true;
     
-    if (!newChild['name'] || !newChild['lastName'] || !newChild['dateOfBirthday']) {
+    if (!newChild['name'] || !newChild['lastName'] || !newChild['dateOfBirth']) {
         isValid = false;
         errorValidationMessages['emptyField'] = 'Field with * are required. They cannot be empty.'
     }

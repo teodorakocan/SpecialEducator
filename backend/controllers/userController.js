@@ -1,5 +1,5 @@
 const User = require('../models/userModel');
-var mailCongig = require('../configurations/mailConfig');
+var mailConfig = require('../configurations/mailConfig');
 const { Int } = require('mssql');
 
 exports.emailValidation = async (req, res) => {
@@ -26,7 +26,8 @@ exports.resetPasswordRequest = async (req, res) => {
     try {
         const { status, resetCode, message } = await User.resetPasswordRequest(req.query.email);
         if (status === 'success') {
-            const emailMessage = '<Link to="http://localhost:3000/resetPassword?resetCode=' + resetCode + '"/>';
+            const emailMessage = '<Link to="http://localhost:3000/resetPassword?resetCode=' + resetCode + '"/>' +
+            'Code will expire in one hour.';
             var mailOptionsCenter = {
                 from: 'specialeducator2021@gmail.com',
                 to: req.query.email,
@@ -34,7 +35,7 @@ exports.resetPasswordRequest = async (req, res) => {
                 text: emailMessage
             };
 
-            mailCongig.sendMail(mailOptionsCenter, function (error, info) {
+            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
                 if (error) {
                     res.send({ status: 'failed' });
                 } else {
@@ -73,5 +74,25 @@ exports.resetPassword = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed', message: 'Server failed' });
+    }
+};
+
+exports.allUsers = async (req, res) => {
+    try {
+        const { status, users } = await User.allUsers(req.user.id);
+        res.send({ status: status, users: users });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.allChildren = async (req, res) => {
+    try {
+        const { status, children } = await User.allChildren(req.user.id);
+        res.send({ status: status, children: children });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
     }
 };

@@ -56,7 +56,7 @@ function AddParent(props) {
                     placeholder='658 5489 584...'
                     name='phoneNumber'
                     onChange={handleParentInputChange}
-                    defaultValue={props.parent ? props.parent['phoneNumberk'] : ''}
+                    defaultValue={props.parent ? props.parent['phoneNumber'] : ''}
                 />
             </Form><br />
 

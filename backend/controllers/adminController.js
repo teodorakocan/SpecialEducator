@@ -1,5 +1,5 @@
 const Admin = require('../models/adminModel');
-var mailCongig = require('../configurations/mailConfig');
+var mailConfig = require('../configurations/mailConfig');
 
 exports.changeCenterData = async (req, res) => {
     try {
@@ -10,6 +10,9 @@ exports.changeCenterData = async (req, res) => {
         if (center.areaCode === 'undefined') {
             areaCode = null;
             phoneNumber = null;
+        } else {
+            areaCode = center.areaCode;
+            phoneNumber = center.phoneNumber;
         }
 
         const { status, message } = await Admin.changeCenterData(req.user.id, center, areaCode, phoneNumber);
@@ -34,7 +37,7 @@ exports.addNewUser = async (req, res) => {
                     user.email + ' and password: ' + user.password + '.'
             };
 
-            mailCongig.sendMail(mailOptionsCenter, function (error, info) {
+            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
                 if (error) {
                     res.send({ status: 'failed' });
                 } else {
@@ -59,9 +62,9 @@ exports.addChild = async (req, res) => {
         let areaCode = '';
         let phoneNumber = '';
 
-        if (parent.areaCode === 'undefined') {
-            areaCode = null;
-            phoneNumber = null;
+        if (typeof parent.phoneNumber !== 'undefined') {
+            areaCode = center.areaCode;
+            phoneNumber = center.phoneNumber;
         }
 
         const { status } = await Admin.addChild(req.user.id, child, parent, anamnesis, phoneNumber, areaCode);
@@ -74,7 +77,7 @@ exports.addChild = async (req, res) => {
                     'All information about your child will be sent to this email address.'
             };
 
-            mailCongig.sendMail(mailOptionsCenter, function (error, info) {
+            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
                 if (error) {
                     res.send({ status: 'failed' });
                 } else {

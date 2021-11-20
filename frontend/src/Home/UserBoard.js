@@ -1,4 +1,5 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 import ChangeProfileData from '../User/Account/ChangeProfileData';
 import ChangeProfileImage from '../User/Account/ChangeProfileImage';
@@ -8,6 +9,7 @@ import CenterData from '../Center/CenterData';
 import ChangeCenterData from '../Center/ChangeCenterData';
 import MainNewChildPage from '../User/Admin/AddChild/MainNewChildPage';
 import AddNewUser from '../User/Admin/AddNewUser/AddNewUser';
+import MakeAnAppointment from '../User/Schedule/MakeAnAppointment';
 
 function UserBoard(props) {
 
@@ -26,6 +28,8 @@ function UserBoard(props) {
             return <MainNewChildPage />
         case 'addNewUser':
             return <AddNewUser />
+        case 'makeAnAppointment':
+            return <MakeAnAppointment />
         default:
             return <HomePage />
     }

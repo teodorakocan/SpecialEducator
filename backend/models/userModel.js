@@ -37,11 +37,11 @@ User.login = async (email, password) => {
         var existingUser = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
 
-        var secretToken = existingUser.recordset[0].iduser + '_' + existingUser.recordset[0].email + '_' + new Date().getTime();
         if (existingUser.recordset.length > 0) {
             const isVerified = passwordHash.verify(password, existingUser.recordset[0].password);
+
             if (isVerified) {       //proveri password i ako je dobar dodeli mu token
-                const token = jwt.sign({ id: existingUser.recordset[0].iduser, role: existingUser.recordset[0].role }, secretToken);
+                const token = jwt.sign({ id: existingUser.recordset[0].idUser, role: existingUser.recordset[0].role }, secretToken);
 
                 return ({ status: 'success', token: token });
             } else {
@@ -58,7 +58,7 @@ User.login = async (email, password) => {
 User.resetPasswordRequest = async (email) => {
     try {
         let request = await sql.connect(dbConfig);
-        var message='';
+        var message = '';
 
         var existingUser = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
@@ -67,11 +67,11 @@ User.resetPasswordRequest = async (email) => {
             const code = randomstring.generate({ lenght: 15 });
             const rt = Date.now(); //request time
             const time = new Date(rt);
-            
-            const requestTime = time.getFullYear() + '' + time.getMonth() + '' + time.getDate() + '$'
-             + time.getHours() + '' + time.getMinutes() + '' + time.getSeconds();
 
-            const resetCode = code + '_' + existingUser.recordset[0].iduser + '_' + requestTime;
+            const requestTime = time.getFullYear() + '' + time.getMonth() + '' + time.getDate() + '$'
+                + time.getHours() + '' + time.getMinutes() + '' + time.getSeconds();
+
+            const resetCode = code + '_' + existingUser.recordset[0].idUser + '_' + requestTime;
 
             await request.request().query("UPDATE [User] SET resetCode = '" + resetCode + "' WHERE email = '" + email + "';");
             message = 'Email with reset link was sent on your email address, ' + email + '.';
@@ -97,11 +97,47 @@ User.resetPassword = async (password, resetCode) => {
             const hashedPassword = passwordHash.generate(password);
             const userId = resetCode.split('_');
 
-            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "', resetCode='NULL' WHERE iduser = '" + userId[1] + "';");
+            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "', resetCode='NULL' WHERE idUser = '" + userId[1] + "';");
             return ({ status: 'success' });
         } else {
             const message = 'Invalid reset code';
             return ({ status: 'failed', message: message });
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+User.allUsers = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var userData = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+
+        if (userData.recordset.length > 0) {
+            var users = await request.request()
+            .query("SELECT * FROM [User] WHERE idCenter='" + userData.recordset[0].idCenter + "';");
+            return ({status: 'success', users: users.recordset});
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+User.allChildren = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var employee = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+
+        if (employee.recordset.length > 0) {
+            var children = await request.request()
+            .query("SELECT * FROM child WHERE idCenter='" + employee.recordset[0].idCenter + "';");
+            return ({status: 'success', children: children.recordset});
         }
     } catch (err) {
         console.log(err);

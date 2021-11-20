@@ -8,6 +8,7 @@ import MenuItems from './MenuItems';
 import './HomeStyle.css'
 import avatar from '../images/avatar.png';
 import { useNavigate } from 'react-router';
+import MakeAnAppointment from '../User/Schedule/MakeAnAppointment';
 
 const MainHomePage = () => {
 
@@ -78,6 +79,15 @@ const MainHomePage = () => {
         getUserData();
     }
 
+    function handleChange(name){
+        setActiveItem(name);
+        if(name === 'logOut'){
+            localStorage.removeItem('loggedIn');
+            navigate('/');
+            window.location.reload();
+        }
+    }
+
     return (
         <Container className='containerMenu'>
             <Grid>
@@ -107,7 +117,7 @@ const MainHomePage = () => {
 
                 <Grid.Row style={{ padding: '30px' }}>
                     <Grid.Column width={5}>
-                        <MenuItems handleChange={(name) => setActiveItem(name)} activeItem={activeItem}
+                        <MenuItems handleChange={handleChange} activeItem={activeItem}
                             role={user['role']} />
                     </Grid.Column>
                     <Grid.Column width={10}>

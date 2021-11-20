@@ -6,6 +6,7 @@ const centerRoute = require('./routes/center');
 const userRoute = require('./routes/user');
 const authUserRoute = require('./routes/authUser');
 const adminRoute = require('./routes/admin');
+global.secretToken = 'WTItUdO3OTbqDX8Esl2G';
 
 const whitelist = ['http://localhost:3000'];
 const corsOptions = function (req, callback) {

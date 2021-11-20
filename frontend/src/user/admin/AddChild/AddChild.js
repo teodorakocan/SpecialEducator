@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Segment, Grid, Icon, Button, Form, Image } from 'semantic-ui-react';
-
 import { DateInput } from 'semantic-ui-calendar-react-17';
 import { InputFile } from 'semantic-ui-react-input-file';
+
 import ChildValidation from '../../../Validations/ChildValidation';
 import '../../UserStyle.css';
 
@@ -10,6 +10,7 @@ function AddChild(props) {
 
     const [hasError, setHasError] = useState(false);
     const [errorMessages, setErrorMessages] = useState({});
+    const [value, onChange] = useState(new Date());
 
     const errorComponents = Object.values(errorMessages).map((errorMessage, index) =>
         <div style={{ color: 'red' }} key={index}>{errorMessage}</div>)
@@ -18,7 +19,7 @@ function AddChild(props) {
     function handleChildInputChange(e, { name, value }) {
         e.preventDefault();
         var inputValue = ''
-        if (name === 'dateOfBirthday') {
+        if (name === 'dateOfBirth') {
             inputValue = value;
         } else {
             inputValue = e.target.value
@@ -57,11 +58,12 @@ function AddChild(props) {
                     required
                     width={6}
                     dateFormat='YYYY-MM-DD'
-                    name='dateOfBirthday'
+                    name='dateOfBirth'
                     label='Date of birth'
                     placeholder='Date'
                     iconPosition='left'
-                    value={props.child ? props.child['dateOfBirthday'] : ''}
+                    maxDate={value}
+                    value={props.child ? props.child['dateOfBirth'] : ''}
                     onChange={handleChildInputChange}
                 />
             </Form><br />

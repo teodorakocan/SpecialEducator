@@ -47,6 +47,7 @@ function ResetPasswordRequest() {
                     setErrorMessage(response.data.message);
                 }
             });
+            
         } else {
             setHasError(true);
             setErrorMessage('Email address is invalid.');
@@ -70,7 +71,7 @@ function ResetPasswordRequest() {
                     <Grid.Column>
                         <Form>
                             <Form.Field>
-                                <input placeholder='john@gmail.com' onChange={onInputChange} />
+                                <input required placeholder='john@gmail.com' onChange={onInputChange} />
                                 {hasError && <Label basic color='red' pointing>{errorMessage}</Label>}
                             </Form.Field>
 

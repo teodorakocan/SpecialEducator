@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Header, Image, Segment, Grid, Button, Form, Label } from 'semantic-ui-react';
-import Login from '../Login/Login';
+import StartApp from '../StartApp';
 
 import axiosInstance from '../serverConnection/axios';
 
@@ -42,10 +42,8 @@ function ResetPassword() {
             }).then((response) => {
                 console.log(response.data);
                 if (response.data.status === 'success') {
-                    console.log('uspelo');
                     setNextStep(true);
                 } else {
-                    console.log('puklo nesto');
                     setHasError(true);
                     setErrorMessage(response.data.message);
                 }
@@ -56,7 +54,7 @@ function ResetPassword() {
     }
 
     return (
-        nextStep ? <Login /> :
+        nextStep ? <StartApp /> :
             <Container style={{ padding: '50px' }}>
                 <Segment raised color='orange' style={{ wigth: '100px' }}>
                     <Header as='h4' icon textAlign='center'>

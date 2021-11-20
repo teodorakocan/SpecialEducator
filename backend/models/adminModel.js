@@ -1,7 +1,6 @@
 const sql = require('mssql');
 const dbConfig = require('../configurations/dbConfig');
 var passwordHash = require('password-hash');
-var mailCongig = require('../configurations/mailConfig');
 
 const Admin = function (admin) {
     this.name = admin.name;
@@ -17,11 +16,11 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
         let request = await sql.connect(dbConfig);
 
         var userData = await request.request()
-            .query("SELECT * FROM [User] WHERE iduser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
 
         if (userData.recordset.length > 0) {
             const centerData = await request.request()
-                .query("SELECT * FROM center WHERE idcenter='" + userData.recordset[0].Center_IDCenter + "';");
+                .query("SELECT * FROM center WHERE idCenter='" + userData.recordset[0].idCenter + "';");
 
             if (centerData.recordset[0].email !== center.email) {
                 const { status, message } = await Admin.validationCenterEmail(center.email);
@@ -41,7 +40,7 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
                 .query("UPDATE center SET name = '" + center.name + "', address ='" + center.address +
                     "', addressNumber ='" + center.addressNumber + "', city ='" + center.city + "', email ='" + center.email +
                     "', phoneNumber ='" + phoneNumber + "', areaCode ='" + areaCode + "', state ='" + center.state +
-                    "' WHERE idcenter = '" + userData.recordset[0].Center_IDCenter + "';");
+                    "' WHERE idCenter = '" + userData.recordset[0].idCenter + "';");
             return ({ status: 'success', message: 'You have successfully changed your profile information.' });
         }
 
@@ -55,17 +54,13 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
 
 Admin.validationCenterName = async (name) => {
     try {
-        let status = '';
-        let message = '';
         let request = await sql.connect(dbConfig);
 
         var existingName = await request.request()
             .query("SELECT * FROM center WHERE name='" + name + "';");
 
         if (existingName.recordset.length > 0) {
-            status = 'failed';
-            message = 'Name of center is already taken. Please change.'
-            return ({ status, message });
+            return ({ status: 'failed', message: 'Name of center is already taken. Please change.' });
         }
         return ({ status: 'success' });
     } catch (err) {
@@ -96,7 +91,7 @@ Admin.addNewUser = async (id, user) => {
         let request = await sql.connect(dbConfig);
 
         var admin = await request.request()
-            .query("SELECT * FROM [User] WHERE iduser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
 
         if (admin.recordset.length > 0) {
             const { status, message } = await Admin.validationUserEmail(user.email);
@@ -104,9 +99,9 @@ Admin.addNewUser = async (id, user) => {
                 const hashedPassword = passwordHash.generate(user.password);
 
                 await request.request()
-                    .query("INSERT INTO [User] (name, lastName, email, image, role, Center_IDCenter, password)"
+                    .query("INSERT INTO [User] (name, lastName, email, image, role, password, resetCode, idCenter)"
                         + "VALUES ('" + user.name + "', '" + user.lastName + "', '" + user.email + "', '" + imageName
-                        + "', '" + user.role + "', " + admin.recordset[0].Center_IDCenter + ", '" + hashedPassword + "');");
+                        + "', '" + user.role + "', '" + hashedPassword + "', NULL, " + admin.recordset[0].idCenter + ");");
 
                 return ({ status: 'success' });
 
@@ -145,27 +140,35 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
         let request = await sql.connect(dbConfig);
 
         var admin = await request.request()
-            .query("SELECT * FROM [User] WHERE iduser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
 
         if (admin.recordset.length > 0) {
             var childAnamnesis = await request.request()
-                .query("INSERT INTO anamnesis (descriptionOfPregnancy, description, diagnosis, descriptionOfBehavior, descriptionOfChildbirth, User_IDUser) VALUES ('" +
+                .query("INSERT INTO anamnesis (descriptionOfPregnancy, description, diagnosis, descriptionOfBehavior, descriptionOfChildBirth, iduser) VALUES ('" +
                     anamnesis.descriptionOfPregnancy + "', '" + anamnesis.description + "', '" + anamnesis.diagnosis +
-                    "', '" + anamnesis.descriptionOfBehavior + "', '" + anamnesis.descriptionOfChildbirth +
+                    "', '" + anamnesis.descriptionOfBehavior + "', '" + anamnesis.descriptionOfChildBirth +
                     "', " + id + "); SELECT SCOPE_IDENTITY() AS id");
 
             var anamnesisId = parseInt(childAnamnesis.recordset[0].id);
 
-            var kid = await request.request()
-                .query("INSERT INTO child (name, lastName, dateOfBirthday, image, Center_IDCenter, Anamnesis_IDAnamnesis) VALUES ('" +
-                    child.name + "', '" + child.lastName + "', '" + child.dateOfBirthday + "', '" + imageName + "', '" +
-                    admin.recordset[0].Center_IDCenter + "', " + anamnesisId + "); SELECT SCOPE_IDENTITY() AS id");
+            var parents = await request.request()
+                .query("SELECT * FROM parent WHERE email='" + parent.email + "';");
+            var parentId = 0;
 
-            var kidId = parseInt(kid.recordset[0].id);
+            if (parents.recordset.length > 0) {
+                parentId = parents.recordset[0].idParent
+            } else {
+                var parentData = await request.request()
+                    .query("INSERT INTO parent (name, lastName, email, phoneNumber, areaCode) VALUES ('" +
+                        parent.name + "', '" + parent.lastName + "', '" + parent.email + "', '" + phoneNumber + "', '" + areaCode + "'); SELECT SCOPE_IDENTITY() AS id");
+                parentId = parseInt(parentData.recordset[0].id);
+            }
+
             await request.request()
-                .query("INSERT INTO parent (name, lastName, email, phoneNumber, Child_IDChild, areaCode) VALUES ('" +
-                    parent.name + "', '" + parent.lastName + "', '" + parent.email + "', '" + phoneNumber + "', " + kidId + ", '" + areaCode + "')");
-
+                .query("INSERT INTO child (name, lastName, dateOfBirth, image, idCenter, idAnamnesis, idParent) VALUES ('" +
+                    child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + imageName + "', " +
+                    admin.recordset[0].idCenter + ", " + anamnesisId + ", " + parentId + ");");
+        
             return ({ status: 'success' });
         }
 

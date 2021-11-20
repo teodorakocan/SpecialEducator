@@ -43,16 +43,16 @@ Center.registration = async (user, center, areaCode, phoneNumber) => {
         let request = await sql.connect(dbConfig);
 
         var newCenter = await request.request()
-            .query("INSERT INTO center (name, address, addressNumber, city, email, phoneNumber, areaCode, state)" +
-                "VALUES ('" + center.name + "', '" + center.address + "', '" + center.addressNumber + "', '" + center.city
-                + "', '" + center.email + "', '" + phoneNumber + "', '" + areaCode + "', '" + center.state
+            .query("INSERT INTO center (areaCode, address, addressNumber, city, email, name, phoneNumber, state)" +
+                "VALUES ('" + areaCode + "', '" + center.address + "', '" + center.addressNumber + "', '" + center.city
+                + "', '" + center.email + "', '" + center.name + "', '" + phoneNumber + "', '" + center.state
                 + "'); SELECT SCOPE_IDENTITY() AS id");
 
         var idCenter = parseInt(newCenter.recordset[0].id);
         await request.request()
-            .query("INSERT INTO [User] (name, lastName, email, image, role, Center_IDCenter, password)"
+            .query("INSERT INTO [User] (name, lastName, email, image, role, password, resetCode, idCenter)"
                 + "VALUES ('" + user.name + "', '" + user.lastName + "', '" + user.email + "', '" + imageName
-                + "', 'admin', " + idCenter + ", '" + hashedPassword + "');");
+                + "', 'admin', '" + hashedPassword + "', NULL, " + idCenter + ");");
 
         return ({ status: 'success' });
 

@@ -65,6 +65,43 @@ function MenuItems(props) {
                     </div>
                 }
             </Menu.Menu>
+
+            <Menu.Header>Schedule</Menu.Header>
+            <Menu.Menu>
+                <Menu.Item
+                    name='myAppointment'
+                    active={props.activeItem === 'myAppointment'}
+                    onClick={handleChange}>
+                    <Icon name='calendar alternate' /> My appointment
+                </Menu.Item>
+                <Menu.Item
+                    name='allAppointments'
+                    active={props.activeItem === 'allAppointments'}
+                    onClick={handleChange}>
+                    <Icon name='calendar alternate' /> All appointments
+                </Menu.Item>
+
+                {props.role === 'admin' &&
+                    <div>
+                        <Menu.Item
+                            name='makeAnAppointment'
+                            active={props.activeItem === 'makeAnAppointment'}
+                            onClick={handleChange}>
+                            <Icon name='calendar plus outline' /> Make an appointment
+                        </Menu.Item>
+                    </div>
+                }
+            </Menu.Menu>
+
+
+            <Menu.Item
+                name='logOut'
+                style={{fontSize: '18px'}}
+                active={props.activeItem === 'logOut'}
+                onClick={handleChange}>
+                <Icon name='sign-out' /> Log out
+            </Menu.Item>
+
         </Menu>
     )
 };
