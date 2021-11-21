@@ -8,7 +8,6 @@ import MenuItems from './MenuItems';
 import './HomeStyle.css'
 import avatar from '../images/avatar.png';
 import { useNavigate } from 'react-router';
-import MakeAnAppointment from '../User/Schedule/MakeAnAppointment';
 
 const MainHomePage = () => {
 

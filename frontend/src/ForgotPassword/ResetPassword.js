@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Header, Image, Segment, Grid, Button, Form, Label } from 'semantic-ui-react';
+import { Container, Header, Segment, Grid, Button, Form } from 'semantic-ui-react';
 import StartApp from '../StartApp';
 
 import axiosInstance from '../serverConnection/axios';

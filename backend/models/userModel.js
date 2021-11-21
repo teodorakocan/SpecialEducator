@@ -109,40 +109,4 @@ User.resetPassword = async (password, resetCode) => {
     }
 };
 
-User.allUsers = async (id) => {
-    try {
-        let request = await sql.connect(dbConfig);
-
-        var userData = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
-
-        if (userData.recordset.length > 0) {
-            var users = await request.request()
-            .query("SELECT * FROM [User] WHERE idCenter='" + userData.recordset[0].idCenter + "';");
-            return ({status: 'success', users: users.recordset});
-        }
-    } catch (err) {
-        console.log(err);
-        return ({ status: 'failed' });
-    }
-};
-
-User.allChildren = async (id) => {
-    try {
-        let request = await sql.connect(dbConfig);
-
-        var employee = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
-
-        if (employee.recordset.length > 0) {
-            var children = await request.request()
-            .query("SELECT * FROM child WHERE idCenter='" + employee.recordset[0].idCenter + "';");
-            return ({status: 'success', children: children.recordset});
-        }
-    } catch (err) {
-        console.log(err);
-        return ({ status: 'failed' });
-    }
-};
-
 module.exports = User;

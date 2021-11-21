@@ -40,18 +40,10 @@ Authenticated.changeUserData = async (user) => {
             if (userData.recordset[0].email !== user.email) {
                 const { status, message } = await User.emailValidation(user.email);
                 if (status === 'success') {
-                    var mailOptions = {
-                        from: 'specialeducator2021@gmail.com',
-                        to: user.email,
-                        subject: 'Special Educator',
-                        text: 'You have successfully changed email address on Special Educator app from ' + userData.recordset[0].email + ' to ' + user.email + '. ' +
-                            'From now on all other information will be sent on ' + user.email + ', and you will be logged in with this new email address as your username.'
-                    };
-                    mailConfig.sendMail(mailOptions, function (error, info) {
-                        if (error) {
-                            return ({ status: 'failed' });
-                        }
-                    });
+                    const result = MailDelivery.sendUserDataUpdates(user);
+                    if (result) {
+                        return ({ status: 'failed' });
+                    }
                 } else {
                     return ({ status: 'failed', message: message })
                 }

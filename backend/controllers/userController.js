@@ -1,6 +1,5 @@
 const User = require('../models/userModel');
-var mailConfig = require('../configurations/mailConfig');
-const { Int } = require('mssql');
+const MailDelivery = require('../models/mailDeliveryModel');
 
 exports.emailValidation = async (req, res) => {
     try {
@@ -26,22 +25,12 @@ exports.resetPasswordRequest = async (req, res) => {
     try {
         const { status, resetCode, message } = await User.resetPasswordRequest(req.query.email);
         if (status === 'success') {
-            const emailMessage = '<Link to="http://localhost:3000/resetPassword?resetCode=' + resetCode + '"/>' +
-            'Code will expire in one hour.';
-            var mailOptionsCenter = {
-                from: 'specialeducator2021@gmail.com',
-                to: req.query.email,
-                subject: 'Special Educator',
-                text: emailMessage
-            };
-
-            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
-                if (error) {
-                    res.send({ status: 'failed' });
-                } else {
-                    res.send({ status: 'success', message: message });
-                }
-            });
+            const result = MailDelivery.sendResetPasswordLink(resetCode, req.query.emai)
+            if (result) {
+                res.send({ status: 'failed' });
+            } else {
+                res.send({ status: status, message: message });
+            }
         } else {
             res.send({ status: 'failed', message: message });
         }
@@ -60,10 +49,10 @@ exports.resetPassword = async (req, res) => {
         const nowTime = now.getHours() + '' + now.getMinutes() + '' + now.getSeconds();
         if (nowDate === requestDate[0]) {
             const result = parseInt(nowTime) - parseInt(requestDate[1]);
-            if(result > 10000 || result < 0){
+            if (result > 10000 || result < 0) {
                 res.send({ status: 'failed', message: 'Code expired.' });
-            }else{
-                const { status, message} = await User.resetPassword(req.query.password, req.query.resetCode);
+            } else {
+                const { status, message } = await User.resetPassword(req.query.password, req.query.resetCode);
                 res.send({ status: status, message: message });
             }
 
@@ -74,25 +63,5 @@ exports.resetPassword = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed', message: 'Server failed' });
-    }
-};
-
-exports.allUsers = async (req, res) => {
-    try {
-        const { status, users } = await User.allUsers(req.user.id);
-        res.send({ status: status, users: users });
-    } catch (err) {
-        console.log(err);
-        res.send({ status: 'failed' });
-    }
-};
-
-exports.allChildren = async (req, res) => {
-    try {
-        const { status, children } = await User.allChildren(req.user.id);
-        res.send({ status: status, children: children });
-    } catch (err) {
-        console.log(err);
-        res.send({ status: 'failed' });
     }
 };

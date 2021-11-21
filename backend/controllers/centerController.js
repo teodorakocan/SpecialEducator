@@ -1,5 +1,5 @@
 const Center = require('../models/centerModel');
-var mailConfig = require('../configurations/mailConfig');
+const MailDelivery = require('../models/mailDeliveryModel');
 
 exports.validation = async (req, res) => {
     try {
@@ -25,20 +25,12 @@ exports.registration = async (req, res) => {
 
         const { status } = await Center.registration(user, center, areaCode, phoneNumber);
         if (status === 'success') {
-            var mailOptionsCenter = {
-                from: 'specialeducator2021@gmail.com',
-                to: user.email,
-                subject: 'Special Educator',
-                text: 'Welcome. You have successfully registered your special education center, ' + center.name + ', on the Special Educator application. Enjoy using it.'
-            };
-
-            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
-                if (error) {
-                    res.send({ status: 'failed' });
-                } else {
-                    res.send({ status: status });
-                }
-            });
+            const result = MailDelivery.sendRegistrationToUser(user, center.name);
+            if (result) {
+                res.send({ status: 'failed' });
+            } else {
+                res.send({ status: status });
+            }
         } else {
             res.send({ status: status });
         }

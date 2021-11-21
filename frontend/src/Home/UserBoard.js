@@ -1,5 +1,4 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
 
 import ChangeProfileData from '../User/Account/ChangeProfileData';
 import ChangeProfileImage from '../User/Account/ChangeProfileImage';

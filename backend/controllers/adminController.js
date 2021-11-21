@@ -1,5 +1,5 @@
 const Admin = require('../models/adminModel');
-var mailConfig = require('../configurations/mailConfig');
+const MailDelivery = require('../models/mailDeliveryModel');
 
 exports.changeCenterData = async (req, res) => {
     try {
@@ -7,10 +7,7 @@ exports.changeCenterData = async (req, res) => {
         let areaCode = '';
         let phoneNumber = '';
 
-        if (center.areaCode === 'undefined') {
-            areaCode = null;
-            phoneNumber = null;
-        } else {
+        if (typeof center.phoneNumber !== 'undefined') {
             areaCode = center.areaCode;
             phoneNumber = center.phoneNumber;
         }
@@ -29,22 +26,13 @@ exports.addNewUser = async (req, res) => {
 
         const { status, message } = await Admin.addNewUser(req.user.id, user);
         if (status === 'success') {
-            var mailOptionsCenter = {
-                from: 'specialeducator2021@gmail.com',
-                to: user.email,
-                subject: 'Special Educator',
-                text: 'Welcome. You are now signed up on aplication Special Educator with email/username: ' +
-                    user.email + ' and password: ' + user.password + '.'
-            };
-
-            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
-                if (error) {
-                    res.send({ status: 'failed' });
-                } else {
-                    const portalMessage = 'New member, ' + user.name + ' ' + user.lastName + ', is added in your center.';
-                    res.send({ status: status, message: portalMessage });
-                }
-            });
+            const result = MailDelivery.sendNewUserEmail(user);
+            if (result) {
+                res.send({ status: 'failed' });
+            } else {
+                const portalMessage = 'New member, ' + user.name + ' ' + user.lastName + ', is added in your center.';
+                res.send({ status: status, message: portalMessage });
+            }
         } else {
             res.send({ status: status, message: message });
         }
@@ -69,24 +57,70 @@ exports.addChild = async (req, res) => {
 
         const { status } = await Admin.addChild(req.user.id, child, parent, anamnesis, phoneNumber, areaCode);
         if (status === 'success') {
-            var mailOptionsCenter = {
-                from: 'specialeducator2021@gmail.com',
-                to: parent.email,
-                subject: 'Special Educator',
-                text: 'Welcome. Your child ' + child.name + ' ' + child.lastName + ' is sign up on application Special Educator.' +
-                    'All information about your child will be sent to this email address.'
-            };
-
-            mailConfig.sendMail(mailOptionsCenter, function (error, info) {
-                if (error) {
-                    res.send({ status: 'failed' });
-                } else {
-                    const portalMessage = 'Child ' + child.name + ' ' + child.lastName + ' is added in center.';
-                    res.send({ status: status, message: portalMessage });
-                }
-            });
+            const result = MailDelivery.sendParentEmail(child, parent);
+            if (result) {
+                res.send({ status: 'failed' });
+            } else {
+                const portalMessage = 'Child ' + child.name + ' ' + child.lastName + ' is added in center.';
+                res.send({ status: status, message: portalMessage });
+            }
         } else {
             res.send({ status: 'failed' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.allUsers = async (req, res) => {
+    try {
+        const { status, users } = await Admin.allUsers(req.user.id);
+        res.send({ status: status, users: users });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.allChildren = async (req, res) => {
+    try {
+        const { status, children } = await Admin.allChildren(req.user.id);
+        res.send({ status: status, children: children });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.saveAndSendSchedule = async (req, res) => {
+    try {
+        const { statusSave } = await Admin.saveSchedule(req.query.schedule);
+
+        if (statusSave === 'success') {
+            const { teacherStatus, teacherEmails } = await Admin.getTeachersEmails(req.query.schedule);
+
+            if (teacherStatus === 'success') {
+                //const result = MailDelivery.sendScheduleToTeachers(teacherEmails);
+
+                /*if (result) {
+                    res.send({ status: 'failed' });
+                } else {*/
+                const { parentStatus, childrensSchedule } = await Admin.getParentEmails(req.query.schedule);
+
+                if (parentStatus === 'success') {
+                    //const result = MailDelivery.sendScheduleToParent(childrensSchedule);
+
+                    res.send({ status: 'success' });
+                } else {
+                    res.send({ status: parentStatus });
+                }
+                //}
+            } else {
+                res.send({ status: teacherStatus });
+            }
+        } else {
+            res.send({ status: statusSave });
         }
     } catch (err) {
         console.log(err);
