@@ -7,6 +7,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.24.0",
+    "devextreme-aspnet-data-nojquery": "^2.8.6",
     "devextreme-react": "^21.2.3",
     "react": "^17.0.2",
     "react-date-picker": "^8.3.5",

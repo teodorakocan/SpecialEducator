@@ -95,33 +95,75 @@ exports.allChildren = async (req, res) => {
 
 exports.saveAndSendSchedule = async (req, res) => {
     try {
-        const { statusSave } = await Admin.saveSchedule(req.query.schedule);
+        var newSchedule = [];
+        var oldSchedule = [];
+        var statusAdd, messageAdd, statusUpdate, messageUpdate = ''
 
-        if (statusSave === 'success') {
-            const { teacherStatus, teacherEmails } = await Admin.getTeachersEmails(req.query.schedule);
-
-            if (teacherStatus === 'success') {
-                //const result = MailDelivery.sendScheduleToTeachers(teacherEmails);
-
-                /*if (result) {
-                    res.send({ status: 'failed' });
-                } else {*/
-                const { parentStatus, childrensSchedule } = await Admin.getParentEmails(req.query.schedule);
-
-                if (parentStatus === 'success') {
-                    //const result = MailDelivery.sendScheduleToParent(childrensSchedule);
-
-                    res.send({ status: 'success' });
-                } else {
-                    res.send({ status: parentStatus });
-                }
-                //}
+        req.query.schedule.map(data => {
+            const schedule = JSON.parse(data);
+            if (typeof schedule.idAppointment === 'undefined') {
+                newSchedule.push(schedule);
             } else {
-                res.send({ status: teacherStatus });
+                oldSchedule.push(schedule);
             }
-        } else {
-            res.send({ status: statusSave });
+        });
+
+        if (newSchedule.length > 0) {
+            //ubaci u bazu i informisi korisnike i nastavnike
+            const { addStatus } = await Admin.addSchedule(req.user.id, newSchedule);
+            if (addStatus === 'success') {
+                //preuzmi mailove nasavnika i roditelja
+                const { teacherStatus, teacherEmails } = await Admin.getTeachersEmails(newSchedule);
+                const { parentStatus, childrensSchedule } = await Admin.getParentEmails(newSchedule);
+                if (teacherStatus === 'success' && parentStatus === 'success') {
+                    //obavesti nastavnike i roditelje
+                    MailDelivery.sendScheduleToTeachers(teacherEmails);
+                    MailDelivery.sendScheduleToParent(childrensSchedule);
+
+                    statusAdd = teacherStatus;
+                    messageAdd = 'Teachers and parents are informed.';
+                } else {
+                    statusAdd = teacherStatus;
+                    messageAdd = 'Something went wrong. Please try again.';
+                }
+            } else {
+                statusAdd = addStatus;
+                messageAdd = 'Something went wrong. Please try again.';
+            }
         }
+
+        if (oldSchedule.length > 0) {
+            //updejtuj ili izbrisi
+            const { updateStatus, updateMessage } = await Admin.updateSchedule(oldSchedule);
+
+            if (updateStatus === 'success') {
+                const { teacherStatus, teacherEmails } = await Admin.getTeachersEmails(oldSchedule);
+                const { parentStatus, childrensSchedule } = await Admin.getParentEmails(oldSchedule);
+                if (teacherStatus === 'success' && parentStatus === 'success') {
+                    //obavesti roditelje i nastvanike
+                    MailDelivery.sendScheduleToTeachers(teacherEmails);
+                    MailDelivery.sendScheduleToParent(childrensSchedule);
+
+                    statusUpdate = updateStatus;
+                    messageUpdate = updateMessage;
+                } else {
+                    statusUpdate = updateStatus;
+                    messageUpdate = 'Something went wrong. Please try again.';
+                }
+            }
+        }
+
+        res.send({ statusAdd: statusAdd, messageAdd: messageAdd, statusUpdate: statusUpdate, messageUpdate: messageUpdate })
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.schedule = async (req, res) => {
+    try {
+        const { appointments } = await Admin.schedule(req.user.id);
+        res.send({ appointments: appointments })
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

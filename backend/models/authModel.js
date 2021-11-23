@@ -18,7 +18,7 @@ Authenticated.userData = async (id) => {
         let request = await sql.connect(dbConfig);
 
         var userData = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (userData.recordset.length > 0) {
             return ({ status: 'success', user: userData.recordset[0] });
@@ -34,7 +34,7 @@ Authenticated.changeUserData = async (user) => {
         let request = await sql.connect(dbConfig);
 
         var userData = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + user.idUser + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + user.idUser + ";");
 
         if (userData.recordset.length > 0) {
             if (userData.recordset[0].email !== user.email) {
@@ -49,7 +49,8 @@ Authenticated.changeUserData = async (user) => {
                 }
             }
 
-            await request.request().query("UPDATE [User] SET name = '" + user.name + "', lastName ='" + user.lastName + "', email ='" + user.email + "' WHERE idUser = '" + user.idUser + "';");
+            await request.request().query("UPDATE [User] SET name = '" + user.name + "', lastName ='" + user.lastName + 
+            "', email ='" + user.email + "' WHERE idUser = " + user.idUser + ";");
             return ({ status: 'success', message: 'You have successfully changed your profile information.' });
         }
         return ({ status: 'failed' });
@@ -67,7 +68,7 @@ Authenticated.changePassword = async (userId, newPassword, oldPassword) => {
             const hashedPassword = passwordHash.generate(newPassword);
             let request = await sql.connect(dbConfig);
 
-            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "' WHERE idUser = '" + userId + "';");
+            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "' WHERE idUser = " + userId + ";");
             return ({ status: 'success', message: 'You have successfully changed your password.' });
         } else {
             return ({ status: 'failed', message: 'Old password is incorrect.' });
@@ -82,7 +83,7 @@ Authenticated.changeImage = async (id) => {
     try {
         let request = await sql.connect(dbConfig);
         await request.request()
-            .query("UPDATE [User] SET image = '" + imageName + "' WHERE idUser = '" + id + "';");
+            .query("UPDATE [User] SET image = '" + imageName + "' WHERE idUser = " + id + ";");
 
         return ({ status: 'success' });
     } catch (err) {
@@ -97,10 +98,46 @@ Authenticated.centerData = async (id) => {
         const { user } = await Authenticated.userData(id);
 
         var centerData = await request.request()
-            .query("SELECT * FROM center WHERE idCenter='" + user.idCenter + "';");
+            .query("SELECT * FROM center WHERE idCenter=" + user.idCenter + ";");
 
         if (centerData.recordset.length > 0) {
             return ({ status: 'success', center: centerData.recordset[0] });
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.mySchedule = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var mySchedule = await request.request()
+            .query("SELECT * FROM appointment WHERE idUser=" + id + ";");
+
+        if (mySchedule.recordset.length > 0) {
+            return ({ status: 'success', mySchedule: mySchedule.recordset });
+        }else{
+            return ({status: 'false'})
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.allChildren = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var employee = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
+
+        if (employee.recordset.length > 0) {
+            var children = await request.request()
+                .query("SELECT * FROM child WHERE idCenter=" + employee.recordset[0].idCenter + ";");
+            return ({ status: 'success', children: children.recordset });
         }
     } catch (err) {
         console.log(err);

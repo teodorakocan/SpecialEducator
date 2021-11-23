@@ -69,16 +69,10 @@ function MenuItems(props) {
             <Menu.Header>Schedule</Menu.Header>
             <Menu.Menu>
                 <Menu.Item
-                    name='myAppointment'
-                    active={props.activeItem === 'myAppointment'}
+                    name='mySchedule'
+                    active={props.activeItem === 'mySchedule'}
                     onClick={handleChange}>
-                    <Icon name='calendar alternate' /> My appointment
-                </Menu.Item>
-                <Menu.Item
-                    name='allAppointments'
-                    active={props.activeItem === 'allAppointments'}
-                    onClick={handleChange}>
-                    <Icon name='calendar alternate' /> All appointments
+                    <Icon name='calendar alternate' /> My schedule
                 </Menu.Item>
 
                 {props.role === 'admin' &&

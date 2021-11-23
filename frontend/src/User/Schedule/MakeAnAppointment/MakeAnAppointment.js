@@ -2,14 +2,15 @@ import React from 'react';
 import Scheduler, { Resource } from 'devextreme-react/scheduler'
 import { Button, Popup, Icon } from 'semantic-ui-react';
 
-import axiosInstance from '../../serverConnection/axios';
-import { authHeader } from '../../serverConnection/authHeader';
-import OpnePortal from '../../HelpPages/OpenPortal';
+import axiosInstance from '../../../serverConnection/axios';
+import { authHeader } from '../../../serverConnection/authHeader';
+import OpnePortal from '../../../HelpPages/OpenPortal';
+import avatar from '../../../images/avatar.png';
+import { appointments } from './appointments';
+import AppointmentTemplate from './AppointmentTemplate';
 
 const currentDate = new Date();
 const views = ['month'];
-const data = [];
-const colors = ['#ff8533', '#4747d1', '#ff1a8c', '#9900ff', '#00b33c', '#ff0000'];
 
 class MakeAnAppointment extends React.Component {
 
@@ -18,9 +19,9 @@ class MakeAnAppointment extends React.Component {
         this.state = {
             users: [],
             children: [],
-            data: [],
             openPortal: false,
-            portalMessage: ''
+            portalMessage: '',
+            data: appointments
         }
     }
 
@@ -29,8 +30,8 @@ class MakeAnAppointment extends React.Component {
             var employee = {};
             employee['text'] = user.name + ' ' + user.lastName;
             employee['id'] = user.idUser;
-            employee['color'] = colors[(Math.random() * colors.length) | 0];
-            employee['avatra'] = 'http://localhost:9000/' + user.image;
+            employee['color'] = '#ff8533';
+            employee['image'] = { avatar: true, src: user.image ? 'http://localhost:9000/' + user.image : avatar };
             this.state.users.push(employee);
         });
     }
@@ -40,7 +41,7 @@ class MakeAnAppointment extends React.Component {
             var children = {};
             children['text'] = child.name + ' ' + child.lastName;
             children['id'] = child.idChild;
-            children['avatra'] = 'http://localhost:9000/' + child.image;
+            children['avatar'] = 'http://localhost:9000/' + child.image;
             this.state.children.push(children);
         });
     }
@@ -57,20 +58,22 @@ class MakeAnAppointment extends React.Component {
     }
 
     saveAndSendSchedule = () => {
+        console.log(this.state.data)
         axiosInstance.post('/admin/saveAndSendSchedule', {}, {
             headers: authHeader(),
             params: {
-                schedule: data
+                schedule: this.state.data
             }
         }).then((response) => {
             var message = '';
-            if (response.data.status === 'success') {
+            console.log(response.data);
+            /*if (response.data.status === 'success') {
                 message = 'Teachers and parents are informed.';
                 this.setState({ openPortal: true, portalMessage: message });
             } else {
                 message = "Something want wrong emails aren't sent.";
                 this.setState({ openPortal: false, portalMessage: message });
-            }
+            }*/
         });
     }
 
@@ -79,28 +82,27 @@ class MakeAnAppointment extends React.Component {
             <div>
                 <Scheduler
                     timeZone='Europe/Belgrade'
-                    dataSource={data}
+                    dataSource={this.state.data}
                     views={views}
                     defaultCurrentView='month'
                     defaultCurrentDate={currentDate}
                     height={600}
                     showAllDayPanel={true}
-                    firstDayOfWeek={1}
-                    startDayHour={8}
-                    endDayHour={18}
+                    appointmentRender={AppointmentTemplate}
                 >
                     <Resource
                         label='Teachers'
-                        fieldExpr='teacherID'
+                        fieldExpr='idUser'
                         dataSource={this.state.users}
                         allowMultiple={false}
                         useColorAsDefault={true}
                     />
                     <Resource
                         label='Children'
-                        fieldExpr='childID'
+                        fieldExpr='idChild'
                         dataSource={this.state.children}
                         allowMultiple={false}
+                        useColorAsDefault={true}
                     />
                 </Scheduler>
                 <div style={{ padding: '10px' }}>

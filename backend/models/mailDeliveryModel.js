@@ -5,8 +5,8 @@ const MailDelivery = function (to) {
     this.message = admin.message;
 };
 
-MailDelivery.sendScheduleToTeachers = (emails) => {
-    emails.map(email => {
+MailDelivery.sendScheduleToTeachers = (teachersEmails) => {
+    teachersEmails.map(email => {
         var mailOptionsCenter = {
             from: 'specialeducator2021@gmail.com',
             to: email.email,
@@ -14,34 +14,28 @@ MailDelivery.sendScheduleToTeachers = (emails) => {
             text: 'Your schedule is updated.'
         };
 
-        mailConfig.sendMail(mailOptionsCenter, function (error, info) {
-            if (error) {
-                return true;
-            } else {
-                return false;
-            }
-        });
+        mailConfig.sendMail(mailOptionsCenter);
 
     });
 };
 
-MailDelivery.sendScheduleToParent = (parentEmails) => {
+MailDelivery.sendScheduleToParent = (parentsEmails) => {
 
-    for (const parentEmail of parentEmails) {
+    for (const parentEmail of parentsEmails) {
         var emailMessage = '';
         const emailHead = '<h1> Schedule for ' + parentEmail.childInfo.childName + '</h1>'
         parentEmail.appointments.forEach(appointment => {
             emailMessage += '<div><p>Date:' + appointment.startDate + '</p><p>Class start at:' + appointment.classDuration +
                 '</p><p>Description:' + appointment.description + '</p><p>Text:' + appointment.text + '</p></div>';
-            
-                mailOptionsCenter = {
-                from: 'specialeducator2021@gmail.com',
-                to: parentEmail.parentEmail,
-                subject: 'Special Educator',
-                html: emailHead + emailMessage
-            };
-            mailConfig.sendMail(mailOptionsCenter);
-        })
+        });
+
+        var mailOptionsCenter = {
+            from: 'specialeducator2021@gmail.com',
+            to: parentEmail.parentEmail,
+            subject: 'Special Educator',
+            html: emailHead + emailMessage
+        };
+        mailConfig.sendMail(mailOptionsCenter);
     }
 };
 

@@ -6,6 +6,9 @@ const upload = require('../configurations/uploads');
 
 //authenticated user
 router.get('/userData', loggedIn, authController.userData);
+router.get('/mySchedule', loggedIn, authController.mySchedule);
+router.get('/allChildren', loggedIn, authController.allChildren);
+
 router.post('/changeUserData', loggedIn, authController.changeUserData);
 router.post('/changePassword', loggedIn, authController.changePassword);
 router.post('/changeImage', loggedIn, upload.single('file'), authController.changeImage);

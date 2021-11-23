@@ -97,7 +97,7 @@ User.resetPassword = async (password, resetCode) => {
             const hashedPassword = passwordHash.generate(password);
             const userId = resetCode.split('_');
 
-            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "', resetCode='NULL' WHERE idUser = '" + userId[1] + "';");
+            await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "', resetCode='NULL' WHERE idUser = " + userId[1] + ";");
             return ({ status: 'success' });
         } else {
             const message = 'Invalid reset code';

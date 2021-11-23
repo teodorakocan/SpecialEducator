@@ -16,11 +16,11 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
         let request = await sql.connect(dbConfig);
 
         var userData = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (userData.recordset.length > 0) {
             const centerData = await request.request()
-                .query("SELECT * FROM center WHERE idCenter='" + userData.recordset[0].idCenter + "';");
+                .query("SELECT * FROM center WHERE idCenter=" + userData.recordset[0].idCenter + ";");
 
             if (centerData.recordset[0].email !== center.email) {
                 const { status, message } = await Admin.validationCenterEmail(center.email);
@@ -40,7 +40,7 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
                 .query("UPDATE center SET name = '" + center.name + "', address ='" + center.address +
                     "', addressNumber ='" + center.addressNumber + "', city ='" + center.city + "', email ='" + center.email +
                     "', phoneNumber ='" + phoneNumber + "', areaCode ='" + areaCode + "', state ='" + center.state +
-                    "' WHERE idCenter = '" + userData.recordset[0].idCenter + "';");
+                    "' WHERE idCenter = " + userData.recordset[0].idCenter + ";");
             return ({ status: 'success', message: 'You have successfully changed your profile information.' });
         }
 
@@ -91,7 +91,7 @@ Admin.addNewUser = async (id, user) => {
         let request = await sql.connect(dbConfig);
 
         var admin = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (admin.recordset.length > 0) {
             const { status, message } = await Admin.validationUserEmail(user.email);
@@ -108,9 +108,9 @@ Admin.addNewUser = async (id, user) => {
             } else {
                 return ({ status: status, message: message });
             }
+        } else {
+            return ({ status: 'failed' });
         }
-
-        return ({ status: 'failed' });
 
     } catch (err) {
         console.log(err);
@@ -140,7 +140,7 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
         let request = await sql.connect(dbConfig);
 
         var admin = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (admin.recordset.length > 0) {
             var childAnamnesis = await request.request()
@@ -168,10 +168,9 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
                 .query("INSERT INTO child (name, lastName, dateOfBirth, image, idCenter, idAnamnesis, idParent) VALUES ('" +
                     child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + imageName + "', " +
                     admin.recordset[0].idCenter + ", " + anamnesisId + ", " + parentId + ");");
-
-            return ({ status: 'success' });
         }
 
+        return ({ status: 'success' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });
@@ -183,13 +182,14 @@ Admin.allUsers = async (id) => {
         let request = await sql.connect(dbConfig);
 
         var userData = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (userData.recordset.length > 0) {
             var users = await request.request()
                 .query("SELECT * FROM [User] WHERE idCenter='" + userData.recordset[0].idCenter + "';");
-            return ({ status: 'success', users: users.recordset });
         }
+
+        return ({ status: 'success', users: users.recordset });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });
@@ -201,11 +201,11 @@ Admin.allChildren = async (id) => {
         let request = await sql.connect(dbConfig);
 
         var employee = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (employee.recordset.length > 0) {
             var children = await request.request()
-                .query("SELECT * FROM child WHERE idCenter='" + employee.recordset[0].idCenter + "';");
+                .query("SELECT * FROM child WHERE idCenter=" + employee.recordset[0].idCenter + ";");
             return ({ status: 'success', children: children.recordset });
         }
     } catch (err) {
@@ -214,45 +214,73 @@ Admin.allChildren = async (id) => {
     }
 };
 
-Admin.schedule = async (id) => {
+Admin.addSchedule = async (id, schedule) => {
     try {
-        let request = await sql.connect(dbConfig);
+        schedule.map(async (timeTable) => {
+            let request = await sql.connect(dbConfig);
+            var admin = await request.request()
+                .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
-        var employee = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser='" + id + "';");
-
-        if (employee.recordset.length > 0) {
-            var children = await request.request()
-                .query("SELECT * FROM child WHERE idCenter='" + employee.recordset[0].idCenter + "';");
-            return ({ status: 'success', children: children.recordset });
-        }
-    } catch (err) {
-        console.log(err);
-        return ({ status: 'failed' });
-    }
-};
-
-Admin.saveSchedule = async (schedule) => {
-    try {
-        let request = await sql.connect(dbConfig);
-        schedule.forEach(async (date) => {
-            const timeTable = JSON.parse(date);
             var scheduled = await request.request()
-                .query("SELECT * FROM appointment WHERE startDate='" + timeTable.startDate + "' AND endDate='" +
-                    timeTable.endDate + "' AND idUser=" + timeTable.teacherID + " AND idChild=" + timeTable.childID + ";");
+                .query("SELECT * FROM appointment WHERE startDate='" + timeTable.startDate + "' AND idUser="
+                    + timeTable.idUser + " AND idChild=" + timeTable.idChild + ";");
+            var childFree = await request.request()
+                .query("SELECT * FROM appointment WHERE startDate='" + timeTable.startDate +
+                    "' AND idChild=" + timeTable.idChild + ";");
+
+            var teacherFree = await request.request()
+                .query("SELECT * FROM appointment WHERE startDate='" + timeTable.startDate + "' AND idUser="
+                    + timeTable.idUser + ";");
 
             if (scheduled.recordset.length == 0) {
-                await request.request()
-                    .query("INSERT INTO appointment (endDate, startDate, text, description, idUser, idChild) VALUES ('" +
-                        timeTable.endDate + "', '" + timeTable.startDate + "', '" + timeTable.text + "', '" + timeTable.description +
-                        "', " + timeTable.teacherID + ", " + timeTable.childID + ");");
+                if (childFree.recordset.length == 0) {
+                    if (teacherFree.recordset.length == 0) {
+                        await request.request()
+                            .query("INSERT INTO appointment (endDate, startDate, text, description, idUser, idChild, idCenter) VALUES ('" +
+                                timeTable.endDate + "', '" + timeTable.startDate + "', '" + timeTable.text + "', '" + timeTable.description +
+                                "', " + timeTable.idUser + ", " + timeTable.idChild + ", " + admin.recordset[0].idCenter + ");");
+                    }
+                }
             }
         });
-
-        return ({ statusSave: 'success' });
+        return ({ addStatus: 'success' });
     } catch (err) {
         console.log(err);
-        return ({ statusSave: 'failed' });
+        return ({ addStatus: 'failed' });
+    }
+};
+
+Admin.updateSchedule = async (timeTable) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        var appointments = await request.request().query("SELECT * FROM appointment;");
+        var scheduleIDs = [];
+
+        timeTable.map(schedule => {
+            scheduleIDs.push(schedule.idAppointment);
+        });
+
+        //proveri da li se id prosledjenog rasporeda nalazi u bazi ili ne 
+        //ako ne postoji izbisi ga
+        for (const appointment of appointments.recordset) {
+            const id = scheduleIDs.indexOf(appointment.idAppointment);
+            if (id == -1) {
+                await request.request()
+                    .query("DELETE FROM appointment WHERE idAppointment=" + appointment.idAppointment + ";");
+            }else{
+                //posto raspored postoji u bazi
+                //proveri da li su mu vresnosti izmenjena, ako jesu odradi update
+                const schedule = timeTable.find(tt => tt.idAppointment == appointment.idAppointment);
+                await request.request().query("UPDATE appointment SET endDate='" + schedule.endDate + "', startDate='" + schedule.startDate + 
+                "', text='" + schedule.text + "', description='" + schedule.description + "', idUser=" + schedule.idUser
+                 + ", idChild=" + schedule.idChild + ", idCenter=" + appointment.idCenter + " WHERE idAppointment = " + schedule.idAppointment + ";");
+            }
+        }
+
+        return ({ updateStatus: 'success', updateMessage: 'Schedule is updated.' })
+    } catch (err) {
+        console.log(err);
+        return({ updateStatus: 'failed' })
     }
 };
 
@@ -264,13 +292,12 @@ Admin.getTeachersEmails = async (schedule) => {
         var teachers = await request.request()
             .query("SELECT * FROM [User];");
 
-        schedule.forEach(data => {
-            const timeTable = JSON.parse(data);
+        schedule.forEach(timeTable => {
             var email = '';
 
             teachers.recordset.forEach(teacher => {
                 if (!teacherEmails.some(email => email.email === teacher.email)) {
-                    if (teacher.idUser == timeTable.teacherID) {
+                    if (teacher.idUser == timeTable.idUser) {
                         email = teacher.email;
                         teacherEmails.push({ email });
                     }
@@ -296,8 +323,7 @@ Admin.getParentEmails = async (timeTable) => {
         var parents = await request.request()
             .query("SELECT * FROM parent;");
 
-        timeTable.forEach(data => {
-            const schedule = JSON.parse(data);
+        timeTable.forEach(schedule => {
 
             parents.recordset.forEach(parent => {
                 var emailInfo = {};
@@ -306,7 +332,7 @@ Admin.getParentEmails = async (timeTable) => {
                 emailInfo['parentEmail'] = parent.email;
 
                 children.recordset.forEach(child => {
-                    if (child.idChild == schedule.childID) {
+                    if (child.idChild == schedule.idChild) {
                         if (parent.idParent == child.idParent) {
                             childInfo['childId'] = child.idChild;
                             childInfo['childName'] = child.name + ' ' + child.lastName;
@@ -324,10 +350,9 @@ Admin.getParentEmails = async (timeTable) => {
             var appointmentInfo = {};
             var appointments = [];
 
-            timeTable.forEach(data => {
-                const schedule = JSON.parse(data);
+            timeTable.forEach(schedule => {
 
-                if (schedule.childID == information.childInfo.childId) {
+                if (schedule.idChild == information.childInfo.childId) {
                     var startDate = schedule.startDate.split('T');
                     var startTime = startDate[1].split(':');
                     var endDate = schedule.endDate.split('T');
@@ -346,14 +371,31 @@ Admin.getParentEmails = async (timeTable) => {
         const uniquechildrensSchedule = childrensSchedule.filter((email, index) => {
             const _email = JSON.stringify(email);
             return index === childrensSchedule.findIndex(obj => {
-              return JSON.stringify(obj) === _email;
+                return JSON.stringify(obj) === _email;
             });
-          });
+        });
 
         return ({ parentStatus: 'success', childrensSchedule: uniquechildrensSchedule })
     } catch (err) {
         console.log(err);
         return ({ parentStatus: 'failed' });
+    }
+};
+
+Admin.schedule = async (id) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var admin = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
+
+        var appointments = await request.request()
+            .query("SELECT * FROM appointment WHERE idCenter=" + admin.recordset[0].idCenter + ";");
+
+        return ({ appointments: appointments.recordset })
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
     }
 };
 

@@ -8,7 +8,8 @@ import CenterData from '../Center/CenterData';
 import ChangeCenterData from '../Center/ChangeCenterData';
 import MainNewChildPage from '../User/Admin/AddChild/MainNewChildPage';
 import AddNewUser from '../User/Admin/AddNewUser/AddNewUser';
-import MakeAnAppointment from '../User/Schedule/MakeAnAppointment';
+import MakeAnAppointment from '../User/Schedule/MakeAnAppointment/MakeAnAppointment';
+import MySchedule from '../User/Schedule/MySchedule/MySchedule';
 
 function UserBoard(props) {
 
@@ -29,6 +30,8 @@ function UserBoard(props) {
             return <AddNewUser />
         case 'makeAnAppointment':
             return <MakeAnAppointment />
+        case 'mySchedule':
+            return <MySchedule />
         default:
             return <HomePage />
     }

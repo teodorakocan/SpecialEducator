@@ -49,4 +49,24 @@ exports.centerData = async (req, res) => {
         console.log(err);
         res.send({status: 'failed'});
     }
-}
+};
+
+exports.mySchedule = async (req, res) => {
+    try{
+        const { status, mySchedule } = await Authentiated.mySchedule(req.user.id);
+        res.send({ status: status, mySchedule: mySchedule });
+    }catch(err){
+        console.log(err);
+        res.send({status: 'failed'});
+    }
+};
+
+exports.allChildren = async (req, res) => {
+    try {
+        const { status, children } = await Authentiated.allChildren(req.user.id);
+        res.send({ status: status, children: children });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
