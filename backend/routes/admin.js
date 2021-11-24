@@ -7,6 +7,7 @@ const upload = require('../configurations/uploads');
 router.get('/allUsers', loggedIn, adminOnly, adminController.allUsers);
 router.get('/schedule', loggedIn, adminOnly, adminController.schedule);
 router.get('/searchTeacher', loggedIn, adminOnly, adminController.searchTeacher);
+router.get('/getTeacherData', loggedIn, adminOnly, adminController.getTeacherData);
 
 router.post('/changeCenterData', loggedIn, adminOnly, adminController.changeCenterData);
 router.post('/addNewUser', loggedIn, adminOnly, upload.single('file'), adminController.addNewUser);

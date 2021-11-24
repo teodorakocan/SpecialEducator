@@ -428,4 +428,21 @@ Admin.searchTeacher = async (adminId, fullName) => {
     }
 };
 
+Admin.getTeacherData = async (teacherId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var teacherData = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + teacherId + ";");
+
+        var appointments = await request.request()
+            .query("SELECT * FROM appointment WHERE idUser=" + teacherId + ";");
+
+        return ({status:'success', teacher: teacherData.recordset, appointments: appointments.recordset })
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
 module.exports = Admin;

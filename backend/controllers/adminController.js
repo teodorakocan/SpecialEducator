@@ -169,3 +169,15 @@ exports.searchTeacher = async (req, res) => {
         res.send({ status: 'failed' });
     }
 };
+
+exports.getTeacherData = async (req, res) => {
+    try {
+        const { status, teacher, appointments } = await Admin.getTeacherData(req.query.teacherId);
+        console.log(teacher);
+        console.log(appointments);
+        res.send({ status: status, teacher: teacher, appointments: appointments });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};

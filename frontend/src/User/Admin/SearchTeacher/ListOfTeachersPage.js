@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Input, Button, Feed, Image } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { teachers } from './teachers';
 import axiosInstance from '../../../serverConnection/axios';
@@ -21,7 +22,7 @@ function ListOfTeachersPage() {
                 </Feed.Label>
                 <Feed.Content>
                     <Feed.Summary>
-                        <a>{teacher.name + ' ' + teacher.lastName}</a>
+                        <Link to={'/profile/teacher/' + teacher.idUser}>{teacher.name + ' ' + teacher.lastName}</Link>
                     </Feed.Summary>
                 </Feed.Content>
             </Feed.Event>
