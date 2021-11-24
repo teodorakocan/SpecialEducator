@@ -50,7 +50,8 @@ function ChangeProfileData(props) {
                         setPortalMessage(response.data.message);
                         props.onClickChangeUserData();
                     }
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     if (typeof error.response === 'undefined') {
                         navigate('/notFound');
                     } else if (error.response.status === 403) {

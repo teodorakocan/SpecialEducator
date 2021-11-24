@@ -17,8 +17,7 @@ function getSchedule() {
                 data['endDate'] = new Date(appointment.endDate);
                 data['description'] = appointment.description;
                 schedule.push(data);
-            })
-            console.log(schedule);
+            });
         });
     return schedule;
 }

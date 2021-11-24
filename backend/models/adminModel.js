@@ -196,24 +196,6 @@ Admin.allUsers = async (id) => {
     }
 };
 
-Admin.allChildren = async (id) => {
-    try {
-        let request = await sql.connect(dbConfig);
-
-        var employee = await request.request()
-            .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
-
-        if (employee.recordset.length > 0) {
-            var children = await request.request()
-                .query("SELECT * FROM child WHERE idCenter=" + employee.recordset[0].idCenter + ";");
-            return ({ status: 'success', children: children.recordset });
-        }
-    } catch (err) {
-        console.log(err);
-        return ({ status: 'failed' });
-    }
-};
-
 Admin.addSchedule = async (id, schedule) => {
     try {
         schedule.map(async (timeTable) => {
@@ -393,6 +375,53 @@ Admin.schedule = async (id) => {
             .query("SELECT * FROM appointment WHERE idCenter=" + admin.recordset[0].idCenter + ";");
 
         return ({ appointments: appointments.recordset })
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Admin.searchTeacher = async (adminId, fullName) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        var teacherName = [];
+
+        var admin = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + adminId + ";");
+        var teachers = await request.request()
+            .query("SELECT * FROM [User] WHERE idCenter=" + admin.recordset[0].idCenter + ";");
+
+        if (teachers.recordset.length > 0) {
+            if (fullName.indexOf(' ') >= 0) {
+                teacherName = fullName.split(' ');
+
+                var firstSearchCombination = await request.request()
+                    .query("SELECT * FROM [User] WHERE name='" + teacherName[0] + "' AND lastName='" + teacherName[1] + "';");
+
+                if (firstSearchCombination.recordset.length == 0) {
+                    var secondSearchCombination = await request.request()
+                        .query("SELECT * FROM [User] WHERE name='" + teacherName[1] + "' AND lastName='" + teacherName[0] + "';");
+
+                    return ({ status: 'success', teacher: secondSearchCombination.recordset });
+                } else {
+                    return ({ status: 'success', teacher: firstSearchCombination.recordset })
+                }
+            } else {
+                var firstSearchCombination = await request.request()
+                    .query("SELECT * FROM [User] WHERE name='" + fullName + "';");
+
+                if (firstSearchCombination.recordset.length == 0) {
+                    var secondSearchCombination = await request.request()
+                        .query("SELECT * FROM [User] WHERE lastName='" + fullName + "';");
+
+                    return ({ status: 'success', teacher: secondSearchCombination.recordset });
+                } else {
+                    return ({ status: 'success', teacher: firstSearchCombination.recordset })
+                }
+            }
+        } else {
+            return ({ status: 'failed', teacher: teachers.recordset })
+        }
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

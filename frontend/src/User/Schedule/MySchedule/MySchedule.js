@@ -11,10 +11,6 @@ const views = ['month'];
 
 class MySchedule extends React.Component {
 
-    componentDidMount(){
-        console.log(children);
-    }
-    
     render() {
         return (
             <React.Fragment>

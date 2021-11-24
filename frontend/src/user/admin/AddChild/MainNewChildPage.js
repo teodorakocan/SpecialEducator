@@ -72,6 +72,8 @@ class MainNewChildPage extends React.Component {
                 } else {
                     this.setState({ openPortal: true, portalMessage: registration.data.message });
                 }
+            }).catch((error) => {
+                window.location.reload(false);
             });
         }
     }

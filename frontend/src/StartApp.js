@@ -1,6 +1,6 @@
 import React from 'react';
 
-import MainHomePage from './Home/MainHomePage';
+import MainHomePage from './MainPage/MainHomePage';
 import Login from './Login/Login';
 
 class StartApp extends React.Component {
@@ -14,6 +14,7 @@ class StartApp extends React.Component {
 
     onHomePage = async (logged) => {
         this.setState({ isLogged: logged });
+        window.location.reload(false);
     }
 
     render() {

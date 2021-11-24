@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Segment, Portal } from 'semantic-ui-react'
-import '../Home/HomeStyle.css';
+import '../MainPage/HomeStyle.css';
 
 function OpenPortal(props) {
 

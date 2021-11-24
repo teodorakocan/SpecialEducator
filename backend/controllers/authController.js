@@ -70,3 +70,13 @@ exports.allChildren = async (req, res) => {
         res.send({ status: 'failed' });
     }
 };
+
+exports.searchChild = async (req, res) => {
+    try {
+        const { status, child } = await Authentiated.searchChild(req.user.id, req.query.fullName);
+        res.send({ status: status, child: child });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};

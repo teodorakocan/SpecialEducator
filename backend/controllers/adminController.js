@@ -83,16 +83,6 @@ exports.allUsers = async (req, res) => {
     }
 };
 
-exports.allChildren = async (req, res) => {
-    try {
-        const { status, children } = await Admin.allChildren(req.user.id);
-        res.send({ status: status, children: children });
-    } catch (err) {
-        console.log(err);
-        res.send({ status: 'failed' });
-    }
-};
-
 exports.saveAndSendSchedule = async (req, res) => {
     try {
         var newSchedule = [];
@@ -164,6 +154,16 @@ exports.schedule = async (req, res) => {
     try {
         const { appointments } = await Admin.schedule(req.user.id);
         res.send({ appointments: appointments })
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.searchTeacher = async (req, res) => {
+    try {
+        const { status, teacher } = await Admin.searchTeacher(req.user.id, req.query.fullName);
+        res.send({ status: status, teacher: teacher });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

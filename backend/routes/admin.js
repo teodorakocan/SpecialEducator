@@ -5,8 +5,8 @@ const { loggedIn, adminOnly } = require('../helper/authMiddleware');
 const upload = require('../configurations/uploads');
 
 router.get('/allUsers', loggedIn, adminOnly, adminController.allUsers);
-router.get('/allChildren', loggedIn, adminOnly, adminController.allChildren);
 router.get('/schedule', loggedIn, adminOnly, adminController.schedule);
+router.get('/searchTeacher', loggedIn, adminOnly, adminController.searchTeacher);
 
 router.post('/changeCenterData', loggedIn, adminOnly, adminController.changeCenterData);
 router.post('/addNewUser', loggedIn, adminOnly, upload.single('file'), adminController.addNewUser);

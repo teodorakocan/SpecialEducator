@@ -8,6 +8,7 @@ const upload = require('../configurations/uploads');
 router.get('/userData', loggedIn, authController.userData);
 router.get('/mySchedule', loggedIn, authController.mySchedule);
 router.get('/allChildren', loggedIn, authController.allChildren);
+router.get('/searchChild', loggedIn, authController.searchChild);
 
 router.post('/changeUserData', loggedIn, authController.changeUserData);
 router.post('/changePassword', loggedIn, authController.changePassword);

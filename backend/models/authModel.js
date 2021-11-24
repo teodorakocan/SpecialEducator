@@ -49,11 +49,12 @@ Authenticated.changeUserData = async (user) => {
                 }
             }
 
-            await request.request().query("UPDATE [User] SET name = '" + user.name + "', lastName ='" + user.lastName + 
-            "', email ='" + user.email + "' WHERE idUser = " + user.idUser + ";");
+            await request.request().query("UPDATE [User] SET name = '" + user.name + "', lastName ='" + user.lastName +
+                "', email ='" + user.email + "' WHERE idUser = " + user.idUser + ";");
             return ({ status: 'success', message: 'You have successfully changed your profile information.' });
+        } else {
+            return ({ status: 'failed' });
         }
-        return ({ status: 'failed' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });
@@ -118,8 +119,8 @@ Authenticated.mySchedule = async (id) => {
 
         if (mySchedule.recordset.length > 0) {
             return ({ status: 'success', mySchedule: mySchedule.recordset });
-        }else{
-            return ({status: 'false'})
+        } else {
+            return ({ status: 'false' })
         }
     } catch (err) {
         console.log(err);
@@ -137,7 +138,54 @@ Authenticated.allChildren = async (id) => {
         if (employee.recordset.length > 0) {
             var children = await request.request()
                 .query("SELECT * FROM child WHERE idCenter=" + employee.recordset[0].idCenter + ";");
-            return ({ status: 'success', children: children.recordset });
+        }
+        return ({ status: 'success', children: children.recordset });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.searchChild = async (teacherId, fullName) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        var childName = [];
+
+        var teacher = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + teacherId + ";");
+        var children = await request.request()
+            .query("SELECT * FROM child WHERE idCenter=" + teacher.recordset[0].idCenter + ";");
+
+        if (children.recordset.length > 0) {
+            if (fullName.indexOf(' ') >= 0) {
+                childName = fullName.split(' ');
+
+                var firstSearchCombination = await request.request()
+                    .query("SELECT * FROM child WHERE name='" + childName[0] + "' AND lastName='" + childName[1] + "';");
+
+                if (firstSearchCombination.recordset.length == 0) {
+                    var secondSearchCombination = await request.request()
+                        .query("SELECT * FROM child WHERE name='" + childName[1] + "' AND lastName='" + childName[0] + "';");
+
+                    return ({ status: 'success', child: secondSearchCombination.recordset });
+                } else {
+                    return ({ status: 'success', child: firstSearchCombination.recordset })
+                }
+            } else {
+                var firstSearchCombination = await request.request()
+                    .query("SELECT * FROM child WHERE name='" + fullName + "';");
+
+                if (firstSearchCombination.recordset.length == 0) {
+                    var secondSearchCombination = await request.request()
+                        .query("SELECT * FROM child WHERE lastName='" + fullName + "';");
+
+                    return ({ status: 'success', child: secondSearchCombination.recordset });
+                } else {
+                    return ({ status: 'success', child: firstSearchCombination.recordset })
+                }
+            }
+        } else {
+            return ({ status: 'failed', child: children.recordset })
         }
     } catch (err) {
         console.log(err);

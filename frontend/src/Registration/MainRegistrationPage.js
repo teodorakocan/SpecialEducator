@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-import CenterRegistration from "./CenterRegistration";
-import UserRegistration from "./UserRegistration";
+import CenterRegistration from './CenterRegistration';
+import UserRegistration from './UserRegistration';
 import Steps from './Steps';
-import axiosInstance from "../serverConnection/axios";
+import axiosInstance from '../serverConnection/axios';
 
 class MainRegistrationPage extends React.Component {
 
@@ -99,7 +99,7 @@ class MainRegistrationPage extends React.Component {
                 )
             default:
                 return (
-                    <Navigate to="/" />
+                    <Navigate to='/' />
                 )
         }
     }

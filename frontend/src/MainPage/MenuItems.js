@@ -66,6 +66,18 @@ function MenuItems(props) {
                 }
             </Menu.Menu>
 
+            {props.role === 'admin' &&
+                <div><Menu.Header>Teachers</Menu.Header>
+                    <Menu.Menu>
+                        <Menu.Item
+                            name='allTeachers'
+                            active={props.activeItem === 'allTeachers'}
+                            onClick={handleChange}>
+                            <Icon name='group' /> List of teachers in center
+                        </Menu.Item>
+                    </Menu.Menu>
+                </div>}
+
             <Menu.Header>Schedule</Menu.Header>
             <Menu.Menu>
                 <Menu.Item
@@ -90,7 +102,7 @@ function MenuItems(props) {
 
             <Menu.Item
                 name='logOut'
-                style={{fontSize: '18px'}}
+                style={{ fontSize: '18px' }}
                 active={props.activeItem === 'logOut'}
                 onClick={handleChange}>
                 <Icon name='sign-out' /> Log out
