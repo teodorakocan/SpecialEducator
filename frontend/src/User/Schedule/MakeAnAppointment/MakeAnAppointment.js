@@ -9,7 +9,6 @@ import OpnePortal from '../../../HelpPages/OpenPortal';
 import avatar from '../../../images/avatar.png';
 import { appointments } from './appointments';
 import AppointmentTemplate from './AppointmentTemplate';
-import NotAuthorized from '../../../HelpPages/NotAuthorized';
 
 const currentDate = new Date();
 const views = ['month'];
@@ -52,11 +51,12 @@ class MakeAnAppointment extends React.Component {
     componentDidMount() {
         axiosInstance.get('/admin/allUsers', { headers: authHeader() })
             .then((response) => {
+                console.log(response)
                 this.allUsers(response.data.users);
             }).catch((error) => {
                 this.setState({ notAuthorized: true });
             });
-        axiosInstance.get('/admin/allChildren', { headers: authHeader() })
+        axiosInstance.get('/authUser/allChildren', { headers: authHeader() })
             .then((response) => {
                 this.allChildren(response.data.children);
             }).catch((error) => {

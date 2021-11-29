@@ -193,4 +193,142 @@ Authenticated.searchChild = async (teacherId, fullName) => {
     }
 };
 
+Authenticated.getChildData = async (childId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var childData = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + childId + ";");
+
+        var appointments = await request.request()
+            .query("SELECT * FROM appointment WHERE idChild=" + childId + ";");
+
+        return ({ status: 'success', child: childData.recordset, appointments: appointments.recordset })
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.allTeachers = async (teacherId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var userData = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + teacherId + ";");
+
+        if (userData.recordset.length > 0) {
+            var users = await request.request()
+                .query("SELECT * FROM [User] WHERE idCenter='" + userData.recordset[0].idCenter + "';");
+        }
+
+        return ({ status: 'success', users: users.recordset });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.checkIfDailyReportAllreadyExist = async () => {
+    try {
+        let request = await sql.connect(dbConfig);
+        const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const nowDate = nowDateAndTime.split(' ');
+        var exist = false;
+
+        var daiyReports = await request.request()
+            .query("SELECT * FROM dailyreport;");
+
+        daiyReports.recordset.forEach(daiyReport => {
+            const dealyReportDateAndTime = new Date(daiyReport.date).toISOString().slice(0, 19).replace('T', ' ');
+            const dailyReortDate = dealyReportDateAndTime.split(' ');
+
+            if (dailyReortDate[0] === nowDate[0]) {
+                exist = true;
+            }
+        });
+
+        return exist;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+};
+
+Authenticated.sendAndSaveDailyReport = async (childId, teacherId, report) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        const result = await Authenticated.checkIfDailyReportAllreadyExist();
+        if (result) {
+            return ({ status: 'failed' });
+        } else {
+            var teacher = await request.request()
+                .query("SELECT * FROM [User] WHERE idUser=" + teacherId + ";");
+            var teacherName = teacher.recordset[0].name + ' ' + teacher.recordset[0].lastName;
+
+            await request.request()
+                .query("INSERT INTO dailyreport (report, recommendationForTeacher, recommendationForParent, progress, problems, mark, date, idChild, idUser) VALUES ('" +
+                    report.report + "', '" + report.recommendationForTeacher + "', '" + report.recommendationForParent + "', '" + report.progress + "', '" +
+                    report.problems + "', " + report.mark + ", '" + nowDateAndTime + "', " + parseInt(childId) + ", " + teacherId + ");");
+
+            var child = await request.request()
+                .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
+            var childName = child.recordset[0].name + ' ' + child.recordset[0].lastName;
+
+            var childParent = await request.request()
+                .query("SELECT * FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+
+            return ({ status: 'success', parentEmail: childParent.recordset[0].email, childName: childName, teacherName: teacherName });
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.listOfChildsDailyReports = async (childId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var childsDailyReports = await request.request()
+            .query("SELECT * FROM dailyreport WHERE idChild=" + childId + ";");
+
+        return ({ status: 'success', childsDailyReports: childsDailyReports.recordset });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.deleteDailyReport = async (reportId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        await request.request()
+            .query("DELETE FROM dailyreport WHERE idDailyReport=" + reportId + ";");
+
+        return ({ status: 'success' });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.deleteMarkedDailyReports = async (reports) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        reports.map(async (report) => {
+            await request.request()
+                .query("DELETE FROM dailyreport WHERE idDailyReport=" + report + ";");
+        })
+        return ({ status: 'success' });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
 module.exports = Authenticated;

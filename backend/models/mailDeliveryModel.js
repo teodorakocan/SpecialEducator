@@ -6,12 +6,13 @@ const MailDelivery = function (to) {
 };
 
 MailDelivery.sendScheduleToTeachers = (teachersEmails) => {
+    const contentEmail = '<h1>Your schedule is updated</h1><div><Link to="http://localhost:3000" /></div>';
     teachersEmails.map(email => {
         var mailOptionsCenter = {
             from: 'specialeducator2021@gmail.com',
             to: email.email,
-            subject: 'Special Educator',
-            text: 'Your schedule is updated.'
+            subject: 'Special Educator - Schedule',
+            html: contentEmail
         };
 
         mailConfig.sendMail(mailOptionsCenter);
@@ -40,12 +41,13 @@ MailDelivery.sendScheduleToParent = (parentsEmails) => {
 };
 
 MailDelivery.sendNewUserEmail = (user) => {
+    const contentEmail = '<h1>Registration</h1><div><p>Welcome. You are now signed up on aplication Special Educator with email/username: ' +
+        user.email + ' and password: ' + user.password + '.</p></div>';
     var mailOptionsCenter = {
         from: 'specialeducator2021@gmail.com',
         to: user.email,
         subject: 'Special Educator',
-        text: 'Welcome. You are now signed up on aplication Special Educator with email/username: ' +
-            user.email + ' and password: ' + user.password + '.'
+        html: contentEmail
     };
 
     mailConfig.sendMail(mailOptionsCenter, function (error, info) {
@@ -58,12 +60,13 @@ MailDelivery.sendNewUserEmail = (user) => {
 };
 
 MailDelivery.sendParentEmail = (child, parent) => {
+    const contentEmail = '<h1>Registration</h1><div><p>Welcome. Your child ' + child.name + ' ' + child.lastName + ' is sign up on application Special Educator.' +
+        'All information about your child will be sent to this email address.</p></div>';
     var mailOptionsCenter = {
         from: 'specialeducator2021@gmail.com',
         to: parent.email,
         subject: 'Special Educator',
-        text: 'Welcome. Your child ' + child.name + ' ' + child.lastName + ' is sign up on application Special Educator.' +
-            'All information about your child will be sent to this email address.'
+        html: contentEmail
     };
 
     mailConfig.sendMail(mailOptionsCenter, function (error, info) {
@@ -76,11 +79,13 @@ MailDelivery.sendParentEmail = (child, parent) => {
 };
 
 MailDelivery.sendRegistrationToUser = (user, name) => {
+    const contentEmail = '<h1>Registration</h1><div><p>Welcome. You have successfully registered your special education center, ' + name +
+        ', on the Special Educator application. Enjoy using it.</p></div>';
     var mailOptionsCenter = {
         from: 'specialeducator2021@gmail.com',
         to: user.email,
         subject: 'Special Educator',
-        text: 'Welcome. You have successfully registered your special education center, ' + name + ', on the Special Educator application. Enjoy using it.'
+        html: contentEmail
     };
 
     mailConfig.sendMail(mailOptionsCenter, function (error, info) {
@@ -98,7 +103,7 @@ MailDelivery.sendResetPasswordLink = (resetCode, email) => {
     var mailOptionsCenter = {
         from: 'specialeducator2021@gmail.com',
         to: email,
-        subject: 'Special Educator',
+        subject: 'Special Educator - Reset code',
         text: emailMessage
     };
 
@@ -112,13 +117,39 @@ MailDelivery.sendResetPasswordLink = (resetCode, email) => {
 };
 
 MailDelivery.sendUserDataUpdates = (user) => {
+    const contentEmail = '<h1>Data updated</h1><div><p>You have successfully changed email address on Special Educator app from ' + userData.recordset[0].email + ' to ' + user.email + '. ' +
+        'From now on all other information will be sent on ' + user.email + ', and you will be logged in with this new email address as your username.</p></div>';
     var mailOptions = {
         from: 'specialeducator2021@gmail.com',
         to: user.email,
-        subject: 'Special Educator',
-        text: 'You have successfully changed email address on Special Educator app from ' + userData.recordset[0].email + ' to ' + user.email + '. ' +
-            'From now on all other information will be sent on ' + user.email + ', and you will be logged in with this new email address as your username.'
+        subject: 'Special Educator - Update',
+        html: contentEmail
     };
+    mailConfig.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+};
+
+MailDelivery.sendToParentDailyReport = (parentEmail, report, childName, teacherName) => {
+    const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const nowDate = nowDateAndTime.split(' ');
+
+    var subject = 'Special Educator - Daily report'
+    var emailContent = '<h1><span style="text-decoration: underline;">' + childName + ' - ' + nowDate[0] + '</span></h1>' +
+        '<div><p><strong>progress: </strong>' + report.progress + '</p><p><strong>Problems: </strong>' + report.problems +
+        '</p><p><strong>Recommendation for parent: </strong>' + report.recommendationForParent + '</p><p><strong>Mark: </strong>' +
+        report.mark + '</p><p><strong>Teacher who wrote report: </strong>' + teacherName + '</p></div>'
+    var mailOptions = {
+        from: 'specialeducator2021@gmail.com',
+        to: parentEmail,
+        subject: subject,
+        html: emailContent
+    };
+
     mailConfig.sendMail(mailOptions, function (error, info) {
         if (error) {
             return true;

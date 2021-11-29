@@ -2,10 +2,11 @@ import React from 'react';
 import Scheduler, { Resource } from 'devextreme-react/scheduler';
 
 import ScheduleTemplate from './ScheduleTemplate';
-import { schedule } from './schedule';
-import { teacher } from './teacher';
-import { children } from './children';
+import data from './data'
 
+const schedule = data.schedule;
+const teacher = data.teacher;
+const children = data.children;
 const currentDate = new Date();
 const views = ['month'];
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Input, Button, Feed, Image } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { children } from './children';
 import axiosInstance from '../../serverConnection/axios';
@@ -21,7 +22,7 @@ function HomePage() {
                 </Feed.Label>
                 <Feed.Content>
                     <Feed.Summary>
-                        <a>{child.name + ' ' + child.lastName}</a>
+                        <Link to={'/profile/child/' + child.idChild}>{child.name + ' ' + child.lastName}</Link>
                     </Feed.Summary>
                 </Feed.Content>
             </Feed.Event>
@@ -51,10 +52,8 @@ function HomePage() {
                         navigate('/notFound');
                     } else if (error.response.status === 403) {
                         navigate('/notAuthenticated');
-                    } else if (error.response.status === 404) {
-                        navigate('/notFound');
                     } else {
-                        navigate('/notAuthorized');
+                        navigate('/notFound');
                     }
                 });
         } else {
@@ -69,7 +68,7 @@ function HomePage() {
                 <Grid.Column>
                     <Input
                         icon={{ name: 'search' }}
-                        placeholder='Search...'
+                        placeholder='Search child...'
                         onChange={(e) => setChildName(e.target.value)}
                         action={<Button basic onClick={onClickSearchChild}> </Button>}
                     />

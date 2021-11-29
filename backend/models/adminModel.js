@@ -165,7 +165,7 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
             }
 
             await request.request()
-                .query("INSERT INTO child (name, lastName, dateOfBirth, image, idCenter, idAnamnesis, idParent) VALUES ('" +
+                .query("INSERT INTO child (name, lastName, dateofBirth, image, idCenter, idAnamnesis, idParent) VALUES ('" +
                     child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + imageName + "', " +
                     admin.recordset[0].idCenter + ", " + anamnesisId + ", " + parentId + ");");
         }
@@ -249,20 +249,20 @@ Admin.updateSchedule = async (timeTable) => {
             if (id == -1) {
                 await request.request()
                     .query("DELETE FROM appointment WHERE idAppointment=" + appointment.idAppointment + ";");
-            }else{
+            } else {
                 //posto raspored postoji u bazi
                 //proveri da li su mu vresnosti izmenjena, ako jesu odradi update
                 const schedule = timeTable.find(tt => tt.idAppointment == appointment.idAppointment);
-                await request.request().query("UPDATE appointment SET endDate='" + schedule.endDate + "', startDate='" + schedule.startDate + 
-                "', text='" + schedule.text + "', description='" + schedule.description + "', idUser=" + schedule.idUser
-                 + ", idChild=" + schedule.idChild + ", idCenter=" + appointment.idCenter + " WHERE idAppointment = " + schedule.idAppointment + ";");
+                await request.request().query("UPDATE appointment SET endDate='" + schedule.endDate + "', startDate='" + schedule.startDate +
+                    "', text='" + schedule.text + "', description='" + schedule.description + "', idUser=" + schedule.idUser
+                    + ", idChild=" + schedule.idChild + ", idCenter=" + appointment.idCenter + " WHERE idAppointment = " + schedule.idAppointment + ";");
             }
         }
 
         return ({ updateStatus: 'success', updateMessage: 'Schedule is updated.' })
     } catch (err) {
         console.log(err);
-        return({ updateStatus: 'failed' })
+        return ({ updateStatus: 'failed' })
     }
 };
 
@@ -438,7 +438,37 @@ Admin.getTeacherData = async (teacherId) => {
         var appointments = await request.request()
             .query("SELECT * FROM appointment WHERE idUser=" + teacherId + ";");
 
-        return ({status:'success', teacher: teacherData.recordset, appointments: appointments.recordset })
+        return ({ status: 'success', teacher: teacherData.recordset, appointments: appointments.recordset })
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
+    try {
+        let request = await sql.connect(dbConfig);
+        const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        await request.request()
+            .query("INSERT INTO estimate (grossMotorSkils, fineMotorSkils, perceptualAbilities, speakingSkils, socioEmotionalDevelopment, " +
+                "intellectualAbility,idChild, idUser, grossMotorSkilsMark, fineMotorSkilsMark, perceptualAbilitiesMark, speakingSkilsMark, " +
+                "socioEmotionalDevelopmentMark, intellectualAbilityMark, date) VALUES ('" + estimate.grossMotorSkils + "', '" +
+                estimate.fineMotorSkils + "', '" + estimate.perceptualAbilities + "', '" + estimate.speakingSkils + "', '" + estimate.socioEmotionalDevelopment + "', '"
+                + estimate.intellectualAbility + "', " + parseInt(childId) + "', " + parseInt(adminId) + "', " + 
+                estimate.grossMotorSkilsMark + ", " + estimate.fineMotorSkilsMark + ", " + estimate.perceptualAbilitiesMark + ", " + 
+                estimate.speakingSkilsMark + ", " + estimate.socioEmotionalDevelopmentMark + ", " + estimate.intellectualAbilityMark 
+                + ", '" + nowDateAndTime + "');");
+
+        var child = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
+        var childName = child.recordset[0].name + ' ' + child.recordset[0].lastName;
+
+        var childParent = await request.request()
+            .query("SELECT * FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+
+        return ({ status: 'success', parentEmail: childParent.recordset[0].email, childName: childName });
+
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

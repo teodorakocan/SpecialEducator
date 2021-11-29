@@ -10,7 +10,6 @@ function AddChild(props) {
 
     const [hasError, setHasError] = useState(false);
     const [errorMessages, setErrorMessages] = useState({});
-    const [value, onChange] = useState(new Date());
 
     const errorComponents = Object.values(errorMessages).map((errorMessage, index) =>
         <div style={{ color: 'red' }} key={index}>{errorMessage}</div>)
@@ -62,7 +61,7 @@ function AddChild(props) {
                     label='Date of birth'
                     placeholder='Date'
                     iconPosition='left'
-                    maxDate={value}
+                    maxDate={new Date()}
                     value={props.child ? props.child['dateOfBirth'] : ''}
                     onChange={handleChildInputChange}
                 />

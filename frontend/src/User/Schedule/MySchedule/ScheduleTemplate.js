@@ -1,7 +1,9 @@
 import React from 'react';
 import Query from 'devextreme/data/query';
 
-import { schedule } from './schedule';
+import data from './data'
+
+const schedule = data.schedule;
 
 function getMovieById(idUser, idChild) {
   return Query(schedule).filter(['idChild', idChild], ['idUser', idUser]).toArray()[0];

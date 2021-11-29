@@ -2,8 +2,10 @@ import React from 'react';
 import Scheduler, { Resource } from 'devextreme-react/scheduler';
 
 import ScheduleTemplate from '../Schedule/MySchedule/ScheduleTemplate';
-import { children } from '../Schedule/MySchedule/children';
+import data from '../Schedule/MySchedule/data';
+import { teachers } from './ChildProfile/teachers';
 
+const children = data.children;
 const currentDate = new Date();
 const views = ['month'];
 
@@ -21,11 +23,16 @@ function Schedule(props) {
                 height={600}
                 appointmentRender={ScheduleTemplate}
             >
-                <Resource
+                {props.role === 'teacher' ? <Resource
                     label='Child'
                     dataSource={children}
                     fieldExpr='idChild'
-                />
+                /> :
+                    <Resource
+                        label='Teacher'
+                        dataSource={teachers}
+                        fieldExpr='idUser'
+                    />}
             </Scheduler>
         </React.Fragment>
     )

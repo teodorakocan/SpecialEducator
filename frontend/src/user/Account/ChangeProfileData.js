@@ -56,10 +56,8 @@ function ChangeProfileData(props) {
                         navigate('/notFound');
                     } else if (error.response.status === 403) {
                         navigate('/notAuthenticated');
-                    } else if (error.response.status === 404) {
-                        navigate('/notFound');
                     } else {
-                        navigate('/notAuthorized');
+                        navigate('/notFound');
                     }
                 });
         } else {

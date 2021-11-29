@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Image, Container, Button, Icon } from 'semantic-ui-react';
+import { useNavigate } from 'react-router';
 
 import axiosInstance from '../serverConnection/axios';
 import { authHeader } from '../serverConnection/authHeader';
@@ -7,7 +8,6 @@ import UserBoard from './UserBoard';
 import MenuItems from './MenuItems';
 import './HomeStyle.css'
 import avatar from '../images/avatar.png';
-import { useNavigate } from 'react-router';
 
 const MainHomePage = () => {
 
@@ -15,14 +15,10 @@ const MainHomePage = () => {
     const [center, setCenter] = useState({});
     const [imageURL, setImageURL] = useState(null);
     const [activeItem, setActiveItem] = useState('home');
+    const [userIsChanged, setUserIsChanged] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        getUserData();
-        getCenterData();
-    }, []);
-
-    function getUserData() {
         axiosInstance.get('/authUser/userData', { headers: authHeader() })
             .then((resposnse) => {
                 setUser(resposnse.data.user);
@@ -35,17 +31,15 @@ const MainHomePage = () => {
             .catch((error) => {
                 throwError(error);
             });
-    }
-
-    function getCenterData() {
-        axiosInstance.get('/authUser/centerData', { headers: authHeader() })
+            axiosInstance.get('/authUser/centerData', { headers: authHeader() })
             .then((resposnse) => {
                 setCenter(resposnse.data.center);
             })
             .catch((error) => {
                 throwError(error);
             });
-    }
+            setUserIsChanged(false);
+    }, [userIsChanged]);
 
     function onClickUploadImage(file) {
         var formData = new FormData();
@@ -55,7 +49,7 @@ const MainHomePage = () => {
             headers: authHeader()
         }).then((response) => {
             if (response.data.status === 'success') {
-                getUserData();
+                setUserIsChanged(true);
             }
         }).catch((error) => {
             throwError(error);
@@ -67,15 +61,13 @@ const MainHomePage = () => {
             navigate('/notFound');
         } else if (error.response.status === 403) {
             navigate('/notAuthenticated');
-        } else if (error.response.status === 401) {
-            navigate('/notAuthorized');
         } else {
             navigate('/notFound');
         }
     }
 
     function onClickChangeUserData() {
-        getUserData();
+        setUserIsChanged(true);
     }
 
     function handleChange(name){

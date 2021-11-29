@@ -74,7 +74,7 @@ User.resetPasswordRequest = async (email) => {
             const resetCode = code + '_' + existingUser.recordset[0].idUser + '_' + requestTime;
 
             await request.request().query("UPDATE [User] SET resetCode = '" + resetCode + "' WHERE email = '" + email + "';");
-            message = 'Email with reset link was sent on your email address, ' + email + '.';
+            message = 'Email with reset link was sent on your email address, ' + email + '. Code will expire in one hour.';
             return ({ status: 'success', resetCode: resetCode, message: message });
         } else {
             message = "User with this email address isn't register on app";

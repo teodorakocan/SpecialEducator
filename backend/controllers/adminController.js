@@ -173,9 +173,25 @@ exports.searchTeacher = async (req, res) => {
 exports.getTeacherData = async (req, res) => {
     try {
         const { status, teacher, appointments } = await Admin.getTeacherData(req.query.teacherId);
-        console.log(teacher);
-        console.log(appointments);
         res.send({ status: status, teacher: teacher, appointments: appointments });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.saveAndSendEstimate = async (req, res) => {
+    try {
+        const { status, parentEmail, childName } = await Admin.saveAndSendEstimate(req.user.id, req.query.childId, req.query.estimate);
+        if(status === 'success'){
+            //salji mail roditelju sa procenom i linkom da pogledaju dijagram dnevnih izvestaja u roku od mesec dana
+            //i dijagram procene
+            console.log(parentEmail);
+            console.log(childName);
+            res.send({ status: status });
+        }else{
+            res.send({ status: status });
+        }
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

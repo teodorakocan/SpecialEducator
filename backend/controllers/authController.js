@@ -1,4 +1,5 @@
 const Authentiated = require('../models/authModel');
+const MailDelivery = require('../models/mailDeliveryModel');
 
 exports.userData = async (req, res) => {
     try {
@@ -42,22 +43,22 @@ exports.changeImage = async (req, res) => {
 }
 
 exports.centerData = async (req, res) => {
-    try{
+    try {
         const { status, center } = await Authentiated.centerData(req.user.id);
         res.send({ status: status, center: center });
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.send({status: 'failed'});
+        res.send({ status: 'failed' });
     }
 };
 
 exports.mySchedule = async (req, res) => {
-    try{
+    try {
         const { status, mySchedule } = await Authentiated.mySchedule(req.user.id);
         res.send({ status: status, mySchedule: mySchedule });
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.send({status: 'failed'});
+        res.send({ status: 'failed' });
     }
 };
 
@@ -75,6 +76,99 @@ exports.searchChild = async (req, res) => {
     try {
         const { status, child } = await Authentiated.searchChild(req.user.id, req.query.fullName);
         res.send({ status: status, child: child });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.getChildData = async (req, res) => {
+    try {
+        const { status, child, appointments } = await Authentiated.getChildData(req.query.childId);
+        res.send({ status: status, child: child, appointments: appointments });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.allTeachers = async (req, res) => {
+    try {
+        const { status, users } = await Authentiated.allTeachers(req.user.id);
+        res.send({ status: status, users: users });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.checkIfDailyReportAllreadyExist = async (req, res) => {
+    try {
+        const result = await Authentiated.checkIfDailyReportAllreadyExist();
+        if (result) {
+            res.send({ status: 'success', message: 'Daily report for this day is already added.' });
+        } else {
+            res.send({ status: 'failed' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.sendAndSaveDailyReport = async (req, res) => {
+    try {
+        const report = JSON.parse(req.query.report);
+        const { status, parentEmail, childName, teacherName } = await Authentiated.sendAndSaveDailyReport(req.query.childId, req.user.id, report);
+
+        if (status === 'success') {
+            if (MailDelivery.sendToParentDailyReport(parentEmail, report, childName, teacherName)) {
+                res.send({ status: 'failed' });
+            } else {
+                res.send({ status: status });
+            }
+        } else {
+            res.send({ status: status });
+        }
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.listOfChildsDailyReports = async (req, res) => {
+    try {
+        const { status, childsDailyReports } = await Authentiated.listOfChildsDailyReports(req.query.childId);
+        res.send({ status: status, childsDailyReports: childsDailyReports });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.deleteDailyReport = async (req, res) => {
+    try {
+        const { status } = await Authentiated.deleteDailyReport(req.query.reportId);
+        res.send({ status: status });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.deleteMarkedDailyReports = async (req, res) => {
+    try {
+        const { status } = await Authentiated.deleteMarkedDailyReports(req.query.reports);
+        res.send({ status: status });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.getTeacherRole = async (req, res) => {
+    try {
+        res.send({ status: 'success', role: req.user.role });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

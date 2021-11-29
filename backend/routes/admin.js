@@ -14,5 +14,6 @@ router.post('/addNewUser', loggedIn, adminOnly, upload.single('file'), adminCont
 router.post('/addChild', loggedIn, adminOnly, upload.single('file'), adminController.addChild);
 router.post('/addChild', loggedIn, adminOnly, upload.single('file'), adminController.addChild);
 router.post('/saveAndSendSchedule', loggedIn, adminOnly, adminController.saveAndSendSchedule);
+router.post('/saveAndSendEstimate', loggedIn, adminOnly, adminController.saveAndSendEstimate);
 
 module.exports = router;

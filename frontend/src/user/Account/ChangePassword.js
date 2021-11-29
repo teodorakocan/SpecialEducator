@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Segment, Grid, Button, Input, Checkbox, Divider } from 'semantic-ui-react';
+import { useNavigate } from 'react-router';
 
 import '../UserStyle.css';
 import PasswordValidation from '../../Validations/PasswordValidation';
 import { authHeader } from '../../serverConnection/authHeader';
 import axiosInstance from '../../serverConnection/axios';
 import OpenPortal from '../../HelpPages/OpenPortal';
-import { useNavigate } from 'react-router';
 
 function ChangePassword(props) {
 
@@ -55,10 +55,8 @@ function ChangePassword(props) {
                     navigate('/notFound');
                 }else if (error.response.status === 403) {
                     navigate('/notAuthenticated');
-                } else if (error.response.status === 404) {
-                    navigate('/notFound');
                 } else {
-                    navigate('/notAuthorized');
+                    navigate('/notFound');
                 }
             })
 

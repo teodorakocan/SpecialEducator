@@ -1,13 +1,13 @@
 import React from 'react';
 import { Grid, Image, Segment } from 'semantic-ui-react'
 
-import useTeacher from '../../hooks/useTeacher';
+import useTeacherData from '../../hooks/useTeacherData';
 import '../../MainPage/HomeStyle.css'
 import Schedule from './Schedule';
 
 function TeacherProfilData(props) {
 
-    const [teacher, appointments] = useTeacher(props.teacherId);
+    const [teacher, appointments] = useTeacherData(props.teacherId);
 
     const teacherImage = Object.values(teacher).map((teacher, index) =>
         <Image src={'http://localhost:9000/' + teacher.image} key={index} style={{ height: '300px', width: '300px' }} />
@@ -32,7 +32,7 @@ function TeacherProfilData(props) {
             </Grid.Row>
 
             <Grid.Row>
-                <Schedule appointments={appointments} teacher={teacher} />
+                <Schedule appointments={appointments} teacher={teacher} role={props.role} />
             </Grid.Row>
         </Grid>
     )
