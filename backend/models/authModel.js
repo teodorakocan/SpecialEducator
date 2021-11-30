@@ -351,7 +351,7 @@ Authenticated.searchDailyReport = async (date) => {
 
         var dailyReports = await request.request()
             .query("SELECT * FROM dailyreport;");
-        var serachedDailyReports = [];
+        var serachedDailyReport = [];
 
 
         dailyReports.recordset.forEach((dailyReport) => {
@@ -359,11 +359,52 @@ Authenticated.searchDailyReport = async (date) => {
             const dailyReportDate = dailyReportDateAndTime.split(' ');
             
             if(dailyReportDate[0] === date){
-                serachedDailyReports.push(dailyReport);
+                serachedDailyReport.push(dailyReport);
             }
         });
-        
-        return ({ status: 'success', dailyReports: serachedDailyReports })
+
+        return ({ status: 'success', dailyReport: serachedDailyReport })
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.searchEstimate = async (date) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var estimates = await request.request()
+            .query("SELECT * FROM estimate;");
+        var serachedEstimate = [];
+
+
+        estimates.recordset.forEach((estimate) => {
+            const estimateDateAndTime = new Date(estimate.date).toISOString().slice(0, 19).replace('T', ' ');
+            const estimateDate = estimateDateAndTime.split(' ');
+            
+            if(estimateDate[0] === date){
+                serachedEstimate.push(estimate);
+            }
+        });
+
+        return ({ status: 'success', estimate: serachedEstimate })
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.getDailyReportById = async (dailyReportId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var dailyReport = await request.request()
+            .query("SELECT * FROM dailyreport WHERE idDailyReport=" + dailyReportId + ";");
+
+        return ({ status: 'success', dailyReport: dailyReport.recordset })
 
     } catch (err) {
         console.log(err);

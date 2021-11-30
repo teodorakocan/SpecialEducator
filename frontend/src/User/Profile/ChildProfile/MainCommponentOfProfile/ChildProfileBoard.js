@@ -3,8 +3,8 @@ import React from 'react';
 import AddDailyReport from '../DailyReports/AddDailyReport';
 import ChildProfileData from '../ChildProfileData';
 import ListOfChildsDailyReports from '../DailyReports/ListOfChildsDailyReports';
-import AddNewEstimate from '../Estimate/AddNewEstimate';
-import ListOfChildsEstimates from '../Estimate/ListOfChildsEstimates';
+import AddNewEstimate from '../Estimates/AddNewEstimate';
+import ListOfChildsEstimates from '../Estimates/ListOfChildsEstimates';
 
 function ChildProfileBoard(props) {
 

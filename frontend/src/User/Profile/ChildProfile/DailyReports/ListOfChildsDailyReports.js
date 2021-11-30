@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router';
 
 import axiosInstance from '../../../../serverConnection/axios';
 import { authHeader } from '../../../../serverConnection/authHeader';
+import OpenPortal from '../../../../HelpPages/OpenPortal';
 
 function ListOfChildsDailyReports(props) {
 
     const [childsReports, setChildsReports] = useState([]);
     const [listIsChanged, setListIsChanged] = useState(false);
     const [checkedReports, setCheckedReports] = useState([]);
-    const [isChecked, setIsChecked] = useState(false);
+    const [openPortal, setOpenPortal] = useState(false);
+    const [portalMessage, setPortalMessage] = useState();
     const [searchDate, setSearchDate] = useState();
     const navigate = useNavigate();
 
@@ -34,7 +36,7 @@ function ListOfChildsDailyReports(props) {
                 />
             </List.Content>
             <List.Content>
-                <List.Item href='#'>Daily report for {childsReport.date}</List.Item>
+                <List.Item href={'/dailyReport/' + childsReport.id}>Daily report for {childsReport.date}</List.Item>
             </List.Content>
         </List.Item>
     );
@@ -85,12 +87,6 @@ function ListOfChildsDailyReports(props) {
         } else {
             checkedReports.push(value);
         }
-
-        if (checkedReports.length == 0) {
-            setIsChecked(false);
-        } else {
-            setIsChecked(true);
-        }
     }
 
     function onClickDeleteDailyReport(reportId) {
@@ -103,6 +99,8 @@ function ListOfChildsDailyReports(props) {
             .then((response) => {
                 if (response.data.status === 'success') {
                     setListIsChanged(true);
+                    setOpenPortal(true);
+                    setPortalMessage('Daily report is deleted');
                 }
             }).catch((error) => {
                 throwError(error);
@@ -119,6 +117,8 @@ function ListOfChildsDailyReports(props) {
             .then((response) => {
                 if (response.data.status === 'success') {
                     setListIsChanged(true);
+                    setOpenPortal(true);
+                    setPortalMessage('Daily report is deleted');
                 }
             }).catch((error) => {
                 throwError(error);
@@ -140,7 +140,7 @@ function ListOfChildsDailyReports(props) {
             })
                 .then((response) => {
                     if (response.data.status === 'success') {
-                        setChildsReports(response.data.dailyReports);
+                        setChildsReports(response.data.dailyReport);
                     }
                 }).catch((error) => {
                     throwError(error);
@@ -150,24 +150,17 @@ function ListOfChildsDailyReports(props) {
         }
     }
 
-    function onClickRefreshList(){
+    function onClickRefreshList() {
         setListIsChanged(true);
     }
 
     return (
-        childsReports.length === 0 ?
+        <Grid>
             <Grid.Row>
-                <Message
-                    warning
-                    header='List is empty'
-                    content='No daily report was added.'
-                />
-            </Grid.Row > :
-            < Grid.Row >
-                <Grid.Column width={10}>
+                <Grid.Column width={16}>
                     <Segment>
                         <Input placeholder='Search...' type='date' onChange={handleSearch} />
-                        
+
                         <Button icon inverted color='orange' floated='right' onClick={onClickRefreshList}>
                             <Icon name='refresh' />
                         </Button>
@@ -175,16 +168,29 @@ function ListOfChildsDailyReports(props) {
                         <Button icon inverted color='orange' floated='right' onClick={onClickSerachDailyReport}>
                             <Icon name='search' />
                         </Button>
-                    </Segment> <br />
-                    <List divided verticalAlign='middle'>
-                        {dailyReportContent}
-                    </List>
-
-                    {isChecked ?
-                        <Button inverted color='red' onClick={onClickDeleteMarkedReports}>Delete marked</Button>
-                        : ''}
+                    </Segment>
                 </Grid.Column>
             </Grid.Row>
+
+            <Grid.Row>
+                {childsReports.length === 0 ?
+                    <Grid.Column width={16}>
+                        <Message
+                            warning
+                            header='List is empty'
+                            content='No daily report was added.'
+                        />
+                    </Grid.Column > :
+                    <Grid.Column width={16}>
+                        <List divided verticalAlign='middle'>
+                            {dailyReportContent}
+                        </List>
+                        {checkedReports.length === 0 ? '' :
+                            <Button inverted color='red' onClick={onClickDeleteMarkedReports}>Delete marked</Button>}
+                    </Grid.Column>}
+            </Grid.Row>
+            {openPortal && <OpenPortal open={openPortal} message={portalMessage} handleClose={() => setOpenPortal(!openPortal)} />}
+        </Grid>
     )
 }
 export default ListOfChildsDailyReports;

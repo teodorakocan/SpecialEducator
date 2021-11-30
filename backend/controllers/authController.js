@@ -187,9 +187,28 @@ exports.listOfChildsEstimates = async (req, res) => {
 
 exports.searchDailyReport = async (req, res) => { //proveri na frontu jel prazno
     try {
-        const { status, dailyReports } = await Authentiated.searchDailyReport(req.query.date);
-        console.log(dailyReports)
-        res.send({ status: status, dailyReports: dailyReports });
+        const { status, dailyReport } = await Authentiated.searchDailyReport(req.query.date);
+        res.send({ status: status, dailyReport: dailyReport });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.searchEstimate = async (req, res) => { //proveri na frontu jel prazno
+    try {
+        const { status, estimate } = await Authentiated.searchEstimate(req.query.date);
+        res.send({ status: status, estimate: estimate });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.getDailyReportById = async (req, res) => { //proveri na frontu jel prazno
+    try {
+        const { status, dailyReport } = await Authentiated.getDailyReportById(req.query.dailyReportId);
+        res.send({ status: status, dailyReport: dailyReport });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

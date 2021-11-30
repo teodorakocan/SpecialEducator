@@ -7,7 +7,7 @@ import Schedule from '../Schedule'
 function ChildProfileData(props) {
 
     const [child, appointments] = useChildData(props.childId);
-    
+
     const childData = Object.values(child).map((child, index) =>
         <Card key={index}>
             <Image src={child.image} wrapped ui={false} />
@@ -21,14 +21,16 @@ function ChildProfileData(props) {
     )
 
     return (
-        <Grid.Row>
-            <Grid.Column width={4}>
-                {childData}
-            </Grid.Column>
-            <Grid.Column width={10}>
-                <Schedule appointments={appointments} child={child} role={props.role} />
-            </Grid.Column>
-        </Grid.Row>
+        <Grid>
+            <Grid.Row>
+                <Grid.Column width={4}>
+                    {childData}
+                </Grid.Column>
+                <Grid.Column width={10}>
+                    <Schedule appointments={appointments} child={child} role={props.role} />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
     )
 }
 
