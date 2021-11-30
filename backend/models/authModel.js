@@ -412,4 +412,19 @@ Authenticated.getDailyReportById = async (dailyReportId) => {
     }
 };
 
+Authenticated.getEstimateById = async (estimateId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var estimate = await request.request()
+            .query("SELECT * FROM estimate WHERE idEstimate=" + estimateId + ";");
+
+        return ({ status: 'success', estimate: estimate.recordset })
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
 module.exports = Authenticated;

@@ -4,30 +4,29 @@ import { useNavigate } from 'react-router';
 import axiosInstance from '../serverConnection/axios';
 import { authHeader } from '../serverConnection/authHeader';
 
-const useGetDailyReportById = (dailyReportId) => {
-    const [dailyReport, setDailyReport] = useState([]);
+const useGetEstimateById = (estimateId) => {
+    const [estimate, setEstimate] = useState([]);
     const [date, setDate] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
-        getDailyReportById();
-    }, [dailyReportId]);
+        getEstimateById();
+    }, [estimateId]);
 
-    const getDailyReportById = async () => {
-        axiosInstance.get('/authUser/getDailyReportById', {
+    const getEstimateById = async () => {
+        axiosInstance.get('/authUser/getEstimateById', {
             headers: authHeader(),
             params:{
-                dailyReportId: dailyReportId
+                estimateId: estimateId
             }
         })
             .then((response) => {
-                debugger
                 if (response.data.status === 'success') {
-                    var dailyReportDateAndTime = response.data.dailyReport[0].date.split('T');
-                    var dailyReportDate = dailyReportDateAndTime[0].split('-');
+                    var estimateDateAndTime = response.data.estimate[0].date.split('T');
+                    var estimateDate = estimateDateAndTime[0].split('-');
 
-                    setDate(dailyReportDate[2] + '.' + dailyReportDate[1] + '.' + dailyReportDate[0]);
-                    setDailyReport(response.data.dailyReport);
+                    setDate(estimateDate[2] + '.' + estimateDate[1] + '.' + estimateDate[0]);
+                    setEstimate(response.data.estimate);
                 }
             }).catch((error) => {
                 if (typeof error.response === 'undefined') {
@@ -40,7 +39,7 @@ const useGetDailyReportById = (dailyReportId) => {
             })
     }
 
-    return [dailyReport, date];
+    return [estimate, date];
 }
 
-export default useGetDailyReportById;
+export default useGetEstimateById;

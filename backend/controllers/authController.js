@@ -185,7 +185,7 @@ exports.listOfChildsEstimates = async (req, res) => {
     }
 };
 
-exports.searchDailyReport = async (req, res) => { //proveri na frontu jel prazno
+exports.searchDailyReport = async (req, res) => { 
     try {
         const { status, dailyReport } = await Authentiated.searchDailyReport(req.query.date);
         res.send({ status: status, dailyReport: dailyReport });
@@ -195,7 +195,7 @@ exports.searchDailyReport = async (req, res) => { //proveri na frontu jel prazno
     }
 };
 
-exports.searchEstimate = async (req, res) => { //proveri na frontu jel prazno
+exports.searchEstimate = async (req, res) => { 
     try {
         const { status, estimate } = await Authentiated.searchEstimate(req.query.date);
         res.send({ status: status, estimate: estimate });
@@ -205,10 +205,20 @@ exports.searchEstimate = async (req, res) => { //proveri na frontu jel prazno
     }
 };
 
-exports.getDailyReportById = async (req, res) => { //proveri na frontu jel prazno
+exports.getDailyReportById = async (req, res) => { 
     try {
         const { status, dailyReport } = await Authentiated.getDailyReportById(req.query.dailyReportId);
         res.send({ status: status, dailyReport: dailyReport });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.getEstimateById = async (req, res) => { 
+    try {
+        const { status, estimate } = await Authentiated.getEstimateById(req.query.estimateId);
+        res.send({ status: status, estimate: estimate });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

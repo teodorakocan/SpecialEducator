@@ -11,7 +11,8 @@ import NotFound from './HelpPages/NotFound';
 import ResetPasswordRequest from './ForgotPassword/ResetPasswordRequest';
 import ResetPassword from './ForgotPassword/ResetPassword';
 import Profile from './User/Profile/Profile';
-import DailyReport from './User/Profile/ChildProfile/DailyReports/DailyReport';
+import DailyReportView from './User/Profile/ChildProfile/DailyReports/DailyReportView';
+import EstimateView from './User/Profile/ChildProfile/Estimates/EstimateView';
 
 const isLogged = localStorage.getItem('loggedIn') ? true : false
 
@@ -26,7 +27,8 @@ const routing = (
             <Route path='/forgotPassword' element={<ResetPasswordRequest />} />
             <Route path='/resetPassword' element={<ResetPassword />} />
             {isLogged && <Route path='/profile/:role/:id' element={<Profile />} />}
-            {isLogged && <Route path='/dailyReport/:id' element={<DailyReport />} />}
+            {isLogged && <Route path='/dailyReport/:id' element={<DailyReportView />} />}
+            {isLogged && <Route path='/estimate/:id' element={<EstimateView />} />}
         </Routes>
     </BrowserRouter>
 )

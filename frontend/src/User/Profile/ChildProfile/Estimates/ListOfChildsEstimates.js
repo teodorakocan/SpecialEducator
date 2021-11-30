@@ -29,7 +29,7 @@ function ListOfChildsEstimates(props) {
                         </Button>} />
                 </List.Content>
             }
-            <List.Item href='#'>Estimate for {childsEstimate.date}</List.Item>
+            <List.Item href={'/estimate/' + childsEstimate.id}>Estimate for {childsEstimate.date}</List.Item>
         </List.Item>
     );
 

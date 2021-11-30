@@ -33,5 +33,6 @@ router.post('/deleteMarkedDailyReports', loggedIn, authController.deleteMarkedDa
 
 //estimate
 router.get('/searchEstimate', loggedIn, authController.searchEstimate)
+router.get('/getEstimateById', loggedIn, authController.getEstimateById)
 
 module.exports = router;

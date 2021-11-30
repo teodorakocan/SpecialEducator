@@ -138,7 +138,7 @@ function AddDailyReport(props) {
 
                                         <Form.Field>
                                             <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
-                                                Give child a mark for his appointment:
+                                                Grade the child:
                                             </p>
                                             <Rating maxRating={5} defaultRating={3} icon='star' size='massive' name='mark'
                                                 onRate={handleInputChange} />

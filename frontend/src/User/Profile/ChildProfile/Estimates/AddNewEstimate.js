@@ -106,7 +106,7 @@ function AddNewEstimate(props) {
                                             Gross motor skils</p>
                                         <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='grossMotorSkils'
                                             onChange={handleInputChange} />
-                                        <div>Gross motor skils - mark:</div>
+                                        <div>Assess gross motor skils:</div>
                                         <Rating maxRating={5} icon='star' name='grossMotorSkilsMark'
                                             onRate={handleMarkChange} />
                                     </Form.Field>
@@ -116,7 +116,7 @@ function AddNewEstimate(props) {
                                             Fine motor skils</p>
                                         <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='fineMotorSkils'
                                             onChange={handleInputChange} />
-                                        <div>Fine motor skils - mark:</div>
+                                        <div>Assess fine motor skils:</div>
                                         <Rating maxRating={5} icon='star' name='fineMotorSkilsMark'
                                             onRate={handleMarkChange} />
                                     </Form.Field>
@@ -126,7 +126,7 @@ function AddNewEstimate(props) {
                                             Perceptual abilities</p>
                                         <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='perceptualAbilities'
                                             onChange={handleInputChange} />
-                                        <div>Perceptual abilities - mark:</div>
+                                        <div>Assess perceptual abilities:</div>
                                         <Rating maxRating={5} icon='star' name='perceptualAbilitiesMark'
                                             onRate={handleMarkChange} />
                                     </Form.Field>
@@ -136,7 +136,7 @@ function AddNewEstimate(props) {
                                             Speaking skils</p>
                                         <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='speakingSkils'
                                             onChange={handleInputChange} />
-                                        <div>Speaking skils - mark:</div>
+                                        <div>Assess speaking skils:</div>
                                         <Rating maxRating={5} icon='star' name='speakingSkilsMark'
                                             onRate={handleMarkChange} />
                                     </Form.Field>
@@ -146,7 +146,7 @@ function AddNewEstimate(props) {
                                             Socio emotional development</p>
                                         <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='socioEmotionalDevelopment'
                                             onChange={handleInputChange} />
-                                        <div>Socio emotional development - mark:</div>
+                                        <div>Assess socio emotional development:</div>
                                         <Rating maxRating={5} icon='star' name='socioEmotionalDevelopmentMark'
                                             onRate={handleMarkChange} />
                                     </Form.Field>
@@ -156,7 +156,7 @@ function AddNewEstimate(props) {
                                             Intellectual ability</p>
                                         <TextArea placeholder='Describe...' style={{ minHeight: 100 }} name='intellectualAbility'
                                             onChange={handleInputChange} />
-                                        <div>Intellectual ability - mark:</div>
+                                        <div>Assess intellectual ability:</div>
                                         <Rating maxRating={5} icon='star' name='intellectualAbilityMark'
                                             onRate={handleMarkChange} />
                                     </Form.Field>
