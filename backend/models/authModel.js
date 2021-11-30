@@ -433,7 +433,6 @@ Authenticated.getGradesOfDailyReports = async (childId) => {
         const noWDateAndTime = new Date();
         const noWMonth = noWDateAndTime.getMonth();
 
-        console.log(noWMonth)
         let request = await sql.connect(dbConfig);
 
         var dailyReports = await request.request()

@@ -200,7 +200,7 @@ exports.saveAndSendEstimate = async (req, res) => {
         const { status, parentEmail, childName, teacherName } = await Admin.saveAndSendEstimate(req.user.id, req.query.childId, estimate);
         
         if (status === 'success') {
-            if (MailDelivery.sendToParentEstimate(parentEmail, estimate, childName, teacherName)) {
+            if (MailDelivery.sendToParentEstimate(parentEmail, estimate, childName, teacherName, req.query.childId)) {
                 res.send({ status: 'failed' });
             } else {
                 res.send({ status: status });

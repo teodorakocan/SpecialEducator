@@ -109,4 +109,60 @@ User.resetPassword = async (password, resetCode) => {
     }
 };
 
+User.diagramMonthlyDailyReport = async (childId) => {
+    try {
+        var monthlyDailyReport = [];
+        const noWDateAndTime = new Date();
+        const noWMonth = noWDateAndTime.getMonth();
+
+        let request = await sql.connect(dbConfig);
+
+        var dailyReports = await request.request()
+            .query("SELECT * FROM dailyreport WHERE idChild=" + parseInt(childId) + ";");
+
+        dailyReports.recordset.map((dailyReport) => {
+            var dailyReportDateAndTime = new Date(dailyReport.date);
+            var dailyReportMonth = dailyReportDateAndTime.getMonth();
+
+            if(noWMonth === dailyReportMonth){
+                monthlyDailyReport.push(dailyReport);
+            }
+        });
+
+        return ({ status: 'success', dailyReports: monthlyDailyReport })
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+User.diagramAnnualEstimate = async (childId) => {
+    try {
+        var annualEstimates = [];
+        const noWDateAndTime = new Date();
+        const noWYear = noWDateAndTime.getFullYear();
+
+        let request = await sql.connect(dbConfig);
+
+        var estimates = await request.request()
+            .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
+
+            estimates.recordset.map((estimate) => {
+            var estimateDateAndTime = new Date(estimate.date);
+            var estimateYear = estimateDateAndTime.getFullYear();
+
+            if(noWYear === estimateYear){
+                annualEstimates.push(estimate);
+            }
+        });
+
+        return ({ status: 'success', estimates: annualEstimates });
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
 module.exports = User;

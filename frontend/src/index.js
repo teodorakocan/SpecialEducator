@@ -13,6 +13,8 @@ import ResetPassword from './ForgotPassword/ResetPassword';
 import Profile from './User/Profile/Profile';
 import DailyReportView from './User/Profile/ChildProfile/DailyReports/DailyReportView';
 import EstimateView from './User/Profile/ChildProfile/Estimates/EstimateView';
+import MonthlyDailyReportDiagram from './ParentView/MonthlyDailyReportDiagram';
+import AnnualEstimateDiagram from './ParentView/AnnualEstimateDiagram';
 
 const isLogged = localStorage.getItem('loggedIn') ? true : false
 
@@ -29,6 +31,8 @@ const routing = (
             {isLogged && <Route path='/profile/:role/:id' element={<Profile />} />}
             {isLogged && <Route path='/dailyReport/:id' element={<DailyReportView />} />}
             {isLogged && <Route path='/estimate/:id' element={<EstimateView />} />}
+            <Route path='/monthlyDailyReportDiagram' element={<MonthlyDailyReportDiagram />} />
+            <Route path='/annualEstimateDiagram' element={<AnnualEstimateDiagram />} />
         </Routes>
     </BrowserRouter>
 )

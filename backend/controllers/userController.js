@@ -65,3 +65,23 @@ exports.resetPassword = async (req, res) => {
         res.send({ status: 'failed', message: 'Server failed' });
     }
 };
+
+exports.diagramMonthlyDailyReport = async (req, res) => {
+    try {
+        const { status, dailyReports } = await User.diagramMonthlyDailyReport(req.query.childId);
+        res.send({ status: status, dailyReports: dailyReports });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed', message: 'Server failed' });
+    }
+};
+
+exports.diagramAnnualEstimate = async (req, res) => {
+    try {
+        const { status, estimates } = await User.diagramAnnualEstimate(req.query.childId);
+        res.send({ status: status, estimates: estimates });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed', message: 'Server failed' });
+    }
+};

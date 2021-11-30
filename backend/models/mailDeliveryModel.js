@@ -159,7 +159,7 @@ MailDelivery.sendToParentDailyReport = (parentEmail, report, childName, teacherN
     });
 };
 
-MailDelivery.sendToParentEstimate = (parentEmail, estimate, childName, teacherName) => {
+MailDelivery.sendToParentEstimate = (parentEmail, estimate, childName, teacherName, childId) => {
     const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const nowDate = nowDateAndTime.split(' ');
 
@@ -168,12 +168,15 @@ MailDelivery.sendToParentEstimate = (parentEmail, estimate, childName, teacherNa
         '<div><p><strong>Gross motor skils: </strong>' + estimate.grossMotorSkils + '</p><p><strong>Fine motor skils: </strong>' + estimate.fineMotorSkils +
         '</p><p><strong>Perceptual abilities: </strong>' + estimate.perceptualAbilities + '</p><p><strong>Speaking skils: </strong>' + estimate.speakingSkils +
         '</p><p><strong>Socio emotional development: </strong>' + estimate.socioEmotionalDevelopment + '</p><p><strong>Intellectual ability: </strong>' +
-        estimate.intellectualAbility + '</p><p><strong>Teacher who wrote estimate: </strong>' + teacherName + '</p></div>'
+        estimate.intellectualAbility + '</p><p><strong>Teacher who wrote estimate: </strong>' + teacherName + '</p></div>';
+    var dailyReportDiagramLink = '<div><Link to="http://localhost:3000/monthlyDailyReportDiagram?childId=' + childId + '"/></div>';
+    var annualEstimateDiagramLink = '<div><Link to="http://localhost:3000/annualEstimateDiagram?childId=' + childId + '"/></div>';
+    
     var mailOptions = {
         from: 'specialeducator2021@gmail.com',
         to: parentEmail,
         subject: subject,
-        html: emailContent
+        html: emailContent + dailyReportDiagramLink + annualEstimateDiagramLink
     };
 
     mailConfig.sendMail(mailOptions, function (error, info) {
