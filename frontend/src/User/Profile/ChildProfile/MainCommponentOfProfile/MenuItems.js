@@ -39,6 +39,11 @@ function MenuItems(props) {
         active={props.activeItem === 'listOfEstimates'}
         onClick={handleChangeActiveItem}
       />
+      <Menu.Item
+        name='diagrams'
+        active={props.activeItem === 'diagrams'}
+        onClick={handleChangeActiveItem}
+      />
     </Menu>
   )
 };

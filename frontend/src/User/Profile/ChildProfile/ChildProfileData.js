@@ -1,12 +1,14 @@
 import React from 'react';
 import { Grid, Image, Card } from 'semantic-ui-react'
 import useChildData from '../../../hooks/useChildData';
+import { useParams } from 'react-router-dom';
 
 import Schedule from '../Schedule'
 
-function ChildProfileData(props) {
+function ChildProfileData() {
 
-    const [child, appointments] = useChildData(props.childId);
+    const { role, id } = useParams();
+    const [child, appointments] = useChildData(id);
 
     const childData = Object.values(child).map((child, index) =>
         <Card key={index}>
@@ -27,7 +29,7 @@ function ChildProfileData(props) {
                     {childData}
                 </Grid.Column>
                 <Grid.Column width={10}>
-                    <Schedule appointments={appointments} child={child} role={props.role} />
+                    <Schedule appointments={appointments} child={child} role={role} />
                 </Grid.Column>
             </Grid.Row>
         </Grid>

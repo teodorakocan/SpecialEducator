@@ -9,7 +9,7 @@ import axiosInstance from '../../serverConnection/axios';
 import {authHeader} from '../../serverConnection/authHeader';
 
 function Profile() {
-    const { role, id } = useParams();
+    const { role } = useParams();
     const [teacherRole, setTeacherRole] = useState();
     const navigate = useNavigate();
 
@@ -34,8 +34,8 @@ function Profile() {
 
     return (
         <Container style={{ padding: '15px' }}>
-            {role === 'teacher' ? <TeacherProfileData teacherId={id} role={role} /> :
-                <ChildProfile childId={id} role={role} teacherRole={teacherRole} />}
+            {role === 'teacher' ? <TeacherProfileData /> :
+                <ChildProfile teacherRole={teacherRole} />}
         </Container>
     )
 }

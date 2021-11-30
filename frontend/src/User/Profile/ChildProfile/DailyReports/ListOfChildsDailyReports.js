@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { List, Grid, Button, Checkbox, Message, Icon, Popup, Segment, Input } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import axiosInstance from '../../../../serverConnection/axios';
 import { authHeader } from '../../../../serverConnection/authHeader';
@@ -8,6 +9,7 @@ import OpenPortal from '../../../../HelpPages/OpenPortal';
 
 function ListOfChildsDailyReports(props) {
 
+    const { id } = useParams();
     const [childsReports, setChildsReports] = useState([]);
     const [listIsChanged, setListIsChanged] = useState(false);
     const [checkedReports, setCheckedReports] = useState([]);
@@ -45,7 +47,7 @@ function ListOfChildsDailyReports(props) {
         axiosInstance.get('/authUser/listOfChildsDailyReports', {
             headers: authHeader(),
             params: {
-                childId: props.childId
+                childId: id
             }
         })
             .then((response) => {

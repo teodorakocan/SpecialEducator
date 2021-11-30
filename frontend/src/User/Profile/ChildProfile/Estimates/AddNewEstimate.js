@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Header, Image, Segment, TextArea, Grid, Popup, Form, Rating, Message } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import useChekIfEstimateExist from '../../../../hooks/useChekIfEstimateExist';
 import logo from '../../../../images/main_logo.png';
@@ -9,9 +10,10 @@ import axiosInstance from '../../../../serverConnection/axios';
 import { authHeader } from '../../../../serverConnection/authHeader';
 import './EstimateStyle.css';
 
-function AddNewEstimate(props) {
+function AddNewEstimate() {
 
-    const [exist, message] = useChekIfEstimateExist(props.childId);
+    const { id } = useParams();
+    const [exist, message] = useChekIfEstimateExist(id);
     const [estimate, setEstimate] = useState({});
     const [openPortal, setOpenPortal] = useState(false);
     const [portalMessage, setPortalMessage] = useState('');
@@ -50,7 +52,7 @@ function AddNewEstimate(props) {
                 headers: authHeader(),
                 params: {
                     estimate: estimate,
-                    childId: props.childId
+                    childId: id
                 }
             }).then((response) => {
                 if (response.data.status === 'success') {

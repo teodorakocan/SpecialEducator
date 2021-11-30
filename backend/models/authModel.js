@@ -357,8 +357,8 @@ Authenticated.searchDailyReport = async (date) => {
         dailyReports.recordset.forEach((dailyReport) => {
             const dailyReportDateAndTime = new Date(dailyReport.date).toISOString().slice(0, 19).replace('T', ' ');
             const dailyReportDate = dailyReportDateAndTime.split(' ');
-            
-            if(dailyReportDate[0] === date){
+
+            if (dailyReportDate[0] === date) {
                 serachedDailyReport.push(dailyReport);
             }
         });
@@ -383,8 +383,8 @@ Authenticated.searchEstimate = async (date) => {
         estimates.recordset.forEach((estimate) => {
             const estimateDateAndTime = new Date(estimate.date).toISOString().slice(0, 19).replace('T', ' ');
             const estimateDate = estimateDateAndTime.split(' ');
-            
-            if(estimateDate[0] === date){
+
+            if (estimateDate[0] === date) {
                 serachedEstimate.push(estimate);
             }
         });
@@ -420,6 +420,63 @@ Authenticated.getEstimateById = async (estimateId) => {
             .query("SELECT * FROM estimate WHERE idEstimate=" + estimateId + ";");
 
         return ({ status: 'success', estimate: estimate.recordset })
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.getGradesOfDailyReports = async (childId) => {
+    try {
+        var monthlyDailyReport = [];
+        const noWDateAndTime = new Date();
+        const noWMonth = noWDateAndTime.getMonth();
+
+        console.log(noWMonth)
+        let request = await sql.connect(dbConfig);
+
+        var dailyReports = await request.request()
+            .query("SELECT * FROM dailyreport WHERE idChild=" + parseInt(childId) + ";");
+
+        dailyReports.recordset.map((dailyReport) => {
+            var dailyReportDateAndTime = new Date(dailyReport.date);
+            var dailyReportMonth = dailyReportDateAndTime.getMonth();
+
+            if(noWMonth === dailyReportMonth){
+                monthlyDailyReport.push(dailyReport);
+            }
+        });
+
+        return ({ status: 'success', dailyReports: monthlyDailyReport })
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.getGradesOfEstimates = async (childId) => {
+    try {
+        var annualEstimates = [];
+        const noWDateAndTime = new Date();
+        const noWYear = noWDateAndTime.getFullYear();
+
+        let request = await sql.connect(dbConfig);
+
+        var estimates = await request.request()
+            .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
+
+            estimates.recordset.map((estimate) => {
+            var estimateDateAndTime = new Date(estimate.date);
+            var estimateYear = estimateDateAndTime.getFullYear();
+
+            if(noWYear === estimateYear){
+                annualEstimates.push(estimate);
+            }
+        });
+
+        return ({ status: 'success', estimates: annualEstimates })
 
     } catch (err) {
         console.log(err);

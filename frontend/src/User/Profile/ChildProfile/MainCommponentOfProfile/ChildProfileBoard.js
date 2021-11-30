@@ -5,20 +5,23 @@ import ChildProfileData from '../ChildProfileData';
 import ListOfChildsDailyReports from '../DailyReports/ListOfChildsDailyReports';
 import AddNewEstimate from '../Estimates/AddNewEstimate';
 import ListOfChildsEstimates from '../Estimates/ListOfChildsEstimates';
+import DigramsMainPage from '../Diagrams/DiagramsMainPage';
 
 function ChildProfileBoard(props) {
 
     switch (props.activeItem) {
-        case 'profile':
-            return <ChildProfileData childId={props.childId} role={props.role} />
+        case 'addNewEstimate':
+            return <AddNewEstimate />
         case 'dailyReport':
-            return <AddDailyReport child={props.child} childId={props.childId} />
+            return <AddDailyReport />
         case 'listOfDailyReports':
-            return <ListOfChildsDailyReports childId={props.childId} />
+            return <ListOfChildsDailyReports />
         case 'listOfEstimates':
-            return <ListOfChildsEstimates teacherRole={props.teacherRole} childId={props.childId} />
+            return <ListOfChildsEstimates teacherRole={props.teacherRole} />
+        case 'diagrams':
+            return <DigramsMainPage />
         default:
-            return <AddNewEstimate childId={props.childId} />
+            return <ChildProfileData />
     }
 };
 

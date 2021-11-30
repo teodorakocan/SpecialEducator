@@ -224,3 +224,23 @@ exports.getEstimateById = async (req, res) => {
         res.send({ status: 'failed' });
     }
 };
+
+exports.getGradesOfDailyReports = async (req, res) => { 
+    try {
+        const { status, dailyReports } = await Authentiated.getGradesOfDailyReports(req.query.childId);
+        res.send({ status: status, dailyReports: dailyReports });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.getGradesOfEstimates = async (req, res) => { 
+    try {
+        const { status, estimates } = await Authentiated.getGradesOfEstimates(req.query.childId);
+        res.send({ status: status, estimates: estimates });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};

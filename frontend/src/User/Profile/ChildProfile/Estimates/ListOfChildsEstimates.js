@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { List, Grid, Button, Segment, Input, Message, Icon, Popup } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import axiosInstance from '../../../../serverConnection/axios';
 import { authHeader } from '../../../../serverConnection/authHeader';
@@ -8,6 +9,7 @@ import OpenPortal from '../../../../HelpPages/OpenPortal';
 
 function ListOfChildsEstimates(props) {
 
+    const { role, id } = useParams();
     const [childsEstimates, setChildsEstimates] = useState([]);
     const [listIsChanged, setListIsChanged] = useState(false);
     const [searchDate, setSearchDate] = useState();
@@ -37,7 +39,7 @@ function ListOfChildsEstimates(props) {
         axiosInstance.get('/authUser/listOfChildsEstimates', {
             headers: authHeader(),
             params: {
-                childId: props.childId
+                childId: id
             }
         })
             .then((response) => {
