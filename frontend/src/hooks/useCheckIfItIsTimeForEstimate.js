@@ -17,7 +17,7 @@ const useCheckIfItIsTimeForEstimate = (teacherRole) =>{
         //ako je admin i ako je prvi u mesecu posalji true ako nije nesto od to dva salji false
         var nowDateAndTime = new Date();
         let date = nowDateAndTime.getDate();
-        
+        //debugger
         if(date == 29 && teacherRole === 'admin'){
             setTimeForEstimete(true);
         }else{

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { List, Grid, Button, Checkbox, Message, Icon, Popup } from 'semantic-ui-react';
+import { List, Grid, Button, Checkbox, Message, Icon, Popup, Segment, Input } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
 
 import axiosInstance from '../../../../serverConnection/axios';
 import { authHeader } from '../../../../serverConnection/authHeader';
-import useChildData from '../../../../hooks/useChildData';
 
-function ListOfDailyReports(props) {
+function ListOfChildsDailyReports(props) {
 
     const [childsReports, setChildsReports] = useState([]);
     const [listIsChanged, setListIsChanged] = useState(false);
     const [checkedReports, setCheckedReports] = useState([]);
     const [isChecked, setIsChecked] = useState(false);
+    const [searchDate, setSearchDate] = useState();
     const navigate = useNavigate();
 
     const dailyReportContent = Object.values(childsReports).map((childsReport, index) =>
@@ -26,12 +26,16 @@ function ListOfDailyReports(props) {
                         <Icon name='trash' />
                     </Button>} />
             </List.Content>
-            <Checkbox
-                label={'Daily report for ' + childsReport.date}
-                name='checkboxDailyReport'
-                value={childsReport.id}
-                onChange={handleOnChange}
-            />
+            <List.Content floated='left'>
+                <Checkbox
+                    name='checkboxDailyReport'
+                    value={childsReport.id}
+                    onChange={handleOnChange}
+                />
+            </List.Content>
+            <List.Content>
+                <List.Item href='#'>Daily report for {childsReport.date}</List.Item>
+            </List.Content>
         </List.Item>
     );
 
@@ -97,7 +101,6 @@ function ListOfDailyReports(props) {
             }
         })
             .then((response) => {
-                debugger
                 if (response.data.status === 'success') {
                     setListIsChanged(true);
                 }
@@ -122,6 +125,35 @@ function ListOfDailyReports(props) {
             })
     }
 
+    function handleSearch(e) {
+        e.preventDefault();
+        setSearchDate(e.target.value);
+    }
+
+    function onClickSerachDailyReport() {
+        if (searchDate) {
+            axiosInstance.get('/authUser/searchDailyReport', {
+                headers: authHeader(),
+                params: {
+                    date: searchDate
+                }
+            })
+                .then((response) => {
+                    if (response.data.status === 'success') {
+                        setChildsReports(response.data.dailyReports);
+                    }
+                }).catch((error) => {
+                    throwError(error);
+                })
+        } else {
+            setListIsChanged(true);
+        }
+    }
+
+    function onClickRefreshList(){
+        setListIsChanged(true);
+    }
+
     return (
         childsReports.length === 0 ?
             <Grid.Row>
@@ -133,6 +165,17 @@ function ListOfDailyReports(props) {
             </Grid.Row > :
             < Grid.Row >
                 <Grid.Column width={10}>
+                    <Segment>
+                        <Input placeholder='Search...' type='date' onChange={handleSearch} />
+                        
+                        <Button icon inverted color='orange' floated='right' onClick={onClickRefreshList}>
+                            <Icon name='refresh' />
+                        </Button>
+
+                        <Button icon inverted color='orange' floated='right' onClick={onClickSerachDailyReport}>
+                            <Icon name='search' />
+                        </Button>
+                    </Segment> <br />
                     <List divided verticalAlign='middle'>
                         {dailyReportContent}
                     </List>
@@ -144,4 +187,4 @@ function ListOfDailyReports(props) {
             </Grid.Row>
     )
 }
-export default ListOfDailyReports;
+export default ListOfChildsDailyReports;

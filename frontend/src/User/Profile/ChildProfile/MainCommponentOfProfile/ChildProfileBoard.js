@@ -1,9 +1,10 @@
 import React from 'react';
 
 import AddDailyReport from '../DailyReports/AddDailyReport';
-import Estimate from '../Estimate';
 import ChildProfileData from '../ChildProfileData';
-import ListOfDailyReports from '../DailyReports/ListOfDailyReports';
+import ListOfChildsDailyReports from '../DailyReports/ListOfChildsDailyReports';
+import AddNewEstimate from '../Estimate/AddNewEstimate';
+import ListOfChildsEstimates from '../Estimate/ListOfChildsEstimates';
 
 function ChildProfileBoard(props) {
 
@@ -13,9 +14,11 @@ function ChildProfileBoard(props) {
         case 'dailyReport':
             return <AddDailyReport child={props.child} childId={props.childId} />
         case 'listOfDailyReports':
-            return <ListOfDailyReports childId={props.childId} />
+            return <ListOfChildsDailyReports childId={props.childId} />
+        case 'listOfEstimates':
+            return <ListOfChildsEstimates teacherRole={props.teacherRole} childId={props.childId} />
         default:
-            return <Estimate childId={props.childId} />
+            return <AddNewEstimate childId={props.childId} />
     }
 };
 

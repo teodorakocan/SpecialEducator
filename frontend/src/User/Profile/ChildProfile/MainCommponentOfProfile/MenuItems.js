@@ -3,14 +3,14 @@ import { Menu } from 'semantic-ui-react'
 import useCheckIfItIsTimeForEstimate from '../../../../hooks/useCheckIfItIsTimeForEstimate';
 
 function MenuItems(props) {
-//proverava da li je nastavnik admin ili obican nastavnik i da li je prvi u mesecu
-//timeForEstimate staviti kao uslov kod menuitem estimate
-  const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole); 
+  //proverava da li je nastavnik admin ili obican nastavnik i da li je prvi u mesecu
+  //timeForEstimate staviti kao uslov kod menuitem estimate
+  const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
 
   function handleChangeActiveItem(e, { name }) {
     e.preventDefault();
     props.handleChangeActiveItem(name);
-}
+  }
 
   return (
     <Menu pointing secondary>
@@ -30,8 +30,13 @@ function MenuItems(props) {
         onClick={handleChangeActiveItem}
       />
       <Menu.Item
-        name='estimate'
-        active={props.activeItem === 'estimate'}
+        name='addNewEstimate'
+        active={props.activeItem === 'addNewEstimate'}
+        onClick={handleChangeActiveItem}
+      />
+      <Menu.Item
+        name='listOfEstimates'
+        active={props.activeItem === 'listOfEstimates'}
         onClick={handleChangeActiveItem}
       />
     </Menu>

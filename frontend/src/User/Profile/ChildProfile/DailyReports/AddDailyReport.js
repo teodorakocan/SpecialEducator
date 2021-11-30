@@ -48,6 +48,7 @@ function AddDailyReport(props) {
     }
 
     function onClickSendAndSaveReport(e) {
+        e.preventDefault();
         if (CheckMark()) {
             axiosInstance.post('/authUser/sendAndSaveDailyReport', {}, {
                 headers: authHeader(),
@@ -85,7 +86,7 @@ function AddDailyReport(props) {
             <Message
                 warning
                 header={message}
-                content='Adding new daily report will be available tomorrow.'
+                content='Adding new daily report will be available tomorrow or delete last one report to add new one.'
             />
         </Grid.Row > :
             < Grid.Row >
@@ -103,35 +104,35 @@ function AddDailyReport(props) {
                                         <Form.Field>
                                             <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                                                 Report</p>
-                                            <TextArea placeholder='Report...' style={{ minHeight: 100 }} name='report'
+                                            <TextArea placeholder='Additional information...' style={{ minHeight: 100 }} name='report'
                                                 onChange={handleInputChange} />
                                         </Form.Field>
 
                                         <Form.Field>
                                             <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                                                 Recommendation for teacher</p>
-                                            <TextArea placeholder='Recommendation for teacher...' style={{ minHeight: 100 }} name='recommendationForTeacher'
+                                            <TextArea placeholder='Write recommentation...' style={{ minHeight: 100 }} name='recommendationForTeacher'
                                                 onChange={handleInputChange} />
                                         </Form.Field>
 
                                         <Form.Field>
                                             <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                                                 Recommendation for parent</p>
-                                            <TextArea placeholder='Recommendation for parent...' style={{ minHeight: 100 }} name='recommendationForParent'
+                                            <TextArea placeholder='Write recommentation...' style={{ minHeight: 100 }} name='recommendationForParent'
                                                 onChange={handleInputChange} />
                                         </Form.Field>
 
                                         <Form.Field>
                                             <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                                                 Progress</p>
-                                            <TextArea placeholder='Progress...' style={{ minHeight: 100 }} name='progress'
+                                            <TextArea placeholder='Desribe progress...' style={{ minHeight: 100 }} name='progress'
                                                 onChange={handleInputChange} />
                                         </Form.Field>
 
                                         <Form.Field>
                                             <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                                                 Problems</p>
-                                            <TextArea placeholder='Problems...' style={{ minHeight: 100 }} name='problems'
+                                            <TextArea placeholder='Desribe problems...' style={{ minHeight: 100 }} name='problems'
                                                 onChange={handleInputChange} />
                                         </Form.Field>
 
@@ -154,7 +155,7 @@ function AddDailyReport(props) {
                                                 inverted
                                                 color='orange'
                                                 floated='right'>
-                                                Send report
+                                                Save report
                                             </Form.Button>
                                         } />
                                     </Grid.Column>

@@ -445,30 +445,78 @@ Admin.getTeacherData = async (teacherId) => {
     }
 };
 
+Admin.checkIfEstimateAllreadyExist = async () => {
+    try {
+        let request = await sql.connect(dbConfig);
+        const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const nowDate = nowDateAndTime.split(' ');
+        var exist = false;
+
+        var estimates = await request.request()
+            .query("SELECT * FROM estimate;");
+
+        estimates.recordset.forEach(estimate => {
+            const estimateDateAndTime = new Date(estimate.date).toISOString().slice(0, 19).replace('T', ' ');
+            const estimateDate = estimateDateAndTime.split(' ');
+
+            if (estimateDate[0] === nowDate[0]) {
+                exist = true;
+            }
+        });
+
+        return exist;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+};
+
 Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
     try {
         let request = await sql.connect(dbConfig);
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
+        const estimateExist = await Admin.checkIfEstimateAllreadyExist();
+
+        if (estimateExist) {
+            return ({ status: 'failed' })
+        } else {
+            await request.request()
+                .query("INSERT INTO estimate (grossMotorSkils, fineMotorSkils, perceptualAbilities, speakingSkils, socioEmotionalDevelopment, " +
+                    "intellectualAbility, idChild, idUser, grossMotorSkilsMark, fineMotorSkilsMark, perceptualAbilitiesMark, speakingSkilsMark, " +
+                    "socioEmotionalDevelopmentMark, intellectualAbilityMark, date) VALUES ('" + estimate.grossMotorSkils + "', '" +
+                    estimate.fineMotorSkils + "', '" + estimate.perceptualAbilities + "', '" + estimate.speakingSkils + "', '" + estimate.socioEmotionalDevelopment + "', '"
+                    + estimate.intellectualAbility + "', " + parseInt(childId) + ", " + adminId + ", " +
+                    estimate.grossMotorSkilsMark + ", " + estimate.fineMotorSkilsMark + ", " + estimate.perceptualAbilitiesMark + ", " +
+                    estimate.speakingSkilsMark + ", " + estimate.socioEmotionalDevelopmentMark + ", " + estimate.intellectualAbilityMark
+                    + ", '" + nowDateAndTime + "');");
+
+            var child = await request.request()
+                .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
+            var childName = child.recordset[0].name + ' ' + child.recordset[0].lastName;
+
+            var teacher = await request.request()
+                .query("SELECT * FROM [User] WHERE idUser=" + adminId + ";");
+            var teacherName = teacher.recordset[0].name + ' ' + teacher.recordset[0].lastName;
+
+            var childParent = await request.request()
+                .query("SELECT * FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+
+            return ({ status: 'success', parentEmail: childParent.recordset[0].email, childName: childName, teacherName: teacherName });
+        }
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Admin.deleteEstimate = async (estimateId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
         await request.request()
-            .query("INSERT INTO estimate (grossMotorSkils, fineMotorSkils, perceptualAbilities, speakingSkils, socioEmotionalDevelopment, " +
-                "intellectualAbility,idChild, idUser, grossMotorSkilsMark, fineMotorSkilsMark, perceptualAbilitiesMark, speakingSkilsMark, " +
-                "socioEmotionalDevelopmentMark, intellectualAbilityMark, date) VALUES ('" + estimate.grossMotorSkils + "', '" +
-                estimate.fineMotorSkils + "', '" + estimate.perceptualAbilities + "', '" + estimate.speakingSkils + "', '" + estimate.socioEmotionalDevelopment + "', '"
-                + estimate.intellectualAbility + "', " + parseInt(childId) + "', " + parseInt(adminId) + "', " + 
-                estimate.grossMotorSkilsMark + ", " + estimate.fineMotorSkilsMark + ", " + estimate.perceptualAbilitiesMark + ", " + 
-                estimate.speakingSkilsMark + ", " + estimate.socioEmotionalDevelopmentMark + ", " + estimate.intellectualAbilityMark 
-                + ", '" + nowDateAndTime + "');");
-
-        var child = await request.request()
-            .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
-        var childName = child.recordset[0].name + ' ' + child.recordset[0].lastName;
-
-        var childParent = await request.request()
-            .query("SELECT * FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
-
-        return ({ status: 'success', parentEmail: childParent.recordset[0].email, childName: childName });
-
+            .query("DELETE FROM estimate WHERE idEstimate=" + estimateId + ";");
+        return ({ status: 'success' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

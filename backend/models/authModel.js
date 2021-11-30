@@ -120,7 +120,7 @@ Authenticated.mySchedule = async (id) => {
         if (mySchedule.recordset.length > 0) {
             return ({ status: 'success', mySchedule: mySchedule.recordset });
         } else {
-            return ({ status: 'false' })
+            return ({ status: 'failed' })
         }
     } catch (err) {
         console.log(err);
@@ -325,6 +325,46 @@ Authenticated.deleteMarkedDailyReports = async (reports) => {
                 .query("DELETE FROM dailyreport WHERE idDailyReport=" + report + ";");
         })
         return ({ status: 'success' });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.listOfChildsEstimates = async (childId) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var childsEstimates = await request.request()
+            .query("SELECT * FROM estimate WHERE idChild=" + childId + ";");
+
+        return ({ status: 'success', childsEstimates: childsEstimates.recordset });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.searchDailyReport = async (date) => {
+    try {
+        let request = await sql.connect(dbConfig);
+
+        var dailyReports = await request.request()
+            .query("SELECT * FROM dailyreport;");
+        var serachedDailyReports = [];
+
+
+        dailyReports.recordset.forEach((dailyReport) => {
+            const dailyReportDateAndTime = new Date(dailyReport.date).toISOString().slice(0, 19).replace('T', ' ');
+            const dailyReportDate = dailyReportDateAndTime.split(' ');
+            
+            if(dailyReportDate[0] === date){
+                serachedDailyReports.push(dailyReport);
+            }
+        });
+        
+        return ({ status: 'success', dailyReports: serachedDailyReports })
+
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

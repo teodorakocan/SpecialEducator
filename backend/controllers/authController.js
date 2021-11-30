@@ -174,3 +174,24 @@ exports.getTeacherRole = async (req, res) => {
         res.send({ status: 'failed' });
     }
 };
+
+exports.listOfChildsEstimates = async (req, res) => {
+    try {
+        const { status, childsEstimates } = await Authentiated.listOfChildsEstimates(req.query.childId);
+        res.send({ status: status, childsEstimates: childsEstimates });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.searchDailyReport = async (req, res) => { //proveri na frontu jel prazno
+    try {
+        const { status, dailyReports } = await Authentiated.searchDailyReport(req.query.date);
+        console.log(dailyReports)
+        res.send({ status: status, dailyReports: dailyReports });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};

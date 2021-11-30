@@ -4,18 +4,18 @@ import { useNavigate } from 'react-router';
 import axiosInstance from '../serverConnection/axios';
 import { authHeader } from '../serverConnection/authHeader';
 
-const useDailyReportExits = (childId) => {
+const useChekIfEstimateExist = (childId) => {
     const [exist, setExist] = useState(false);
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        checkIfDailyReportAllreadyExist();
+        checkIfEstimateAllreadyExist();
     }, [childId]);
 
-    const checkIfDailyReportAllreadyExist = async () => {
-        axiosInstance.get('/authUser/checkIfDailyReportAllreadyExist', {
-            headers: authHeader(),
+    const checkIfEstimateAllreadyExist = async () => {
+        axiosInstance.get('/admin/checkIfEstimateAllreadyExist', {
+            headers: authHeader()
         })
             .then((response) => {
                 if (response.data.status === 'success') {
@@ -27,7 +27,9 @@ const useDailyReportExits = (childId) => {
                     navigate('/notFound');
                 } else if (error.response.status === 403) {
                     navigate('/notAuthenticated');
-                } else {
+                } else if (error.response.status === 401) {
+                    navigate('/notAuthorized');
+                }else {
                     navigate('/notFound');
                 }
             })
@@ -36,4 +38,4 @@ const useDailyReportExits = (childId) => {
     return [exist, message];
 }
 
-export default useDailyReportExits;
+export default useChekIfEstimateExist;

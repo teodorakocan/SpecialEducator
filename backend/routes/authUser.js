@@ -23,9 +23,13 @@ router.get('/getTeacherRole', loggedIn, authController.getTeacherRole);
 //dailyReport
 router.get('/listOfChildsDailyReports', loggedIn, authController.listOfChildsDailyReports)
 router.get('/checkIfDailyReportAllreadyExist', loggedIn, authController.checkIfDailyReportAllreadyExist)
+router.get('/listOfChildsEstimates', loggedIn, authController.listOfChildsEstimates)
 
 router.post('/sendAndSaveDailyReport', loggedIn, authController.sendAndSaveDailyReport)
 router.post('/deleteDailyReport', loggedIn, authController.deleteDailyReport)
 router.post('/deleteMarkedDailyReports', loggedIn, authController.deleteMarkedDailyReports)
+
+//estimate
+router.get('/searchDailyReport', loggedIn, authController.searchDailyReport)
 
 module.exports = router;

@@ -180,18 +180,44 @@ exports.getTeacherData = async (req, res) => {
     }
 };
 
+exports.checkIfEstimateAllreadyExist = async (req, res) => {
+    try {
+        const result = await Admin.checkIfEstimateAllreadyExist();
+        if (result) {
+            res.send({ status: 'success', message: 'Estimate for this month is already added.' });
+        } else {
+            res.send({ status: 'failed' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
 exports.saveAndSendEstimate = async (req, res) => {
     try {
-        const { status, parentEmail, childName } = await Admin.saveAndSendEstimate(req.user.id, req.query.childId, req.query.estimate);
-        if(status === 'success'){
-            //salji mail roditelju sa procenom i linkom da pogledaju dijagram dnevnih izvestaja u roku od mesec dana
-            //i dijagram procene
-            console.log(parentEmail);
-            console.log(childName);
-            res.send({ status: status });
-        }else{
+        const estimate = JSON.parse(req.query.estimate);
+        const { status, parentEmail, childName, teacherName } = await Admin.saveAndSendEstimate(req.user.id, req.query.childId, estimate);
+        
+        if (status === 'success') {
+            if (MailDelivery.sendToParentEstimate(parentEmail, estimate, childName, teacherName)) {
+                res.send({ status: 'failed' });
+            } else {
+                res.send({ status: status });
+            }
+        } else {
             res.send({ status: status });
         }
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.deleteEstimate = async (req, res) => {
+    try {
+        const { status } = await Admin.deleteEstimate(req.query.estimateId);
+        res.send({ status: status });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });
