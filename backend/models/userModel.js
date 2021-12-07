@@ -1,8 +1,7 @@
-const sql = require('mssql');
-const dbConfig = require('../configurations/dbConfig');
 var jwt = require('jsonwebtoken');
 var passwordHash = require('password-hash');
 var randomstring = require('randomstring');
+const { poolPromise } = require('./db');
 
 const User = function (user) {
     this.name = user.name;
@@ -15,15 +14,15 @@ const User = function (user) {
 
 User.emailValidation = async (email) => {
     try {
-        let request = await sql.connect(dbConfig);
-
-        var existingUser = await request.request()
+        const request = await poolPromise;
+        const existingUser = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
 
         if (existingUser.recordset.length > 0) {
             return ({ status: 'failed', message: 'Email address has been already taken. Please change.' });
+        } else {
+            return ({ status: 'success' });
         }
-        return ({ status: 'success' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });
@@ -32,7 +31,7 @@ User.emailValidation = async (email) => {
 
 User.login = async (email, password) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var existingUser = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
@@ -47,8 +46,9 @@ User.login = async (email, password) => {
             } else {
                 return ({ status: 'failed' });
             }
+        } else {
+            return ({ status: 'failed' });
         }
-        return ({ status: 'failed' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });
@@ -57,7 +57,7 @@ User.login = async (email, password) => {
 
 User.resetPasswordRequest = async (email) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         var message = '';
 
         var existingUser = await request.request()
@@ -88,7 +88,7 @@ User.resetPasswordRequest = async (email) => {
 
 User.resetPassword = async (password, resetCode) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var existingCode = await request.request()
             .query("SELECT * FROM [User] WHERE resetCode='" + resetCode + "';");
@@ -115,7 +115,7 @@ User.diagramMonthlyDailyReport = async (childId) => {
         const noWDateAndTime = new Date();
         const noWMonth = noWDateAndTime.getMonth();
 
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var dailyReports = await request.request()
             .query("SELECT * FROM dailyreport WHERE idChild=" + parseInt(childId) + ";");
@@ -124,7 +124,7 @@ User.diagramMonthlyDailyReport = async (childId) => {
             var dailyReportDateAndTime = new Date(dailyReport.date);
             var dailyReportMonth = dailyReportDateAndTime.getMonth();
 
-            if(noWMonth === dailyReportMonth){
+            if (noWMonth === dailyReportMonth) {
                 monthlyDailyReport.push(dailyReport);
             }
         });
@@ -143,16 +143,16 @@ User.diagramAnnualEstimate = async (childId) => {
         const noWDateAndTime = new Date();
         const noWYear = noWDateAndTime.getFullYear();
 
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var estimates = await request.request()
             .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
 
-            estimates.recordset.map((estimate) => {
+        estimates.recordset.map((estimate) => {
             var estimateDateAndTime = new Date(estimate.date);
             var estimateYear = estimateDateAndTime.getFullYear();
 
-            if(noWYear === estimateYear){
+            if (noWYear === estimateYear) {
                 annualEstimates.push(estimate);
             }
         });

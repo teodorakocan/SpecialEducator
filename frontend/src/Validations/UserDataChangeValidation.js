@@ -8,14 +8,14 @@ function UserDataChangeValidation(user) {
         errorValidationMessages['emptyField'] = 'All fields are required. They cannot be empty.'
     }
 
-    if (typeof user['name'] !== 'undefined') {
+    if (user['name']) {
         if (user['name'].length > 20) {
             isValid = false;
             errorValidationMessages['name'] = 'Name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof user['lastName'] !== 'undefined') {
+    if (user['lastName']) {
         if (user['lastName'].length > 20) {
             isValid = false;
             errorValidationMessages['lastName'] = 'Last name cannot contain more than 20 characters.'

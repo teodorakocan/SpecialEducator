@@ -18,7 +18,7 @@ const useCheckIfItIsTimeForEstimate = (teacherRole) =>{
         var nowDateAndTime = new Date();
         let date = nowDateAndTime.getDate();
         //debugger
-        if(date == 29 && teacherRole === 'admin'){
+        if(date == 1 && teacherRole === 'admin'){
             setTimeForEstimete(true);
         }else{
             setTimeForEstimete(false);

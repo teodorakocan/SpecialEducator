@@ -8,7 +8,7 @@ function PasswordValidation(password) {
         errorValidationMessages['emptyField'] = 'All fields are required.'
     }
 
-    if (typeof password['newPassword'] !== 'undefined' && typeof password['passConfirmation'] !== 'undefined') {
+    if (password['newPassword'] && password['passConfirmation']) {
         if (password['newPassword'] !== password['passConfirmation']) {
             isValid = false;
             errorValidationMessages['password'] = 'Passwords do not match';

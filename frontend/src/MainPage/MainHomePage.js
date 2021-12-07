@@ -14,7 +14,7 @@ const MainHomePage = () => {
     const [user, setUser] = useState({});
     const [center, setCenter] = useState({});
     const [imageURL, setImageURL] = useState(null);
-    const [activeItem, setActiveItem] = useState('home');
+    const [activeItem, setActiveItem] = useState('');
     const [userIsChanged, setUserIsChanged] = useState(false);
     const navigate = useNavigate();
 
@@ -79,6 +79,11 @@ const MainHomePage = () => {
         }
     }
 
+    function onClickGoOnHomPage(){
+        setActiveItem(' ');
+        //window.location.reload(false);
+    }
+
     return (
         <Container className='containerMenu'>
             <Grid>
@@ -100,7 +105,7 @@ const MainHomePage = () => {
                         </div>
                     </Grid.Column>
                     <Grid.Column width={2}>
-                        <Button icon inverted color='orange' circular floated='right' onClick={() => setActiveItem('')}>
+                        <Button icon inverted color='orange' circular floated='right' onClick={onClickGoOnHomPage}>
                             <Icon size='large' name='home' />
                         </Button>
                     </Grid.Column>

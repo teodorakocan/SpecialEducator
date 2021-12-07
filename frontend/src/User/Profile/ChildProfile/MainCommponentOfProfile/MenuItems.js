@@ -5,7 +5,8 @@ import useCheckIfItIsTimeForEstimate from '../../../../hooks/useCheckIfItIsTimeF
 function MenuItems(props) {
   //proverava da li je nastavnik admin ili obican nastavnik i da li je prvi u mesecu
   //timeForEstimate staviti kao uslov kod menuitem estimate
-  const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
+  //const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
+  const timeForEstimate = true
 
   function handleChangeActiveItem(e, { name }) {
     e.preventDefault();
@@ -29,11 +30,11 @@ function MenuItems(props) {
         active={props.activeItem === 'listOfDailyReports'}
         onClick={handleChangeActiveItem}
       />
-      <Menu.Item
+      {timeForEstimate && <Menu.Item
         name='addNewEstimate'
         active={props.activeItem === 'addNewEstimate'}
         onClick={handleChangeActiveItem}
-      />
+      />}
       <Menu.Item
         name='listOfEstimates'
         active={props.activeItem === 'listOfEstimates'}

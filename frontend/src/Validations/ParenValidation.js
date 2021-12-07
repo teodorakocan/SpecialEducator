@@ -9,21 +9,21 @@ function ParentValidation(newParent) {
         errorValidationMessages['emptyField'] = 'Field with * are required. They cannot be empty.'
     }
 
-    if (typeof newParent['name'] !== 'undefined') {
+    if (newParent['name']) {
         if (newParent['name'].length > 20) {
             isValid = false;
             errorValidationMessages['name'] = 'Name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newParent['lastName'] !== 'undefined') {
+    if (newParent['lastName']) {
         if (newParent['lastName'].length > 20) {
             isValid = false;
             errorValidationMessages['lastName'] = 'Last name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newParent['email'] !== 'undefined') {
+    if (newParent['email']) {
         if (!emailPattern.test(newParent['email'])) {
             isValid = false;
             errorValidationMessages['email'] = 'Please enter valid email address.';

@@ -1,8 +1,6 @@
-const sql = require('mssql');
-const dbConfig = require('../configurations/dbConfig');
 var passwordHash = require('password-hash');
-var mailConfig = require('../configurations/mailConfig');
 var User = require('../models/userModel');
+const { poolPromise } = require('./db');
 
 const Authenticated = function (user) {
     this.name = user.name;
@@ -15,7 +13,7 @@ const Authenticated = function (user) {
 
 Authenticated.userData = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var userData = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
@@ -31,7 +29,7 @@ Authenticated.userData = async (id) => {
 
 Authenticated.changeUserData = async (user) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var userData = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + user.idUser + ";");
@@ -67,7 +65,7 @@ Authenticated.changePassword = async (userId, newPassword, oldPassword) => {
         const isVerified = passwordHash.verify(oldPassword, user.password);
         if (isVerified) {
             const hashedPassword = passwordHash.generate(newPassword);
-            let request = await sql.connect(dbConfig);
+            const request = await poolPromise;
 
             await request.request().query("UPDATE [User] SET password = '" + hashedPassword + "' WHERE idUser = " + userId + ";");
             return ({ status: 'success', message: 'You have successfully changed your password.' });
@@ -82,7 +80,7 @@ Authenticated.changePassword = async (userId, newPassword, oldPassword) => {
 
 Authenticated.changeImage = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         await request.request()
             .query("UPDATE [User] SET image = '" + imageName + "' WHERE idUser = " + id + ";");
 
@@ -95,7 +93,7 @@ Authenticated.changeImage = async (id) => {
 
 Authenticated.centerData = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         const { user } = await Authenticated.userData(id);
 
         var centerData = await request.request()
@@ -112,7 +110,7 @@ Authenticated.centerData = async (id) => {
 
 Authenticated.mySchedule = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var mySchedule = await request.request()
             .query("SELECT * FROM appointment WHERE idUser=" + id + ";");
@@ -130,7 +128,7 @@ Authenticated.mySchedule = async (id) => {
 
 Authenticated.allChildren = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var employee = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
@@ -148,7 +146,7 @@ Authenticated.allChildren = async (id) => {
 
 Authenticated.searchChild = async (teacherId, fullName) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         var childName = [];
 
         var teacher = await request.request()
@@ -157,7 +155,9 @@ Authenticated.searchChild = async (teacherId, fullName) => {
             .query("SELECT * FROM child WHERE idCenter=" + teacher.recordset[0].idCenter + ";");
 
         if (children.recordset.length > 0) {
-            if (fullName.indexOf(' ') >= 0) {
+            if (fullName === '') {
+                return ({ status: 'success', child: children.recordset })
+            }else if (fullName.indexOf(' ') >= 0) {
                 childName = fullName.split(' ');
 
                 var firstSearchCombination = await request.request()
@@ -195,7 +195,7 @@ Authenticated.searchChild = async (teacherId, fullName) => {
 
 Authenticated.getChildData = async (childId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var childData = await request.request()
             .query("SELECT * FROM child WHERE idChild=" + childId + ";");
@@ -212,7 +212,7 @@ Authenticated.getChildData = async (childId) => {
 
 Authenticated.allTeachers = async (teacherId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var userData = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + teacherId + ";");
@@ -231,7 +231,7 @@ Authenticated.allTeachers = async (teacherId) => {
 
 Authenticated.checkIfDailyReportAllreadyExist = async () => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const nowDate = nowDateAndTime.split(' ');
         var exist = false;
@@ -257,7 +257,7 @@ Authenticated.checkIfDailyReportAllreadyExist = async () => {
 
 Authenticated.sendAndSaveDailyReport = async (childId, teacherId, report) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         const result = await Authenticated.checkIfDailyReportAllreadyExist();
@@ -290,7 +290,7 @@ Authenticated.sendAndSaveDailyReport = async (childId, teacherId, report) => {
 
 Authenticated.listOfChildsDailyReports = async (childId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var childsDailyReports = await request.request()
             .query("SELECT * FROM dailyreport WHERE idChild=" + childId + ";");
@@ -304,7 +304,7 @@ Authenticated.listOfChildsDailyReports = async (childId) => {
 
 Authenticated.deleteDailyReport = async (reportId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         await request.request()
             .query("DELETE FROM dailyreport WHERE idDailyReport=" + reportId + ";");
@@ -318,7 +318,7 @@ Authenticated.deleteDailyReport = async (reportId) => {
 
 Authenticated.deleteMarkedDailyReports = async (reports) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         reports.map(async (report) => {
             await request.request()
@@ -333,7 +333,7 @@ Authenticated.deleteMarkedDailyReports = async (reports) => {
 
 Authenticated.listOfChildsEstimates = async (childId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var childsEstimates = await request.request()
             .query("SELECT * FROM estimate WHERE idChild=" + childId + ";");
@@ -347,7 +347,7 @@ Authenticated.listOfChildsEstimates = async (childId) => {
 
 Authenticated.searchDailyReport = async (date) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var dailyReports = await request.request()
             .query("SELECT * FROM dailyreport;");
@@ -373,7 +373,7 @@ Authenticated.searchDailyReport = async (date) => {
 
 Authenticated.searchEstimate = async (date) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var estimates = await request.request()
             .query("SELECT * FROM estimate;");
@@ -399,7 +399,7 @@ Authenticated.searchEstimate = async (date) => {
 
 Authenticated.getDailyReportById = async (dailyReportId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var dailyReport = await request.request()
             .query("SELECT * FROM dailyreport WHERE idDailyReport=" + dailyReportId + ";");
@@ -414,7 +414,7 @@ Authenticated.getDailyReportById = async (dailyReportId) => {
 
 Authenticated.getEstimateById = async (estimateId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var estimate = await request.request()
             .query("SELECT * FROM estimate WHERE idEstimate=" + estimateId + ";");
@@ -433,7 +433,7 @@ Authenticated.getGradesOfDailyReports = async (childId) => {
         const noWDateAndTime = new Date();
         const noWMonth = noWDateAndTime.getMonth();
 
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var dailyReports = await request.request()
             .query("SELECT * FROM dailyreport WHERE idChild=" + parseInt(childId) + ";");
@@ -442,7 +442,7 @@ Authenticated.getGradesOfDailyReports = async (childId) => {
             var dailyReportDateAndTime = new Date(dailyReport.date);
             var dailyReportMonth = dailyReportDateAndTime.getMonth();
 
-            if(noWMonth === dailyReportMonth){
+            if (noWMonth === dailyReportMonth) {
                 monthlyDailyReport.push(dailyReport);
             }
         });
@@ -461,16 +461,16 @@ Authenticated.getGradesOfEstimates = async (childId) => {
         const noWDateAndTime = new Date();
         const noWYear = noWDateAndTime.getFullYear();
 
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var estimates = await request.request()
             .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
 
-            estimates.recordset.map((estimate) => {
+        estimates.recordset.map((estimate) => {
             var estimateDateAndTime = new Date(estimate.date);
             var estimateYear = estimateDateAndTime.getFullYear();
 
-            if(noWYear === estimateYear){
+            if (noWYear === estimateYear) {
                 annualEstimates.push(estimate);
             }
         });

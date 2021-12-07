@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Input, Button, Feed, Image } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import { children } from './children';
 import axiosInstance from '../../serverConnection/axios';
 import { authHeader } from '../../serverConnection/authHeader';
 
 function HomePage() {
 
     const [childName, setChildName] = useState();
-    const [allChildren, setAllChildren] = useState(children);
+    const [allChildren, setAllChildren] = useState([]);
     const [noRequestedChild, setNoRequestedChild] = useState(false);
     const navigate = useNavigate();
 
-    const allChildrenComponents = Object.values(allChildren).map((child, index) =>
+    const allChildrenComponent = Object.values(allChildren).map((child, index) =>
         <Feed key={index}>
             <Feed.Event>
                 <Feed.Label>
@@ -29,8 +28,17 @@ function HomePage() {
         </Feed>
     )
 
+    useEffect(() => {
+        axiosInstance.get('/authUser/allChildren', { headers: authHeader() })
+            .then((response) => {
+                if (response.data.status === 'success') {
+                    setAllChildren(response.data.children);
+                }
+            });
+    }, [])
+
     function onClickSearchChild() {
-        if (childName !== '') {
+        if (typeof childName !== 'undefined') {
             axiosInstance.get('/authUser/searchChild', {
                 headers: authHeader(),
                 params: {
@@ -57,7 +65,6 @@ function HomePage() {
                     }
                 });
         } else {
-            setAllChildren(children);
             setNoRequestedChild(false);
         }
     }
@@ -77,7 +84,7 @@ function HomePage() {
 
             <Grid.Row >
                 <Grid.Column>
-                    {allChildrenComponents}
+                    {allChildrenComponent}
                     {noRequestedChild && <div>Child with requested name is not registered...</div>}
                 </Grid.Column>
             </Grid.Row>

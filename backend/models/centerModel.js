@@ -1,6 +1,5 @@
-const sql = require('mssql');
-const dbConfig = require('../configurations/dbConfig');
 var passwordHash = require('password-hash');
+const { poolPromise } = require('./db');
 
 const Center = function (center) {
     this.name = center.name;
@@ -15,7 +14,7 @@ const Center = function (center) {
 
 Center.validation = async (name, email) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var existingCenter = await request.request()
             .query("SELECT * FROM center WHERE name='" + name + "';");
@@ -40,7 +39,7 @@ Center.validation = async (name, email) => {
 Center.registration = async (user, center, areaCode, phoneNumber) => {
     try {
         const hashedPassword = passwordHash.generate(user.password);
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var newCenter = await request.request()
             .query("INSERT INTO center (areaCode, address, addressNumber, city, email, name, phoneNumber, state)" +

@@ -23,6 +23,8 @@ const useTeacherData = (teacherId) =>{
                 if (response.data.status === 'success') {
                     setTeacher(response.data.teacher);
                     setAppointments(response.data.appointments);
+                }else{
+                    navigate('/notFound');
                 }
             }).catch((error) => {
                 if (typeof error.response === 'undefined') {

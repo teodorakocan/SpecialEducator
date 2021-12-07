@@ -10,35 +10,35 @@ function CenterFormValidation(newCenter) {
         errorMessages['emptyField'] = 'Field with * are required. They cannot be empty.';
     }
 
-    if (typeof newCenter['name'] !== 'undefined') {
+    if (newCenter['name']) {
         if (newCenter['name'].length > 30) {
             formIsValid = false;
             errorMessages['name'] = 'Name cannot contain more than 30 characters.'
         }
     }
 
-    if (typeof newCenter['address'] !== 'undefined') {
+    if (newCenter['address']) {
         if (newCenter['address'].length > 30) {
             formIsValid = false;
             errorMessages['address'] = 'Address cannot contain more than 30 characters.'
         }
     }
 
-    if (typeof newCenter['city'] !== 'undefined') {
+    if (newCenter['city']) {
         if (newCenter['city'].length > 20) {
             formIsValid = false;
             errorMessages['city'] = 'City cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newCenter['addressNumber'] !== 'undefined') {
+    if (newCenter['addressNumber']) {
         if (newCenter['addressNumber'].length > 5) {
             formIsValid = false;
             errorMessages['addressNumber'] = 'Address number cannot contain more than 5 characters.'
         }
     }
 
-    if (typeof newCenter['email'] !== 'undefined') {
+    if (newCenter['email']) {
         if (!emailPattern.test(newCenter['email'])) {
             formIsValid = false;
             errorMessages['email'] = 'Please enter valid email address.';

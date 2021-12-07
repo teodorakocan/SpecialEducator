@@ -36,6 +36,7 @@ function MonthlyDailyReportDiagram() {
             });
     }, [childId]);
 
+    console.log(grades);
     return (
         <Container style={{ padding: '15px' }}>
             <React.Fragment>

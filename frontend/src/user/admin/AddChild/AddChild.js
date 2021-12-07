@@ -48,10 +48,22 @@ function AddChild(props) {
         <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
             <Form>
                 <Form.Group>
-                    <Form.Input required label='First name' placeholder='First Name' width={6}
+                    <Form.Input required label='First name' placeholder='First Name...' width={6}
                         name='name' onChange={handleChildInputChange} defaultValue={props.child ? props.child['name'] : ''} />
-                    <Form.Input label='Last name' placeholder='Last name' width={6}
+                    <Form.Input required label='Last name' placeholder='Last name...' width={6}
                         name='lastName' onChange={handleChildInputChange} defaultValue={props.child ? props.child['lastName'] : ''} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Input required label='Weight' placeholder='Enter weight in kg' width={6}
+                        name='weight' onChange={handleChildInputChange} defaultValue={props.child ? props.child['weight'] : ''} />
+                    <Form.Input required label='Height' placeholder='Enter height in cm' width={6}
+                        name='height' onChange={handleChildInputChange} defaultValue={props.child ? props.child['height'] : ''} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Input required label='Category' placeholder='Category...' width={6}
+                        name='category' onChange={handleChildInputChange} defaultValue={props.child ? props.child['category'] : ''} />
+                    <Form.Input required label='Degree of disability' placeholder='Degree of disability...' width={6}
+                        name='degreeOfDisability' onChange={handleChildInputChange} defaultValue={props.child ? props.child['degreeOfDisability'] : ''} />
                 </Form.Group>
                 <DateInput
                     required

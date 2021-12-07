@@ -10,28 +10,28 @@ function UserFormValidation(newUser) {
         errorMessages['emptyField'] = 'Field with * are required. They cannot be empty.'
     }
 
-    if (typeof newUser['name'] !== 'undefined') {
+    if (newUser['name']) {
         if (newUser['name'].length > 20) {
             formIsValid = false;
             errorMessages['name'] = 'Name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newUser['lastName'] !== 'undefined') {
+    if (newUser['lastName']) {
         if (newUser['lastName'].length > 20) {
             formIsValid = false;
             errorMessages['lastName'] = 'Last name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newUser['email'] !== 'undefined') {
+    if (newUser['email']) {
         if (!emailPattern.test(newUser['email'])) {
             formIsValid = false;
             errorMessages['email'] = 'Please enter valid email address.';
         }
     }
 
-    if (typeof newUser['password'] !== 'undefined' && typeof newUser['passConfirmation'] !== 'undefined') {
+    if (newUser['password'] && newUser['passConfirmation']) {
         if (newUser['password'] !== newUser['passConfirmation']) {
             formIsValid = false;
             errorMessages['password'] = 'Passwords do not match';

@@ -66,7 +66,6 @@ class MainNewChildPage extends React.Component {
                     anamnesis: this.state.anamnesis
                 }
             }).then((registration) => {
-                console.log(registration);
                 if (registration.data.status !== 'success') {
                     this.setState({ step: this.state.step - 1 });
                 } else {

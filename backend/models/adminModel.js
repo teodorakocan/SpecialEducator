@@ -1,6 +1,5 @@
-const sql = require('mssql');
-const dbConfig = require('../configurations/dbConfig');
 var passwordHash = require('password-hash');
+const { poolPromise } = require('./db');
 
 const Admin = function (admin) {
     this.name = admin.name;
@@ -13,7 +12,7 @@ const Admin = function (admin) {
 
 Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var userData = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
@@ -37,9 +36,9 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
             }
 
             await request.request()
-                .query("UPDATE center SET name = '" + center.name + "', address ='" + center.address +
+                .query("UPDATE center SET areaCode = '" + areaCode + "', address ='" + center.address +
                     "', addressNumber ='" + center.addressNumber + "', city ='" + center.city + "', email ='" + center.email +
-                    "', phoneNumber ='" + phoneNumber + "', areaCode ='" + areaCode + "', state ='" + center.state +
+                    "', name ='" + center.name + "', phoneNumber ='" + phoneNumber + "', state ='" + center.state +
                     "' WHERE idCenter = " + userData.recordset[0].idCenter + ";");
             return ({ status: 'success', message: 'You have successfully changed your profile information.' });
         }
@@ -54,7 +53,7 @@ Admin.changeCenterData = async (id, center, areaCode, phoneNumber) => {
 
 Admin.validationCenterName = async (name) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var existingName = await request.request()
             .query("SELECT * FROM center WHERE name='" + name + "';");
@@ -71,7 +70,7 @@ Admin.validationCenterName = async (name) => {
 
 Admin.validationCenterEmail = async (email) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var existingEmail = await request.request()
             .query("SELECT * FROM center WHERE email='" + email + "';");
@@ -88,7 +87,7 @@ Admin.validationCenterEmail = async (email) => {
 
 Admin.addNewUser = async (id, user) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var admin = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
@@ -120,7 +119,7 @@ Admin.addNewUser = async (id, user) => {
 
 Admin.validationUserEmail = async (email) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var existingEmail = await request.request()
             .query("SELECT * FROM [User] WHERE email='" + email + "';");
@@ -137,14 +136,14 @@ Admin.validationUserEmail = async (email) => {
 
 Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var admin = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
         if (admin.recordset.length > 0) {
             var childAnamnesis = await request.request()
-                .query("INSERT INTO anamnesis (descriptionOfPregnancy, description, diagnosis, descriptionOfBehavior, descriptionOfChildBirth, iduser) VALUES ('" +
+                .query("INSERT INTO anamnesis (descriptionOfPregnancy, description, diagnosis, descriptionOfBehavior, descriptionOfChildBirth, idUser) VALUES ('" +
                     anamnesis.descriptionOfPregnancy + "', '" + anamnesis.description + "', '" + anamnesis.diagnosis +
                     "', '" + anamnesis.descriptionOfBehavior + "', '" + anamnesis.descriptionOfChildBirth +
                     "', " + id + "); SELECT SCOPE_IDENTITY() AS id");
@@ -160,14 +159,19 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
             } else {
                 var parentData = await request.request()
                     .query("INSERT INTO parent (name, lastName, email, phoneNumber, areaCode) VALUES ('" +
-                        parent.name + "', '" + parent.lastName + "', '" + parent.email + "', '" + phoneNumber + "', '" + areaCode + "'); SELECT SCOPE_IDENTITY() AS id");
+                        parent.name + "', '" + parent.lastName + "', '" + parent.email + "', '" + phoneNumber +
+                        "', '" + areaCode + "'); SELECT SCOPE_IDENTITY() AS id");
                 parentId = parseInt(parentData.recordset[0].id);
             }
 
+            const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
             await request.request()
-                .query("INSERT INTO child (name, lastName, dateofBirth, image, idCenter, idAnamnesis, idParent) VALUES ('" +
-                    child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + imageName + "', " +
-                    admin.recordset[0].idCenter + ", " + anamnesisId + ", " + parentId + ");");
+                .query("INSERT INTO child (name, lastName, dateOfBirth, dateOfReceipt, category, degreeOfDisability, weight, height, idCenter, idAnamnesis, idParent, image) VALUES ('" +
+                    child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + nowDateAndTime + 
+                    "', '" + child.category + "', '" + child.degreeOfDisability + "', " + child.weight +
+                    ", " + child.height + ", " + admin.recordset[0].idCenter + ", " + anamnesisId + ", " + parentId +
+                    ", '" + imageName + "');");
         }
 
         return ({ status: 'success' });
@@ -179,7 +183,7 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
 
 Admin.allUsers = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var userData = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
@@ -199,7 +203,7 @@ Admin.allUsers = async (id) => {
 Admin.addSchedule = async (id, schedule) => {
     try {
         schedule.map(async (timeTable) => {
-            let request = await sql.connect(dbConfig);
+            const request = await poolPromise;
             var admin = await request.request()
                 .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
 
@@ -234,7 +238,7 @@ Admin.addSchedule = async (id, schedule) => {
 
 Admin.updateSchedule = async (timeTable) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         var appointments = await request.request().query("SELECT * FROM appointment;");
         var scheduleIDs = [];
 
@@ -242,8 +246,6 @@ Admin.updateSchedule = async (timeTable) => {
             scheduleIDs.push(schedule.idAppointment);
         });
 
-        //proveri da li se id prosledjenog rasporeda nalazi u bazi ili ne 
-        //ako ne postoji izbisi ga
         for (const appointment of appointments.recordset) {
             const id = scheduleIDs.indexOf(appointment.idAppointment);
             if (id == -1) {
@@ -268,7 +270,7 @@ Admin.updateSchedule = async (timeTable) => {
 
 Admin.getTeachersEmails = async (schedule) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         var teacherEmails = [];
 
         var teachers = await request.request()
@@ -296,7 +298,7 @@ Admin.getTeachersEmails = async (schedule) => {
 
 Admin.getParentEmails = async (timeTable) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         var childrensSchedule = [];
         var childrensSchedule = [];
 
@@ -366,7 +368,7 @@ Admin.getParentEmails = async (timeTable) => {
 
 Admin.schedule = async (id) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var admin = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + id + ";");
@@ -383,7 +385,7 @@ Admin.schedule = async (id) => {
 
 Admin.searchTeacher = async (adminId, fullName) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         var teacherName = [];
 
         var admin = await request.request()
@@ -392,7 +394,9 @@ Admin.searchTeacher = async (adminId, fullName) => {
             .query("SELECT * FROM [User] WHERE idCenter=" + admin.recordset[0].idCenter + ";");
 
         if (teachers.recordset.length > 0) {
-            if (fullName.indexOf(' ') >= 0) {
+            if (fullName === '') {
+                return ({ status: 'success', teacher: teachers.recordset })
+            }else if (fullName.indexOf(' ') >= 0) {
                 teacherName = fullName.split(' ');
 
                 var firstSearchCombination = await request.request()
@@ -430,11 +434,10 @@ Admin.searchTeacher = async (adminId, fullName) => {
 
 Admin.getTeacherData = async (teacherId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         var teacherData = await request.request()
             .query("SELECT * FROM [User] WHERE idUser=" + teacherId + ";");
-
         var appointments = await request.request()
             .query("SELECT * FROM appointment WHERE idUser=" + teacherId + ";");
 
@@ -447,7 +450,7 @@ Admin.getTeacherData = async (teacherId) => {
 
 Admin.checkIfEstimateAllreadyExist = async () => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const nowDate = nowDateAndTime.split(' ');
         var exist = false;
@@ -473,7 +476,7 @@ Admin.checkIfEstimateAllreadyExist = async () => {
 
 Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         const estimateExist = await Admin.checkIfEstimateAllreadyExist();
@@ -482,14 +485,14 @@ Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
             return ({ status: 'failed' })
         } else {
             await request.request()
-                .query("INSERT INTO estimate (grossMotorSkils, fineMotorSkils, perceptualAbilities, speakingSkils, socioEmotionalDevelopment, " +
-                    "intellectualAbility, idChild, idUser, grossMotorSkilsMark, fineMotorSkilsMark, perceptualAbilitiesMark, speakingSkilsMark, " +
-                    "socioEmotionalDevelopmentMark, intellectualAbilityMark, date) VALUES ('" + estimate.grossMotorSkils + "', '" +
-                    estimate.fineMotorSkils + "', '" + estimate.perceptualAbilities + "', '" + estimate.speakingSkils + "', '" + estimate.socioEmotionalDevelopment + "', '"
-                    + estimate.intellectualAbility + "', " + parseInt(childId) + ", " + adminId + ", " +
-                    estimate.grossMotorSkilsMark + ", " + estimate.fineMotorSkilsMark + ", " + estimate.perceptualAbilitiesMark + ", " +
-                    estimate.speakingSkilsMark + ", " + estimate.socioEmotionalDevelopmentMark + ", " + estimate.intellectualAbilityMark
-                    + ", '" + nowDateAndTime + "');");
+                .query("INSERT INTO estimate (date, grossMotorSkils, fineMotorSkils, perceptualAbilities, speakingSkils, socioEmotionalDevelopment, " +
+                    "intellectualAbility, grossMotorSkilsMark, fineMotorSkilsMark, perceptualAbilitiesMark, speakingSkilsMark, " +
+                    "socioEmotionalDevelopmentMark, intellectualAbilityMark, idChild, idUser) VALUES ('" + nowDateAndTime + "', '" +
+                    estimate.grossMotorSkils + "', '" + estimate.fineMotorSkils + "', '" + estimate.perceptualAbilities + "', '" +
+                    estimate.speakingSkils + "', '" + estimate.socioEmotionalDevelopment + "', '" + estimate.intellectualAbility +
+                    "', " + estimate.grossMotorSkilsMark + ", " + estimate.fineMotorSkilsMark + ", " + estimate.perceptualAbilitiesMark +
+                    ", " + estimate.speakingSkilsMark + ", " + estimate.socioEmotionalDevelopmentMark + ", " + estimate.intellectualAbilityMark
+                    + ", " + parseInt(childId) + ", " + adminId + ");");
 
             var child = await request.request()
                 .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
@@ -512,7 +515,7 @@ Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
 
 Admin.deleteEstimate = async (estimateId) => {
     try {
-        let request = await sql.connect(dbConfig);
+        const request = await poolPromise;
 
         await request.request()
             .query("DELETE FROM estimate WHERE idEstimate=" + estimateId + ";");

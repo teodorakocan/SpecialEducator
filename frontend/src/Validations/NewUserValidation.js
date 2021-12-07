@@ -10,28 +10,28 @@ function NewUserValidation(newUser) {
         errorValidationMessages['emptyField'] = 'Field with * are required. They cannot be empty.'
     }
 
-    if (typeof newUser['name'] !== 'undefined') {
+    if (newUser['name']) {
         if (newUser['name'].length > 20) {
             isValid = false;
             errorValidationMessages['name'] = 'Name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newUser['lastName'] !== 'undefined') {
+    if (newUser['lastName']) {
         if (newUser['lastName'].length > 20) {
             isValid = false;
             errorValidationMessages['lastName'] = 'Last name cannot contain more than 20 characters.'
         }
     }
 
-    if (typeof newUser['email'] !== 'undefined') {
+    if (newUser['email']) {
         if (!emailPattern.test(newUser['email'])) {
             isValid = false;
             errorValidationMessages['email'] = 'Please enter valid email address.';
         }
     }
 
-    if (typeof newUser['password'] !== 'undefined') {
+    if (newUser['password']) {
         if (!passwordPattern.test(newUser['password'])) {
             isValid = false;
             errorValidationMessages['password'] = 'Password must have 8-20 characters, at least one uppercase letter, one lowercase letter, one number and one special character.';

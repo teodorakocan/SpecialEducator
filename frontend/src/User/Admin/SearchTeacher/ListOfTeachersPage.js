@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Input, Button, Feed, Image } from 'semantic-ui-react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import { teachers } from './teachers';
 import axiosInstance from '../../../serverConnection/axios';
 import { authHeader } from '../../../serverConnection/authHeader';
 
 function ListOfTeachersPage() {
 
     const [teacherName, setTeacherName] = useState();
-    const [allTeachers, setAllTeachers] = useState(teachers);
+    const [allTeachers, setAllTeachers] = useState([]);
     const [noRequestedTeacher, setNoRequestedTeacher] = useState(false);
     const navigate = useNavigate();
 
@@ -29,8 +28,18 @@ function ListOfTeachersPage() {
         </Feed>
     )
 
+    useEffect(() => {
+        axiosInstance.get('/admin/allUsers', { headers: authHeader() })
+            .then((response) => {
+                if (response.data.status === 'success') {
+                    console.log(response.data.users);
+                    setAllTeachers(response.data.users);
+                }
+            });
+    }, [])
+
     function onClickSearchTeacher() {
-        if (teacherName !== '') {
+        if (typeof teacherName !== 'undefined') {
             axiosInstance.get('/admin/searchTeacher', {
                 headers: authHeader(),
                 params: {
@@ -59,7 +68,6 @@ function ListOfTeachersPage() {
                     }
                 });
         } else {
-            setAllTeachers(teachers);
             setNoRequestedTeacher(false);
         }
     }
