@@ -1,5 +1,6 @@
 const Authentiated = require('../models/authModel');
 const MailDelivery = require('../models/mailDeliveryModel');
+var roleHash = require('password-hash');
 
 exports.userData = async (req, res) => {
     try {
@@ -168,7 +169,13 @@ exports.deleteMarkedDailyReports = async (req, res) => {
 
 exports.getTeacherRole = async (req, res) => {
     try {
-        res.send({ status: 'success', role: req.user.role });
+        var teacherRole = '';
+        if(roleHash.verify('admin', req.user.role)){
+            teacherRole = 'admin';
+        }else{
+            teacherRole = 'teacher'
+        }
+        res.send({ status: 'success', role: teacherRole });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });
@@ -239,6 +246,49 @@ exports.getGradesOfEstimates = async (req, res) => {
     try {
         const { status, estimates } = await Authentiated.getGradesOfEstimates(req.query.childId);
         res.send({ status: status, estimates: estimates });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.changeChildData = async (req, res) => {
+    try {
+        const child = JSON.parse(req.query.child);
+        const { status, message } = await Authentiated.changeChildData(child, req.query.childId);
+        res.send({ status: status, message: message });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.getParentData = async (req, res) => {
+    try {
+        var teacherRole = 'teacher';
+        if(roleHash.verify('admin', req.user.role)){
+            teacherRole = 'admin';
+        }
+
+        const { status, parent } = await Authentiated.getParentData(req.query.childId);
+        res.send({ status: status, role: teacherRole, parent: parent });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.deleteAccount = async (req, res) => {
+    try {
+        var role = '';
+        if(roleHash.verify('admin', req.user.role)){
+            role = 'admin';
+        }else{
+            role = 'teacher';
+        }
+
+        const { status } = await Authentiated.deleteAccount(req.user.id, role);
+        res.send({ status: status });
     } catch (err) {
         console.log(err);
         res.send({ status: 'failed' });

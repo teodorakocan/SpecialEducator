@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+var roleHash = require('password-hash');
 
 exports.loggedIn = function (req, res, next) {
     let token = req.header('Authorization');
@@ -22,7 +23,8 @@ exports.loggedIn = function (req, res, next) {
 };
 
 exports.adminOnly = async function(req, res, next){
-    if(req.user.role !== 'admin'){
+    if(!roleHash.verify('admin', req.user.role)){
+        console.log('uslo')
         return res.status(401).send('Unauthorized!');
     }
     next();

@@ -13,7 +13,7 @@ const useDailyReportExits = (childId) => {
         checkIfDailyReportAllreadyExist();
     }, [childId]);
 
-    const checkIfDailyReportAllreadyExist = async () => {
+    function checkIfDailyReportAllreadyExist () {
         axiosInstance.get('/authUser/checkIfDailyReportAllreadyExist', {
             headers: authHeader(),
         })

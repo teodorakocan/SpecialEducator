@@ -13,7 +13,7 @@ const useChekIfEstimateExist = (childId) => {
         checkIfEstimateAllreadyExist();
     }, [childId]);
 
-    const checkIfEstimateAllreadyExist = async () => {
+    function checkIfEstimateAllreadyExist () {
         axiosInstance.get('/admin/checkIfEstimateAllreadyExist', {
             headers: authHeader()
         })

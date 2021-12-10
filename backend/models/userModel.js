@@ -40,7 +40,8 @@ User.login = async (email, password) => {
             const isVerified = passwordHash.verify(password, existingUser.recordset[0].password);
 
             if (isVerified) {       //proveri password i ako je dobar dodeli mu token
-                const token = jwt.sign({ id: existingUser.recordset[0].idUser, role: existingUser.recordset[0].role }, secretToken);
+                const hashedRole = passwordHash.generate(existingUser.recordset[0].role);
+                const token = jwt.sign({ id: existingUser.recordset[0].idUser, role: hashedRole }, secretToken);
 
                 return ({ status: 'success', token: token });
             } else {
@@ -159,6 +160,26 @@ User.diagramAnnualEstimate = async (childId) => {
 
         return ({ status: 'success', estimates: annualEstimates });
 
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+User.checkParentPassword = async (childId, password) => {
+    try {
+        var child = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
+
+        var parent = await request.request()
+            .query("SELECT * FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+
+        const isVerified = passwordHash.verify(password, parent.recordset[0].password);
+        if (isVerified){
+            return ({ status: 'success' });
+        }else{
+            return ({ status: 'failed' });
+        }
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

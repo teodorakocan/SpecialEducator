@@ -12,7 +12,7 @@ const useCheckIfItIsTimeForEstimate = (teacherRole) =>{
         checkIfItIsTimeForEstimate();
     }, [teacherRole]);
 
-    const checkIfItIsTimeForEstimate = () => {
+    function checkIfItIsTimeForEstimate () {
         //proveri da li je prvi u mesecu i proveri rolu teachera
         //ako je admin i ako je prvi u mesecu posalji true ako nije nesto od to dva salji false
         var nowDateAndTime = new Date();

@@ -157,7 +157,7 @@ Authenticated.searchChild = async (teacherId, fullName) => {
         if (children.recordset.length > 0) {
             if (fullName === '') {
                 return ({ status: 'success', child: children.recordset })
-            }else if (fullName.indexOf(' ') >= 0) {
+            } else if (fullName.indexOf(' ') >= 0) {
                 childName = fullName.split(' ');
 
                 var firstSearchCombination = await request.request()
@@ -477,6 +477,78 @@ Authenticated.getGradesOfEstimates = async (childId) => {
 
         return ({ status: 'success', estimates: annualEstimates })
 
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.changeChildData = async (child, childId) => {
+    try {
+        const request = await poolPromise;
+
+        await request.request().query("UPDATE child SET name='" + child.name + "', lastName='" + child.lastName +
+            "', dateOfBirth='" + child.dateOfBirth + "', category='" + child.category + "', degreeOfDisability='" + child.degreeOfDisability
+            + "', weight=" + child.weight + ", height=" + child.height + " WHERE idChild = " + parseInt(childId) + ";");
+
+        const message = "Child's data are changed successfully."
+        return ({ status: 'success', message: message });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.getParentData = async (childId) => {
+    try {
+        const request = await poolPromise;
+        var child = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + childId + ";");
+
+        var parent = await request.request()
+            .query("SELECT * FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+
+        return ({ status: 'success', parent: parent.recordset[0] });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.deleteAccount = async (userId, role) => {
+    try {
+        const request = await poolPromise;
+        var teacher = await request.request()
+            .query("SELECT * FROM [User] WHERE idUser=" + userId + ";");
+
+        if (role === 'admin') {
+            var child = await request.request()
+                .query("SELECT * FROM child WHERE idCenter=" + teacher.recordset[0].idCenter + ";");
+
+            if (child.recordset.length > 0) {
+                await request.request()
+                    .query("DELETE FROM child WHERE idChild=" + child.recordset[0].idChild + ";");
+                await request.request()
+                    .query("DELETE FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+                await request.request()
+                    .query("DELETE FROM anamnesis WHERE idAnamnesis=" + child.recordset[0].idAnamnesis + ";");
+                await request.request()
+                    .query("DELETE FROM estimate WHERE idChild=" + child.recordset[0].idChild + ";");
+                await request.request()
+                    .query("DELETE FROM appointment WHERE idChild=" + child.recordset[0].idChild + ";");
+                await request.request()
+                    .query("DELETE FROM dailyreport WHERE idUser=" + userId + ";");
+            }
+
+            await request.request()
+                .query("DELETE FROM [User] WHERE idCenter=" + teacher.recordset[0].idCenter + ";");
+            await request.request()
+                .query("DELETE FROM center WHERE idCenter=" + teacher.recordset[0].idCenter + ";");
+        } else {
+            await request.request()
+                .query("DELETE FROM [User] WHERE idCenter=" + teacher.recordset[0].idCenter + ";");
+        }
+        return ({ status: 'success' });
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

@@ -4,13 +4,13 @@ import ChangeProfileData from '../User/Account/ChangeProfileData';
 import ChangeProfileImage from '../User/Account/ChangeProfileImage';
 import ChangePassword from '../User/Account/ChangePassword';
 import HomePage from '../User/Home/HomePage';
-import CenterData from '../Center/CenterData';
-import ChangeCenterData from '../Center/ChangeCenterData';
-import MainNewChildPage from '../User/Admin/AddChild/MainNewChildPage';
-import AddNewUser from '../User/Admin/AddNewUser/AddNewUser';
+import CenterData from '../User/Center/CenterData';
+import ChangeCenterData from '../User/Center/ChangeCenterData';
+import MainNewChildPage from '../User/Center/AddChild/MainNewChildPage';
+import AddNewUser from '../User/Teachers/AddNewUser';
 import MakeAnAppointment from '../User/Schedule/MakeAnAppointment/MakeAnAppointment';
 import MySchedule from '../User/Schedule/MySchedule/MySchedule';
-import ListOfTeachersPage from '../User/Admin/SearchTeacher/ListOfTeachersPage';
+import ListOfTeachersPage from '../User/Teachers/ListOfTeachersPage';
 
 function UserBoard(props) {
 

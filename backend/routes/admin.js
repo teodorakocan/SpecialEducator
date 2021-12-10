@@ -18,5 +18,8 @@ router.post('/addChild', loggedIn, adminOnly, upload.single('file'), adminContro
 router.post('/saveAndSendSchedule', loggedIn, adminOnly, adminController.saveAndSendSchedule);
 router.post('/saveAndSendEstimate', loggedIn, adminOnly, adminController.saveAndSendEstimate);
 router.post('/deleteEstimate', loggedIn, adminOnly, adminController.deleteEstimate);
+router.post('/changeParentData', loggedIn, adminOnly, adminController.changeParentData);
+router.post('/removeChild', loggedIn, adminOnly, adminController.removeChild);
+router.post('/removeTeacher', loggedIn, adminOnly, adminController.removeTeacher);
 
 module.exports = router;

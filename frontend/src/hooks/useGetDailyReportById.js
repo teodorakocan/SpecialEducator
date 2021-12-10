@@ -13,7 +13,7 @@ const useGetDailyReportById = (dailyReportId) => {
         getDailyReportById();
     }, [dailyReportId]);
 
-    const getDailyReportById = async () => {
+    function getDailyReportById () {
         axiosInstance.get('/authUser/getDailyReportById', {
             headers: authHeader(),
             params:{

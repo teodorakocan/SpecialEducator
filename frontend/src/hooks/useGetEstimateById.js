@@ -13,7 +13,7 @@ const useGetEstimateById = (estimateId) => {
         getEstimateById();
     }, [estimateId]);
 
-    const getEstimateById = async () => {
+    function getEstimateById () {
         axiosInstance.get('/authUser/getEstimateById', {
             headers: authHeader(),
             params:{

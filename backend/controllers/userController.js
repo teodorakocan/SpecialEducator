@@ -85,3 +85,13 @@ exports.diagramAnnualEstimate = async (req, res) => {
         res.send({ status: 'failed', message: 'Server failed' });
     }
 };
+
+exports.checkParentPassword = async (req, res) => {
+    try {
+        const { status } = await User.checkParentPassword(req.query.childId, req.query.password);
+        res.send({ status: status });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed', message: 'Server failed' });
+    }
+};

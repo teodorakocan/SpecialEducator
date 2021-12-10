@@ -157,18 +157,19 @@ Admin.addChild = async (id, child, parent, anamnesis, phoneNumber, areaCode) => 
             if (parents.recordset.length > 0) {
                 parentId = parents.recordset[0].idParent
             } else {
+                const hashedPassword = passwordHash.generate(parent.password);
                 var parentData = await request.request()
-                    .query("INSERT INTO parent (name, lastName, email, phoneNumber, areaCode) VALUES ('" +
+                    .query("INSERT INTO parent (name, lastName, email, phoneNumber, areaCode, password) VALUES ('" +
                         parent.name + "', '" + parent.lastName + "', '" + parent.email + "', '" + phoneNumber +
-                        "', '" + areaCode + "'); SELECT SCOPE_IDENTITY() AS id");
+                        "', '" + areaCode + "', '" + hashedPassword + "'); SELECT SCOPE_IDENTITY() AS id");
                 parentId = parseInt(parentData.recordset[0].id);
             }
 
             const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
             await request.request()
-                .query("INSERT INTO child (name, lastName, dateOfBirth, dateOfReceipt, category, degreeOfDisability, weight, height, idCenter, idAnamnesis, idParent, image) VALUES ('" +
-                    child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + nowDateAndTime + 
+                .query("INSERT INTO child (name, lastName, dateofBirth, dateOfReceipt, category, degreeOfDisability, weight, height, idCenter, idAnamnesis, idParent, image) VALUES ('" +
+                    child.name + "', '" + child.lastName + "', '" + child.dateOfBirth + "', '" + nowDateAndTime +
                     "', '" + child.category + "', '" + child.degreeOfDisability + "', " + child.weight +
                     ", " + child.height + ", " + admin.recordset[0].idCenter + ", " + anamnesisId + ", " + parentId +
                     ", '" + imageName + "');");
@@ -222,9 +223,9 @@ Admin.addSchedule = async (id, schedule) => {
                 if (childFree.recordset.length == 0) {
                     if (teacherFree.recordset.length == 0) {
                         await request.request()
-                            .query("INSERT INTO appointment (endDate, startDate, text, description, idUser, idChild, idCenter) VALUES ('" +
+                            .query("INSERT INTO appointment (endDate, startDate, text, description, idCenter, idUser, idChild) VALUES ('" +
                                 timeTable.endDate + "', '" + timeTable.startDate + "', '" + timeTable.text + "', '" + timeTable.description +
-                                "', " + timeTable.idUser + ", " + timeTable.idChild + ", " + admin.recordset[0].idCenter + ");");
+                                "', " + admin.recordset[0].idCenter + ", " + timeTable.idUser + ", " + timeTable.idChild + ");");
                     }
                 }
             }
@@ -256,8 +257,7 @@ Admin.updateSchedule = async (timeTable) => {
                 //proveri da li su mu vresnosti izmenjena, ako jesu odradi update
                 const schedule = timeTable.find(tt => tt.idAppointment == appointment.idAppointment);
                 await request.request().query("UPDATE appointment SET endDate='" + schedule.endDate + "', startDate='" + schedule.startDate +
-                    "', text='" + schedule.text + "', description='" + schedule.description + "', idUser=" + schedule.idUser
-                    + ", idChild=" + schedule.idChild + ", idCenter=" + appointment.idCenter + " WHERE idAppointment = " + schedule.idAppointment + ";");
+                    "', text='" + schedule.text + "', description='" + schedule.description + "' WHERE idAppointment = " + schedule.idAppointment + ";");
             }
         }
 
@@ -396,7 +396,7 @@ Admin.searchTeacher = async (adminId, fullName) => {
         if (teachers.recordset.length > 0) {
             if (fullName === '') {
                 return ({ status: 'success', teacher: teachers.recordset })
-            }else if (fullName.indexOf(' ') >= 0) {
+            } else if (fullName.indexOf(' ') >= 0) {
                 teacherName = fullName.split(' ');
 
                 var firstSearchCombination = await request.request()
@@ -519,6 +519,67 @@ Admin.deleteEstimate = async (estimateId) => {
 
         await request.request()
             .query("DELETE FROM estimate WHERE idEstimate=" + estimateId + ";");
+        return ({ status: 'success' });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Admin.changeParentData = async (parent) => {
+    try {
+        var sendEmail = false;
+        const request = await poolPromise;
+
+        var parentData = await request.request()
+            .query("SELECT * FROM parent WHERE idParent=" + parent.idParent + ";");
+
+        if (parentData.recordset[0].email !== parent.email) {
+            sendEmail = true;
+        }
+        await request.request().query("UPDATE parent SET name='" + parent.name + "', lastname='" + parent.lastname +
+            "', email='" + parent.email + "' WHERE idParent = " + parent.idParent + ";");
+
+        const message = "Parent's data are changed successfully."
+        return ({ status: 'success', message: message, sendEmail: sendEmail });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Admin.removeChild = async (childId) => {
+    try {
+        const request = await poolPromise;
+
+        var child = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + childId + ";");
+
+        await request.request()
+            .query("DELETE FROM child WHERE idChild=" + childId + ";");
+        await request.request()
+            .query("DELETE FROM parent WHERE idParent=" + child.recordset[0].idParent + ";");
+        await request.request()
+            .query("DELETE FROM anamnesis WHERE idAnamnesis=" + child.recordset[0].idAnamnesis + ";");
+        await request.request()
+            .query("DELETE FROM estimate WHERE idChild=" + childId + ";");
+        await request.request()
+            .query("DELETE FROM appointment WHERE idChild=" + childId + ";");
+
+        return ({ status: 'success' });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Admin.removeTeacher = async (teacherId) => {
+    try {
+        const request = await poolPromise;
+
+        await request.request()
+            .query("DELETE FROM [User] WHERE idUser=" + teacherId + ";");
+
         return ({ status: 'success' });
     } catch (err) {
         console.log(err);

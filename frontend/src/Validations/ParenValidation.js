@@ -1,10 +1,11 @@
 function ParentValidation(newParent) {
     var errorValidationMessages = {};
     var isValid = true;
-    var phoneNumberPattern = new RegExp('[0-9]');
+    var phoneNumberPattern = new RegExp('^[0-9]*$');
     var emailPattern = new RegExp(/^(('[\w-\s]+')|([\w-]+(?:\.[\w-]+)*)|('[\w-\s]+')([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-
-    if (!newParent['name'] || !newParent['lastName'] || !newParent['email']) {
+    var passwordPattern = new RegExp(/^(?=\D*\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[!@#$%^&*_=+-]).{8,20}$/);
+    
+    if (!newParent['name'] || !newParent['lastName'] || !newParent['email'] || !newParent['password']) {
         isValid = false;
         errorValidationMessages['emptyField'] = 'Field with * are required. They cannot be empty.'
     }
@@ -39,6 +40,13 @@ function ParentValidation(newParent) {
                 isValid = false;
                 errorValidationMessages['phoneNumber'] = 'Phone number must contain only numbers.';
             }
+        }
+    }
+
+    if (newParent['password']) {
+        if (!passwordPattern.test(newParent['password'])) {
+            isValid = false;
+            errorValidationMessages['password'] = 'Password must have 8-20 characters, at least one uppercase letter, one lowercase letter, one number and one special character.';
         }
     }
 

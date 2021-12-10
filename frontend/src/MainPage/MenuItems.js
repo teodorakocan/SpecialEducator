@@ -1,11 +1,38 @@
-import React from 'react';
-import { Menu, Icon } from 'semantic-ui-react'
+import React, { useState } from 'react';
+import { Menu, Icon, Confirm } from 'semantic-ui-react'
+import { useNavigate } from 'react-router';
+
+import axiosInstance from '../serverConnection/axios';
+import { authHeader } from '../serverConnection/authHeader';
 
 function MenuItems(props) {
+    const [close, setClose] = useState(false);
+    const navigate = useNavigate();
 
     function handleChange(e, { name }) {
         e.preventDefault();
         props.handleChange(name);
+    }
+
+    function deleteAcoount() {
+        axiosInstance.post('/authUser/deleteAccount', {}, {
+            headers: authHeader()
+        })
+            .then((response) => {
+                if (response.data.status === 'success') {
+                    setClose(false);
+                    localStorage.removeItem('loggedIn')
+                    navigate('/');
+                }
+            }).catch((error) => {
+                if (typeof error.response === 'undefined') {
+                    navigate('/notFound');
+                } else if (error.response.status === 403) {
+                    navigate('/notAuthenticated');
+                } else {
+                    navigate('/notFound');
+                }
+            })
     }
 
     return (
@@ -55,13 +82,6 @@ function MenuItems(props) {
                             onClick={handleChange}>
                             <Icon name='child' /> Add child
                         </Menu.Item>
-
-                        <Menu.Item
-                            name='addNewUser'
-                            active={props.activeItem === 'addNewUser'}
-                            onClick={handleChange}>
-                            <Icon name='user plus' /> Add new member
-                        </Menu.Item>
                     </div>
                 }
             </Menu.Menu>
@@ -74,6 +94,13 @@ function MenuItems(props) {
                             active={props.activeItem === 'allTeachers'}
                             onClick={handleChange}>
                             <Icon name='group' /> List of teachers in center
+                        </Menu.Item>
+
+                        <Menu.Item
+                            name='addNewUser'
+                            active={props.activeItem === 'addNewUser'}
+                            onClick={handleChange}>
+                            <Icon name='user plus' /> Add new member
                         </Menu.Item>
                     </Menu.Menu>
                 </div>}
@@ -100,13 +127,28 @@ function MenuItems(props) {
             </Menu.Menu>
 
 
-            <Menu.Item
-                name='logOut'
-                style={{ fontSize: '18px' }}
-                active={props.activeItem === 'logOut'}
-                onClick={handleChange}>
-                <Icon name='sign-out' /> Log out
-            </Menu.Item>
+            <Menu.Header>Settings</Menu.Header>
+            <Menu.Menu>
+                <Menu.Item
+                    name='logOut'
+                    active={props.activeItem === 'logOut'}
+                    onClick={handleChange}>
+                    <Icon name='sign-out' /> Log out
+                </Menu.Item>
+
+                <Menu.Item
+                    name='deleteAccount'
+                    style={{ color: 'red' }}
+                    active={props.activeItem === 'deleteAccount'}
+                    onClick={() => setClose(true)}>
+                    <Confirm
+                        open={close}
+                        onCancel={() => setClose(false)}
+                        onConfirm={deleteAcoount}
+                    />
+                    <Icon name='user delete' /> Delete account
+                </Menu.Item>
+            </Menu.Menu>
 
         </Menu>
     )

@@ -13,7 +13,7 @@ const useChildData = (childId) =>{
         getChildData();
     }, [childId]);
 
-    const getChildData = async () => {
+    function getChildData() {
         var childData = []
         axiosInstance.get('/authUser/getChildData', {
             headers: authHeader(),
@@ -26,7 +26,8 @@ const useChildData = (childId) =>{
                     var dateOfBirth = response.data.child[0].dateofBirth.split('T');
                     var correctDateOfBirth = dateOfBirth[0].split('-');
                     var childInfo = {};
-                    childInfo['name'] = response.data.child[0].name + ' ' + response.data.child[0].lastName;
+                    childInfo['name'] = response.data.child[0].name;
+                    childInfo['lastName'] = response.data.child[0].lastName;
                     childInfo['idChild'] = response.data.child[0].idChild;
                     childInfo['dateOfBirth'] = correctDateOfBirth[2] + '.' + correctDateOfBirth[1] + '.' + correctDateOfBirth[0] + '.';
                     childInfo['image'] = 'http://localhost:9000/' + response.data.child[0].image;
@@ -36,6 +37,7 @@ const useChildData = (childId) =>{
                     setAppointments(response.data.appointments);
                 }
             }).catch((error) => {
+                console.log(error);
                 if(typeof error.response === 'undefined'){
                     navigate('/notFound');
                 }else if (error.response.status === 403) {

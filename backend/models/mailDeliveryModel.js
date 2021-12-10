@@ -62,7 +62,8 @@ MailDelivery.sendNewUserEmail = (user) => {
 
 MailDelivery.sendParentEmail = (child, parent) => {
     const contentEmail = '<h1>Registration</h1><div><p>Welcome. Your child ' + child.name + ' ' + child.lastName + ' is sign up on application My Special Educator.' +
-        'All information about your child will be sent to this email address.</p></div>';
+        'All information about your child will be sent to this email address.</p></div>'+
+        '<div>Your password which allows you to see app diagrams is: </div>' + parent.password;
     var mailOptionsCenter = {
         from: 'specialeducator2021@gmail.com',
         to: parent.email,
@@ -169,15 +170,14 @@ MailDelivery.sendToParentEstimate = (parentEmail, estimate, childName, teacherNa
         '<div><p><strong>Gross motor skils: </strong>' + estimate.grossMotorSkils + '</p><p><strong>Fine motor skils: </strong>' + estimate.fineMotorSkils +
         '</p><p><strong>Perceptual abilities: </strong>' + estimate.perceptualAbilities + '</p><p><strong>Speaking skils: </strong>' + estimate.speakingSkils +
         '</p><p><strong>Socio emotional development: </strong>' + estimate.socioEmotionalDevelopment + '</p><p><strong>Intellectual ability: </strong>' +
-        estimate.intellectualAbility + '</p><p><strong>Teacher who wrote estimate: </strong>' + teacherName + '</p></div>';
-    var dailyReportDiagramLink = '<div><Link to="http://localhost:3000/monthlyDailyReportDiagram?childId=' + childId + '"/></div>';
-    var annualEstimateDiagramLink = '<div><Link to="http://localhost:3000/annualEstimateDiagram?childId=' + childId + '"/></div>';
+        estimate.intellectualAbility + '</p><p><strong>Teacher who wrote estimate: </strong>' + teacherName + '</p></div>' + 
+        '<div><Link to="http://localhost:3000/diagrams?childId=' + childId + '"/></div>';
     
     var mailOptions = {
         from: 'specialeducator2021@gmail.com',
         to: parentEmail,
         subject: subject,
-        html: emailContent + dailyReportDiagramLink + annualEstimateDiagramLink
+        html: emailContent
     };
 
     mailConfig.sendMail(mailOptions, function (error, info) {
@@ -187,6 +187,17 @@ MailDelivery.sendToParentEstimate = (parentEmail, estimate, childName, teacherNa
             return false;
         }
     });
+};
+
+MailDelivery.sendToParentChanges = (parentEmail) => {
+    var mailOptionsCenter = {
+        from: 'specialeducator2021@gmail.com',
+        to: parentEmail,
+        subject: 'My Special Educator - Changes',
+        text: 'Your email address has been changed on the My Special Educator app. From now on, all information will be sent on this email address.'
+    };
+
+    mailConfig.sendMail(mailOptionsCenter);
 };
 
 module.exports = MailDelivery;

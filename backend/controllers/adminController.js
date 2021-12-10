@@ -198,7 +198,7 @@ exports.saveAndSendEstimate = async (req, res) => {
     try {
         const estimate = JSON.parse(req.query.estimate);
         const { status, parentEmail, childName, teacherName } = await Admin.saveAndSendEstimate(req.user.id, req.query.childId, estimate);
-        
+
         if (status === 'success') {
             if (MailDelivery.sendToParentEstimate(parentEmail, estimate, childName, teacherName, req.query.childId)) {
                 res.send({ status: 'failed' });
@@ -217,6 +217,40 @@ exports.saveAndSendEstimate = async (req, res) => {
 exports.deleteEstimate = async (req, res) => {
     try {
         const { status } = await Admin.deleteEstimate(req.query.estimateId);
+        res.send({ status: status });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.changeParentData = async (req, res) => {
+    try {
+        const parent = JSON.parse(req.query.parentData);
+        const { status, message, sendEmail } = await Admin.changeParentData(parent);
+        if (sendEmail) {
+            MailDelivery.sendToParentChanges(parent.email);
+        }
+        res.send({ status: status, message: message });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.removeChild = async (req, res) => {
+    try {
+        const { status } = await Admin.removeChild(req.query.childId);
+        res.send({ status: status });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.removeTeacher = async (req, res) => {
+    try {
+        const { status } = await Admin.removeTeacher(req.query.teacherId);
         res.send({ status: status });
     } catch (err) {
         console.log(err);

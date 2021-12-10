@@ -1,23 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Chart, Series, ArgumentAxis, Legend, Label, Tooltip, CommonSeriesSettings, Export } from 'devextreme-react/chart';
-import { Container } from 'semantic-ui-react';
+import { useParams } from 'react-router-dom';
 
-import axiosInstance from '../serverConnection/axios';
-import { authHeader } from '../serverConnection/authHeader';
-import { categoryOfGrades } from '../Profiles/ChildProfile/Diagrams/estimateData';
+import axiosInstance from '../../../serverConnection/axios';
+import { authHeader } from '../../../serverConnection/authHeader';
+import { categoryOfGrades } from './estimateData';
 
-function AnnualEstimateDiagram() {
 
-    const search = window.location.search;
-    const params = new URLSearchParams(search);
-    const childId = params.get('childId');
+function EstimateDigram() {
+
+    const { id } = useParams();
     const [grades, setGrades] = useState([]);
 
     useEffect(() => {
-        axiosInstance.get('/user/diagramAnnualEstimate', {
+        axiosInstance.get('/authUser/getGradesOfEstimates', {
             headers: authHeader(),
             params: {
-                childId: childId
+                childId: id
             }
         })
             .then((response) => {
@@ -40,11 +39,10 @@ function AnnualEstimateDiagram() {
                     setGrades(allGrades);
                 }
             });
-    }, [childId])
+    }, [id])
 
-    console.log(grades);
     return (
-        <Container style={{ padding: '15px' }}>
+        <React.Fragment>
             <Chart
                 dataSource={grades}
                 palette='Violet'
@@ -74,8 +72,8 @@ function AnnualEstimateDiagram() {
                 <Tooltip enabled={true} />
                 <Export enabled={true} />
             </Chart>
-        </Container>
+        </React.Fragment>
     )
 }
 
-export default AnnualEstimateDiagram;
+export default EstimateDigram;

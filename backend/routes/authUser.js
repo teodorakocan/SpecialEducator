@@ -12,6 +12,7 @@ router.get('/searchChild', loggedIn, authController.searchChild);
 router.get('/getChildData', loggedIn, authController.getChildData);
 router.get('/allTeachers', loggedIn, authController.allTeachers);
 
+router.post('/deleteAccount', loggedIn, authController.deleteAccount)
 router.post('/changeUserData', loggedIn, authController.changeUserData);
 router.post('/changePassword', loggedIn, authController.changePassword);
 router.post('/changeImage', loggedIn, upload.single('file'), authController.changeImage);
@@ -36,5 +37,9 @@ router.post('/deleteMarkedDailyReports', loggedIn, authController.deleteMarkedDa
 router.get('/searchEstimate', loggedIn, authController.searchEstimate)
 router.get('/getEstimateById', loggedIn, authController.getEstimateById)
 router.get('/getGradesOfEstimates', loggedIn, authController.getGradesOfEstimates)
+
+//children
+router.post('/changeChildData', loggedIn, authController.changeChildData);
+router.get('/getParentData', loggedIn, authController.getParentData);
 
 module.exports = router;

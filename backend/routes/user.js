@@ -11,5 +11,6 @@ router.post('/resetPassword', userController.resetPassword);
 
 router.get('/diagramMonthlyDailyReport', userController.diagramMonthlyDailyReport);
 router.get('/diagramAnnualEstimate', userController.diagramAnnualEstimate);
+router.get('/checkParentPassword', userController.checkParentPassword);
 
 module.exports = router;

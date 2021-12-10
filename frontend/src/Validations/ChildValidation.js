@@ -1,7 +1,7 @@
 function ChildValidation(newChild) {
     var errorValidationMessages = {};
     var isValid = true;
-    var onlyNumbers = new RegExp('[0-9]');
+    var onlyNumbers = new RegExp('^[0-9]*$');
     
     if (!newChild['name'] || !newChild['lastName'] || !newChild['dateOfBirth'] || !newChild['height'] ||
     !newChild['weight'] || !newChild['category'] || !newChild['degreeOfDisability']) {
