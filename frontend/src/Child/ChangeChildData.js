@@ -10,8 +10,7 @@ import { authHeader } from '../serverConnection/authHeader';
 import ChildValidation from '../Validations/ChildValidation';
 import OpenPortal from '../HelpPages/OpenPortal';
 
-function ChangeChildData() {
-    const { id } = useParams();
+function ChangeChildData(props) {
     const [childData, setChildaData] = useState({});
     const [hasError, setHasError] = useState(false);
     const [errorMessages, setErrorMessages] = useState([]);
@@ -28,7 +27,7 @@ function ChangeChildData() {
         axiosInstance.get('/authUser/getChildData', {
             headers: authHeader(),
             params: {
-                childId: id
+                childId: props.childId
             }
         })
             .then((response) => {
@@ -44,7 +43,7 @@ function ChangeChildData() {
                     navigate('/notFound');
                 }
             })
-    }, [id])
+    }, [props.childId])
 
     function handleChildInputChange(e, { name, value }) {
         e.preventDefault();
@@ -67,7 +66,7 @@ function ChangeChildData() {
             axiosInstance.post('/authUser/changeChildData', {}, {
                 headers: authHeader(),
                 params: {
-                    childId: id,
+                    childId: props.childId,
                     child: childData
                 }
             })

@@ -1,12 +1,18 @@
 import React from 'react';
 import { Menu } from 'semantic-ui-react'
+import { useParams } from 'react-router-dom';
 import useCheckIfItIsTimeForEstimate from '../../../hooks/useCheckIfItIsTimeForEstimate';
+import useCheckIfItIsTimeForFirstEstimate from '../../../hooks/useCheckIfItIsTimeForFirstEstimate';
 
 function MenuItems(props) {
   //proverava da li je nastavnik admin ili obican nastavnik i da li je prvi u mesecu
   //timeForEstimate staviti kao uslov kod menuitem estimate
-  //const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
-  const timeForEstimate = true
+  const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
+  const { id } = useParams();
+  const timeForFirstEstimate = useCheckIfItIsTimeForFirstEstimate(props.teacherRole, id);
+  
+  //const timeForEstimate = true;
+
 
   function handleChangeActiveItem(e, { name }) {
     e.preventDefault();
@@ -32,6 +38,11 @@ function MenuItems(props) {
       />
       {timeForEstimate && <Menu.Item
         name='addEstimate'
+        active={props.activeItem === 'addEstimate'}
+        onClick={handleChangeActiveItem}
+      />}
+      {timeForFirstEstimate && <Menu.Item
+        name='addFirstEstimate'
         active={props.activeItem === 'addEstimate'}
         onClick={handleChangeActiveItem}
       />}

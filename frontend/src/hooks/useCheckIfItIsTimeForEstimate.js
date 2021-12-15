@@ -1,8 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
-
-import axiosInstance from '../serverConnection/axios';
-import { authHeader } from '../serverConnection/authHeader';
 
 const useCheckIfItIsTimeForEstimate = (teacherRole) =>{
 

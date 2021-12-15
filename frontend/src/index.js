@@ -15,8 +15,6 @@ import DailyReportView from './Profiles/ChildProfile/DailyReports/DailyReportVie
 import EstimateView from './Profiles/ChildProfile/Estimates/EstimateView';
 import MonthlyDailyReportDiagram from './ParentView/MonthlyDailyReportDiagram';
 import AnnualEstimateDiagram from './ParentView/AnnualEstimateDiagram';
-import ChangeChildData from './Child/ChangeChildData';
-import ParentData from './Child/ParentData';
 import DiagramsForParents from './ParentView/DiagramsForParents';
 
 const isLogged = localStorage.getItem('loggedIn') ? true : false
@@ -36,8 +34,6 @@ const routing = (
             {isLogged && <Route path='/estimate/:id' element={<EstimateView />} />}
             <Route path='/monthlyDailyReportDiagram' element={<MonthlyDailyReportDiagram />} />
             <Route path='/annualEstimateDiagram' element={<AnnualEstimateDiagram />} />
-            {isLogged && <Route path='/child/profile/:id' element={<ChangeChildData />} />}
-            {isLogged && <Route path='/parent/:id' element={<ParentData />} />}
             <Route path='/diagrams' element={<DiagramsForParents />} />
         </Routes>
     </BrowserRouter>

@@ -294,3 +294,23 @@ exports.deleteAccount = async (req, res) => {
         res.send({ status: 'failed' });
     }
 };
+
+exports.getChildAnamnesis = async (req, res) => {
+    try {
+        const { status, anamnesis } = await Authentiated.getChildAnamnesis(req.query.childId);
+        res.send({ status: status, anamnesis: anamnesis });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+};
+
+exports.checkIfItIsTimeForFirstEstimate = async (req, res) =>{
+    try {
+        const { status } = await Authentiated.checkIfItIsTimeForFirstEstimate(req.query.childId);
+        res.send({ status: status });
+    } catch (err) {
+        console.log(err);
+        res.send({ status: 'failed' });
+    }
+}

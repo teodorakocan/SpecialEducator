@@ -72,7 +72,15 @@ class MainNewChildPage extends React.Component {
                     this.setState({ openPortal: true, portalMessage: registration.data.message });
                 }
             }).catch((error) => {
-                window.location.reload(false);
+                if (typeof error.response === 'undefined') {
+                    this.props.history.push('/notFound');
+                } else if (error.response.status === 403) {
+                    this.props.history.push('/notAuthenticated');
+                } else if (error.response.status === 404) {
+                    this.props.history.push('/notFound');
+                } else {
+                    this.props.history.push('/notAuthorized');
+                }
             });
         }
     }

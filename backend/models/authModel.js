@@ -555,4 +555,41 @@ Authenticated.deleteAccount = async (userId, role) => {
     }
 };
 
+Authenticated.getChildAnamnesis = async (childId) => {
+    try {
+        const request = await poolPromise;
+
+        var child = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
+
+        var anamnesis = await request.request()
+            .query("SELECT * FROM anamnesis WHERE idAnamnesis=" + child.recordset[0].idAnamnesis + ";");
+
+        return ({ status: 'success', anamnesis: anamnesis.recordset[0] });
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
+Authenticated.checkIfItIsTimeForFirstEstimate = async (childId) => {
+    try {
+        const request = await poolPromise;
+
+        var estimate = await request.request()
+            .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
+
+            console.log(estimate.recordset.length);
+        if (estimate.recordset.length > 0) {
+            return ({ status: 'failed' });
+        } else {
+            return ({ status: 'success' });
+        }
+
+    } catch (err) {
+        console.log(err);
+        return ({ status: 'failed' });
+    }
+};
+
 module.exports = Authenticated;

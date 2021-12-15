@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 import { Header, Container, Segment, Input, Grid, Button } from 'semantic-ui-react';
 
@@ -8,8 +7,7 @@ import { authHeader } from '../serverConnection/authHeader';
 import ParentValidation from '../Validations/ParenValidation';
 import OpenPortal from '../HelpPages/OpenPortal';
 
-function ParentData() {
-    const { id } = useParams();
+function ParentData(props) {
     const [role, setRole] = useState();
     const [parent, setParent] = useState({});
     const [hasError, setHasError] = useState(false);
@@ -26,7 +24,7 @@ function ParentData() {
         axiosInstance.get('/authUser/getParentData', {
             headers: authHeader(),
             params: {
-                childId: id
+                childId: props.childId
             }
         })
             .then((response) => {
@@ -83,7 +81,7 @@ function ParentData() {
     }
 
     return (
-        <Container style={{ padding: '15px' }}>
+        <Container>
             <Segment raised color='orange'>
                 <Header as='h1' icon textAlign='center'>
                     <Header.Content style={{ color: 'orange', fontSize: '36px' }}>Parent data</Header.Content>
@@ -123,7 +121,7 @@ function ParentData() {
                             <Grid.Column width={10}>
                                 {hasError && errorComponents}
                             </Grid.Column>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={5}>
                                 <Button inverted floated='left' color='orange' onClick={onClickChangeData}>
                                     Change data
                                 </Button>
