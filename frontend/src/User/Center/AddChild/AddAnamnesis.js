@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment, Grid, TextArea, Button, Form, Icon } from 'semantic-ui-react';
+import { Segment, Grid, TextArea, Button, Form, Icon, Header } from 'semantic-ui-react';
 
 function AddAnamnesis(props) {
 
@@ -10,6 +10,9 @@ function AddAnamnesis(props) {
 
     return (
         <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
+            <Header as='h1' icon textAlign='center'>
+                <Header.Content>Child anamnesis</Header.Content>
+            </Header>
             <Form>
                 <p style={{ fontSize: '14px', fontFamily: 'Verdana, Arial, Helvetica, sans-serif' }}>
                     Description of pregnancy</p>

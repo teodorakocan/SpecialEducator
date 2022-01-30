@@ -2,7 +2,7 @@ module.exports = {
     user: "sa",
     password: "teodora1230",
     server: "DESKTOP-H0J9TJ1\\SQLEXPRESS",
-    database: "dbMySpecialEducator",
+    database: "MySpecialEducatorDB",
     port: 1433,
     options: {
         encrypt: false,

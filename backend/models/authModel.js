@@ -229,24 +229,26 @@ Authenticated.allTeachers = async (teacherId) => {
     }
 };
 
-Authenticated.checkIfDailyReportAllreadyExist = async () => {
+Authenticated.checkIfDailyReportAllreadyExist = async (childId) => {
     try {
         const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const nowDate = nowDateAndTime.split(' ');
         var exist = false;
 
-        var daiyReports = await request.request()
-            .query("SELECT * FROM dailyreport;");
+        var dailyReports = await request.request()
+            .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
 
-        daiyReports.recordset.forEach(daiyReport => {
-            const dealyReportDateAndTime = new Date(daiyReport.date).toISOString().slice(0, 19).replace('T', ' ');
-            const dailyReortDate = dealyReportDateAndTime.split(' ');
+        if (dailyReports.length > 0) {
+            dailyReports.recordset.forEach(dailyReport => {
+                const dailyReportDateAndTime = new Date(dailyReport.date).toISOString().slice(0, 19).replace('T', ' ');
+                const dailyReortDate = dailyReportDateAndTime.split(' ');
 
-            if (dailyReortDate[0] === nowDate[0]) {
-                exist = true;
-            }
-        });
+                if (dailyReortDate[0] === nowDate[0]) {
+                    exist = true;
+                }
+            });
+        }
 
         return exist;
     } catch (err) {
@@ -260,7 +262,7 @@ Authenticated.sendAndSaveDailyReport = async (childId, teacherId, report) => {
         const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        const result = await Authenticated.checkIfDailyReportAllreadyExist();
+        const result = await Authenticated.checkIfDailyReportAllreadyExist(childId);
         if (result) {
             return ({ status: 'failed' });
         } else {
@@ -579,7 +581,6 @@ Authenticated.checkIfItIsTimeForFirstEstimate = async (childId) => {
         var estimate = await request.request()
             .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
 
-            console.log(estimate.recordset.length);
         if (estimate.recordset.length > 0) {
             return ({ status: 'failed' });
         } else {

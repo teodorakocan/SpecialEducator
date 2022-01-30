@@ -168,6 +168,8 @@ User.diagramAnnualEstimate = async (childId) => {
 
 User.checkParentPassword = async (childId, password) => {
     try {
+        const request = await poolPromise;
+
         var child = await request.request()
             .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
 

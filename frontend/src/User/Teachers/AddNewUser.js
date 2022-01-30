@@ -94,6 +94,9 @@ function AddNewUser() {
 
     return (
         <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
+            <Header as='h1' icon textAlign='center'>
+                <Header.Content>Add new member</Header.Content>
+            </Header>
             <Form>
                 <Form.Group>
                     <Form.Input required width={7} label='First name' placeholder='Pierce...' name='name'

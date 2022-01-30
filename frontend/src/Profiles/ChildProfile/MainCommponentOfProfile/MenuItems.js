@@ -10,7 +10,6 @@ function MenuItems(props) {
   const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
   const { id } = useParams();
   const timeForFirstEstimate = useCheckIfItIsTimeForFirstEstimate(props.teacherRole, id);
-  
   //const timeForEstimate = true;
 
 
@@ -41,8 +40,8 @@ function MenuItems(props) {
         active={props.activeItem === 'addEstimate'}
         onClick={handleChangeActiveItem}
       />}
-      {timeForFirstEstimate && <Menu.Item
-        name='addFirstEstimate'
+      {timeForFirstEstimate && !timeForEstimate && <Menu.Item
+        name='addEstimate'
         active={props.activeItem === 'addEstimate'}
         onClick={handleChangeActiveItem}
       />}

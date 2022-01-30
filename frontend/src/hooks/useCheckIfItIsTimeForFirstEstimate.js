@@ -23,7 +23,6 @@ const useCheckIfItIsTimeForFirstEstimate = (teacherRole, id) =>{
             .then((response) => {
                 if (response.data.status === 'success' && teacherRole === 'admin') {
                     setTimeForFirstEstimete(true);
-                    debugger
                 }else{
                     setTimeForFirstEstimete(false);
                 }

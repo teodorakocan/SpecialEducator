@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Segment, Grid, Icon, Button, Form, Image } from 'semantic-ui-react';
+import { Segment, Grid, Icon, Button, Form, Image, Header } from 'semantic-ui-react';
 import { DateInput } from 'semantic-ui-calendar-react-17';
 import { InputFile } from 'semantic-ui-react-input-file';
 
@@ -46,6 +46,9 @@ function AddChild(props) {
 
     return (
         <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
+            <Header as='h1' icon textAlign='center'>
+                <Header.Content>Child information</Header.Content>
+            </Header>
             <Form>
                 <Form.Group>
                     <Form.Input required label='First name' placeholder='First Name...' width={6}

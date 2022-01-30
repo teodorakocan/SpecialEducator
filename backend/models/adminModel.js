@@ -448,7 +448,7 @@ Admin.getTeacherData = async (teacherId) => {
     }
 };
 
-Admin.checkIfEstimateAllreadyExist = async () => {
+Admin.checkIfEstimateAllreadyExist = async (childId) => {
     try {
         const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -456,16 +456,18 @@ Admin.checkIfEstimateAllreadyExist = async () => {
         var exist = false;
 
         var estimates = await request.request()
-            .query("SELECT * FROM estimate;");
+            .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
 
-        estimates.recordset.forEach(estimate => {
-            const estimateDateAndTime = new Date(estimate.date).toISOString().slice(0, 19).replace('T', ' ');
-            const estimateDate = estimateDateAndTime.split(' ');
+        if (estimates.length > 0) {
+            estimates.recordset.forEach(estimate => {
+                const estimateDateAndTime = new Date(estimate.date).toISOString().slice(0, 19).replace('T', ' ');
+                const estimateDate = estimateDateAndTime.split(' ');
 
-            if (estimateDate[0] === nowDate[0]) {
-                exist = true;
-            }
-        });
+                if (estimateDate[0] === nowDate[0]) {
+                    exist = true;
+                }
+            });
+        }
 
         return exist;
     } catch (err) {
@@ -479,7 +481,7 @@ Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
         const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        const estimateExist = await Admin.checkIfEstimateAllreadyExist();
+        const estimateExist = await Admin.checkIfEstimateAllreadyExist(childId);
 
         if (estimateExist) {
             return ({ status: 'failed' })

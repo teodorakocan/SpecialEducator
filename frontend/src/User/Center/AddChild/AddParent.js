@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Segment, Grid, Icon, Button, Form, Dropdown } from 'semantic-ui-react';
+import { Segment, Grid, Icon, Button, Form, Dropdown,Header } from 'semantic-ui-react';
 
 import areaCodes from '../../../Options/AreaCodes';
 import ParentValidation from '../../../Validations/ParenValidation';
@@ -35,6 +35,9 @@ function AddParent(props) {
 
     return (
         <Segment raised style={{ background: 'linear-gradient(to top left, #ffffff 0%, #ff9966 100%)' }}>
+            <Header as='h1' icon textAlign='center'>
+                <Header.Content>Parent information</Header.Content>
+            </Header>
             <Form>
                 <Form.Group>
                     <Form.Input required label='First name' placeholder='First Name' width={6}

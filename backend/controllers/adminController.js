@@ -51,8 +51,8 @@ exports.addChild = async (req, res) => {
         let phoneNumber = '';
 
         if (typeof parent.phoneNumber !== 'undefined') {
-            areaCode = center.areaCode;
-            phoneNumber = center.phoneNumber;
+            areaCode = parent.areaCode;
+            phoneNumber = parent.phoneNumber;
         }
 
         const { status } = await Admin.addChild(req.user.id, child, parent, anamnesis, phoneNumber, areaCode);

@@ -25,7 +25,7 @@ exports.resetPasswordRequest = async (req, res) => {
     try {
         const { status, resetCode, message } = await User.resetPasswordRequest(req.query.email);
         if (status === 'success') {
-            const result = MailDelivery.sendResetPasswordLink(resetCode, req.query.emai)
+            const result = MailDelivery.sendResetPasswordLink(resetCode, req.query.email)
             if (result) {
                 res.send({ status: 'failed' });
             } else {

@@ -37,6 +37,7 @@ function CheckParentPassword(props) {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             {hasError && <div style={{ color: 'red' }}>{errorMessage}</div>}
+                            {props.hasError && <div style={{ color: 'red' }}>{props.errorMessage}</div>}
                             <Grid columns='two' style={{ padding: '10px' }}>
                                 <Grid.Row>
                                     <Grid.Column width={3}>

@@ -93,7 +93,7 @@ function ResetPassword() {
                                             <Button basic color='orange' icon='eye' onMouseEnter={() => setHidePassword(false)}
                                                 onMouseLeave={() => setHidePassword(true)} /> <br /><br />
                                             <Button inverted color='orange' onClick={onClickResetPassword}>
-                                                Send request
+                                                Reset password
                                             </Button>
                                         </Grid.Column>
                                     </Grid.Row>
