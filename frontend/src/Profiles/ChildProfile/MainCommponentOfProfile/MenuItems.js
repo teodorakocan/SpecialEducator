@@ -1,17 +1,13 @@
 import React from 'react';
 import { Menu } from 'semantic-ui-react'
 import { useParams } from 'react-router-dom';
-import useCheckIfItIsTimeForEstimate from '../../../hooks/useCheckIfItIsTimeForEstimate';
-import useCheckIfItIsTimeForFirstEstimate from '../../../hooks/useCheckIfItIsTimeForFirstEstimate';
+import useCheckIfEstimateExist from '../../../hooks/useCheckIfEstimateExist';
 
 function MenuItems(props) {
-  //proverava da li je nastavnik admin ili obican nastavnik i da li je prvi u mesecu
-  //timeForEstimate staviti kao uslov kod menuitem estimate
-  const timeForEstimate = useCheckIfItIsTimeForEstimate(props.teacherRole);
   const { id } = useParams();
-  const timeForFirstEstimate = useCheckIfItIsTimeForFirstEstimate(props.teacherRole, id);
-  //const timeForEstimate = true;
-
+  var nowDateAndTime = new Date();
+  let date = nowDateAndTime.getDate();
+  const estimateExist = useCheckIfEstimateExist(id);
 
   function handleChangeActiveItem(e, { name }) {
     e.preventDefault();
@@ -35,12 +31,7 @@ function MenuItems(props) {
         active={props.activeItem === 'listOfDailyReports'}
         onClick={handleChangeActiveItem}
       />
-      {timeForEstimate && <Menu.Item
-        name='addEstimate'
-        active={props.activeItem === 'addEstimate'}
-        onClick={handleChangeActiveItem}
-      />}
-      {timeForFirstEstimate && !timeForEstimate && <Menu.Item
+      {props.teacherRole === "admin" && (date == 2 || !estimateExist) && <Menu.Item
         name='addEstimate'
         active={props.activeItem === 'addEstimate'}
         onClick={handleChangeActiveItem}

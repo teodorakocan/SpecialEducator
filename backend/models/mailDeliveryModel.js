@@ -170,8 +170,8 @@ MailDelivery.sendToParentEstimate = (parentEmail, estimate, childName, teacherNa
         '<div><p><strong>Gross motor skils: </strong>' + estimate.grossMotorSkils + '</p><p><strong>Fine motor skils: </strong>' + estimate.fineMotorSkils +
         '</p><p><strong>Perceptual abilities: </strong>' + estimate.perceptualAbilities + '</p><p><strong>Speaking skils: </strong>' + estimate.speakingSkils +
         '</p><p><strong>Socio emotional development: </strong>' + estimate.socioEmotionalDevelopment + '</p><p><strong>Intellectual ability: </strong>' +
-        estimate.intellectualAbility + '</p><p><strong>Teacher who wrote estimate: </strong>' + teacherName + '</p></div>' + 
-        '<div><Link to="http://localhost:3000/diagrams?childId=' + childId + '"/></div>';
+        estimate.intellectualAbility + '</p><p><strong>Teacher who wrote estimate: </strong>' + teacherName + "</p><p>Ypu can see diagram of the child's progress on this link" + 
+        '<Link to="http://localhost:3000/diagrams?childId=' + childId + '"/></p></div>';
     
     var mailOptions = {
         from: 'specialeducator2021@gmail.com',

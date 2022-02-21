@@ -105,7 +105,7 @@ exports.allTeachers = async (req, res) => {
 
 exports.checkIfDailyReportAllreadyExist = async (req, res) => {
     try {
-        const result = await Authentiated.checkIfDailyReportAllreadyExist();
+        const result = await Authentiated.checkIfDailyReportAllreadyExist(req.query.childId);
         if (result) {
             res.send({ status: 'success', message: 'Daily report for this day is already added.' });
         } else {
@@ -304,13 +304,3 @@ exports.getChildAnamnesis = async (req, res) => {
         res.send({ status: 'failed' });
     }
 };
-
-exports.checkIfItIsTimeForFirstEstimate = async (req, res) =>{
-    try {
-        const { status } = await Authentiated.checkIfItIsTimeForFirstEstimate(req.query.childId);
-        res.send({ status: status });
-    } catch (err) {
-        console.log(err);
-        res.send({ status: 'failed' });
-    }
-}

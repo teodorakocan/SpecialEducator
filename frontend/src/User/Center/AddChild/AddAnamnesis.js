@@ -57,7 +57,7 @@ function AddAnamnesis(props) {
                     </Grid.Column>
                     <Grid.Column>
                         <Form.Button animated floated='right' color='orange' onClick={props.onClickNextStep} >
-                            <Button.Content visible>Next step</Button.Content>
+                            <Button.Content visible>Finish</Button.Content>
                             <Button.Content hidden>
                                 <Icon name='arrow right' />
                             </Button.Content>

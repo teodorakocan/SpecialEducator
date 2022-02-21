@@ -20,7 +20,6 @@ function AddDailyReport() {
     const [exist, message] = useDailyReportExits(id);
     const navigate = useNavigate();
 
-
     function handleInputChange(e, { rating, name }) {
         e.preventDefault();
         var report = dailyReport;
@@ -79,7 +78,8 @@ function AddDailyReport() {
     }
 
     return (
-        exist ? <Grid.Row>
+        exist ? 
+        <Grid.Row>
             <Message
                 warning
                 header={message}
@@ -87,7 +87,7 @@ function AddDailyReport() {
             />
         </Grid.Row > :
             <Grid.Column width={10}>
-                <Segment raised color='orange' fluid>
+                <Segment raised color='orange' >
                     <Header as='h1' icon textAlign='center'>
                         <Image circular src={logo} />
                         <Header.Content>Write daily report</Header.Content>
@@ -161,7 +161,6 @@ function AddDailyReport() {
                 </Segment>
                 {openPortal && <OpenPortal open={openPortal} message={portalMessage} handleClose={() => setOpenPortal(!openPortal)} />}
             </Grid.Column>
-
     )
 }
 

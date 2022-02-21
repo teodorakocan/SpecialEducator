@@ -12,7 +12,6 @@ router.get('/searchChild', loggedIn, authController.searchChild);
 router.get('/getChildData', loggedIn, authController.getChildData);
 router.get('/allTeachers', loggedIn, authController.allTeachers);
 router.get('/getChildAnamnesis', loggedIn, authController.getChildAnamnesis);
-router.get('/checkIfItIsTimeForFirstEstimate', loggedIn, authController.checkIfItIsTimeForFirstEstimate);
 
 router.post('/deleteAccount', loggedIn, authController.deleteAccount)
 router.post('/changeUserData', loggedIn, authController.changeUserData);

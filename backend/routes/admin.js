@@ -9,7 +9,7 @@ router.get('/allUsers', loggedIn, adminOnly, adminController.allUsers);
 router.get('/schedule', loggedIn, adminOnly, adminController.schedule);
 router.get('/searchTeacher', loggedIn, adminOnly, adminController.searchTeacher);
 router.get('/getTeacherData', loggedIn, adminOnly, adminController.getTeacherData);
-router.get('/checkIfEstimateAllreadyExist', loggedIn, adminOnly, adminController.checkIfEstimateAllreadyExist);
+router.get('/checkIfEstimateExist', loggedIn, adminOnly, adminController.checkIfEstimateExist);
 
 router.post('/changeCenterData', loggedIn, adminOnly, adminController.changeCenterData);
 router.post('/addNewUser', loggedIn, adminOnly, upload.single('file'), adminController.addNewUser);

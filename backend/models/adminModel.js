@@ -448,22 +448,27 @@ Admin.getTeacherData = async (teacherId) => {
     }
 };
 
-Admin.checkIfEstimateAllreadyExist = async (childId) => {
+Admin.checkIfEstimateExist = async (childId) => {
     try {
         const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const nowDate = nowDateAndTime.split(' ');
+        const nowMonth = nowDate[0].split('-');
         var exist = false;
 
         var estimates = await request.request()
             .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
 
-        if (estimates.length > 0) {
+        if (estimates.recordset.length == 0) {
+            exist = false;
+        }
+        else {
             estimates.recordset.forEach(estimate => {
                 const estimateDateAndTime = new Date(estimate.date).toISOString().slice(0, 19).replace('T', ' ');
                 const estimateDate = estimateDateAndTime.split(' ');
-
-                if (estimateDate[0] === nowDate[0]) {
+                const estimateMonth = estimateDate[0].split('-');
+                
+                if (estimateMonth[1] === nowMonth[1]) {
                     exist = true;
                 }
             });
@@ -481,7 +486,7 @@ Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
         const request = await poolPromise;
         const nowDateAndTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        const estimateExist = await Admin.checkIfEstimateAllreadyExist(childId);
+        const estimateExist = await Admin.checkIfEstimateExist(childId);
 
         if (estimateExist) {
             return ({ status: 'failed' })
@@ -492,9 +497,9 @@ Admin.saveAndSendEstimate = async (adminId, childId, estimate) => {
                     "socioEmotionalDevelopmentMark, intellectualAbilityMark, idChild, idUser) VALUES ('" + nowDateAndTime + "', '" +
                     estimate.grossMotorSkils + "', '" + estimate.fineMotorSkils + "', '" + estimate.perceptualAbilities + "', '" +
                     estimate.speakingSkils + "', '" + estimate.socioEmotionalDevelopment + "', '" + estimate.intellectualAbility +
-                    "', " + estimate.grossMotorSkilsMark + ", " + estimate.fineMotorSkilsMark + ", " + estimate.perceptualAbilitiesMark +
-                    ", " + estimate.speakingSkilsMark + ", " + estimate.socioEmotionalDevelopmentMark + ", " + estimate.intellectualAbilityMark
-                    + ", " + parseInt(childId) + ", " + adminId + ");");
+                    "', '" + estimate.grossMotorSkilsMark + "', '" + estimate.fineMotorSkilsMark + "', '" + estimate.perceptualAbilitiesMark +
+                    "', '" + estimate.speakingSkilsMark + "', '" + estimate.socioEmotionalDevelopmentMark + "', '" + estimate.intellectualAbilityMark
+                    + "', " + parseInt(childId) + ", " + adminId + ");");
 
             var child = await request.request()
                 .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");

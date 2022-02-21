@@ -51,7 +51,6 @@ class MakeAnAppointment extends React.Component {
     componentDidMount() {
         axiosInstance.get('/admin/allUsers', { headers: authHeader() })
             .then((response) => {
-                console.log(response)
                 this.allUsers(response.data.users);
             }).catch((error) => {
                 this.setState({ notAuthorized: true });
@@ -65,7 +64,6 @@ class MakeAnAppointment extends React.Component {
     }
 
     saveAndSendSchedule = () => {
-        console.log(this.state.data)
         axiosInstance.post('/admin/saveAndSendSchedule', {}, {
             headers: authHeader(),
             params: {

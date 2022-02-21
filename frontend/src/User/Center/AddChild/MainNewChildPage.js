@@ -6,6 +6,7 @@ import AddAnamnesis from './AddAnamnesis';
 import OpenPortal from '../../../HelpPages/OpenPortal';
 import AddChild from './AddChild';
 import AddParent from './AddParent';
+import AddEstimate from '../../../Profiles/ChildProfile/Estimates/AddEstimate';
 
 class MainNewChildPage extends React.Component {
 
@@ -18,7 +19,8 @@ class MainNewChildPage extends React.Component {
             anamnesis: {},
             selectedFile: [],
             openPortal: false,
-            portalMessage: ''
+            portalMessage: '',
+            addEstimate: false,
         };
     }
 
@@ -105,9 +107,10 @@ class MainNewChildPage extends React.Component {
             default:
                 return (
                     <div>
-                        <AddAnamnesis onClickNextStep={this.onClickNextStep} anamnesis={this.state.anamnesis}
-                            onClickPrevStep={this.onClickPrevStep} handleAnamnesisInputChanges={this.handleAnamnesisInputChanges} />
-                        {this.state.openPortal && <OpenPortal open={this.state.openPortal} message={this.state.portalMessage} handleClose={() => this.setState({ openPortal: false, step: 1 })} />}
+                        {!this.state.addEstimate &&<AddAnamnesis onClickNextStep={this.onClickNextStep} anamnesis={this.state.anamnesis}
+                            onClickPrevStep={this.onClickPrevStep} handleAnamnesisInputChanges={this.handleAnamnesisInputChanges} />}
+                        {this.state.openPortal && <OpenPortal open={this.state.openPortal} message={this.state.portalMessage} handleClose={() => this.setState({ openPortal: false, addEstimate: true })} />}
+                        {this.state.addEstimate && !this.state.openPortal && <AddEstimate/>}
                     </div>
                 )
         }

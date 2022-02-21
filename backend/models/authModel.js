@@ -237,9 +237,9 @@ Authenticated.checkIfDailyReportAllreadyExist = async (childId) => {
         var exist = false;
 
         var dailyReports = await request.request()
-            .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
+            .query("SELECT * FROM dailyreport WHERE idChild=" + parseInt(childId) + ";");
 
-        if (dailyReports.length > 0) {
+        if (dailyReports.recordset.length > 0) {
             dailyReports.recordset.forEach(dailyReport => {
                 const dailyReportDateAndTime = new Date(dailyReport.date).toISOString().slice(0, 19).replace('T', ' ');
                 const dailyReortDate = dailyReportDateAndTime.split(' ');
@@ -273,7 +273,7 @@ Authenticated.sendAndSaveDailyReport = async (childId, teacherId, report) => {
             await request.request()
                 .query("INSERT INTO dailyreport (report, recommendationForTeacher, recommendationForParent, progress, problems, mark, date, idChild, idUser) VALUES ('" +
                     report.report + "', '" + report.recommendationForTeacher + "', '" + report.recommendationForParent + "', '" + report.progress + "', '" +
-                    report.problems + "', " + report.mark + ", '" + nowDateAndTime + "', " + parseInt(childId) + ", " + teacherId + ");");
+                    report.problems + "', '" + report.mark + "', '" + nowDateAndTime + "', " + parseInt(childId) + ", " + teacherId + ");");
 
             var child = await request.request()
                 .query("SELECT * FROM child WHERE idChild=" + parseInt(childId) + ";");
@@ -568,25 +568,6 @@ Authenticated.getChildAnamnesis = async (childId) => {
             .query("SELECT * FROM anamnesis WHERE idAnamnesis=" + child.recordset[0].idAnamnesis + ";");
 
         return ({ status: 'success', anamnesis: anamnesis.recordset[0] });
-    } catch (err) {
-        console.log(err);
-        return ({ status: 'failed' });
-    }
-};
-
-Authenticated.checkIfItIsTimeForFirstEstimate = async (childId) => {
-    try {
-        const request = await poolPromise;
-
-        var estimate = await request.request()
-            .query("SELECT * FROM estimate WHERE idChild=" + parseInt(childId) + ";");
-
-        if (estimate.recordset.length > 0) {
-            return ({ status: 'failed' });
-        } else {
-            return ({ status: 'success' });
-        }
-
     } catch (err) {
         console.log(err);
         return ({ status: 'failed' });

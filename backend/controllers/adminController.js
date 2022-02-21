@@ -180,13 +180,13 @@ exports.getTeacherData = async (req, res) => {
     }
 };
 
-exports.checkIfEstimateAllreadyExist = async (req, res) => {
+exports.checkIfEstimateExist = async (req, res) => {
     try {
-        const result = await Admin.checkIfEstimateAllreadyExist();
+        const result = await Admin.checkIfEstimateExist(req.query.childId);
         if (result) {
-            res.send({ status: 'success', message: 'Estimate for this month is already added.' });
+            res.send({ status: 'exist', message: 'Estimate for this month is already added.' });
         } else {
-            res.send({ status: 'failed' });
+            res.send({ status: 'notExist' });
         }
     } catch (err) {
         console.log(err);

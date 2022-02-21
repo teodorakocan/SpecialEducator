@@ -4,28 +4,30 @@ import { useNavigate } from 'react-router';
 import axiosInstance from '../serverConnection/axios';
 import { authHeader } from '../serverConnection/authHeader';
 
-const useDailyReportExits = (childId) => {
-    const [exist, setExist] = useState(false);
-    const [message, setMessage] = useState('');
+const useCheckIfEstimateExist = (id) => {
+
+    const [estimateExist, setEstimateExist] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        checkIfDailyReportAllreadyExist();
-    }, [childId]);
+        checkIfItIsTimeForEstimate();
+    }, [id]);
 
-    function checkIfDailyReportAllreadyExist () {
-        axiosInstance.get('/authUser/checkIfDailyReportAllreadyExist', {
+    function checkIfItIsTimeForEstimate() {
+        axiosInstance.get('/admin/checkIfEstimateExist', {
             headers: authHeader(),
-            params:{
-                childId: childId
+            params: {
+                childId: id
             }
         })
             .then((response) => {
-                if (response.data.status === 'success') {
-                    setExist(true);
-                    setMessage(response.data.message);
+                if (response.data.status === 'exist') {
+                    setEstimateExist(true);
+                } else {
+                    setEstimateExist(false);
                 }
             }).catch((error) => {
+                console.log(error);
                 if (typeof error.response === 'undefined') {
                     navigate('/notFound');
                 } else if (error.response.status === 403) {
@@ -33,10 +35,10 @@ const useDailyReportExits = (childId) => {
                 } else {
                     navigate('/notFound');
                 }
-            })
+            });
     }
 
-    return [exist, message];
+    return estimateExist;
 }
 
-export default useDailyReportExits;
+export default useCheckIfEstimateExist;
