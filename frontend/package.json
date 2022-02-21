@@ -9,6 +9,7 @@
     "axios": "^0.24.0",
     "devextreme-aspnet-data-nojquery": "^2.8.6",
     "devextreme-react": "^21.2.3",
+    "package": "^1.0.1",
     "react": "^17.0.2",
     "react-date-picker": "^8.3.5",
     "react-dom": "^17.0.2",
